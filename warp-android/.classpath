@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" exported="true" path="/warp" combineaccessrules="false"/>
+	<classpathentry kind="output" path="bin/classes"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" exported="true" path="/warp/libs/gdx.jar" sourcepath="/warp/libs/gdx-sources.jar"/>
+	<classpathentry kind="lib" exported="true" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
+	<classpathentry kind="lib" exported="true" path="/warp/libs/tween-engine-api.jar" sourcepath="/warp/libs/tween-engine-api-sources.jar"/>
+	<classpathentry kind="lib" exported="true" path="/warp/libs/bodyeditor-loader.jar" sourcepath="/warp/libs/bodyeditor-loader-sources.jar"/>
+</classpath>

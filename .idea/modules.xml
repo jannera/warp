@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/warp/warp.iml" filepath="$PROJECT_DIR$/warp/warp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/warp-android/warp-android.iml" filepath="$PROJECT_DIR$/warp-android/warp-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/warp-desktop/warp-desktop.iml" filepath="$PROJECT_DIR$/warp-desktop/warp-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/warp-html/warp-html.iml" filepath="$PROJECT_DIR$/warp-html/warp-html.iml" />
+    </modules>
+  </component>
+</project>
+

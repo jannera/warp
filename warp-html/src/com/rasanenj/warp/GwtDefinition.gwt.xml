@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit trunk//EN" "http://google-web-toolkit.googlecode.com/svn/trunk/distro-source/core/src/gwt-module.dtd">
+<module>
+	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
+	<inherits name='aurelienribon.tweenengine' />
+	<inherits name='aurelienribon.bodyeditorloader' />
+	<inherits name='WarpGame' />
+    <inherits name="com.sksamuel.gwt.GwtWebsockets" />
+	<entry-point class='com.rasanenj.warp.client.GwtLauncher' />
+	<set-configuration-property name="gdx.assetpath" value="C:\Users\gilead\warp\warp-android\assets" />
+    <set-configuration-property name="gdx.assetoutputpath" value="." />
+</module>
