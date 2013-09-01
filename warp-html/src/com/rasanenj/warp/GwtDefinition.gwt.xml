@@ -10,6 +10,6 @@
     <set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
     <set-configuration-property name="devModeRedirectEnabled" value="true"/>
 	<entry-point class='com.rasanenj.warp.client.GwtLauncher' />
-	<set-configuration-property name="gdx.assetpath" value="C:\Users\gilead\IdeaProjects\warp github\warp-android\assets" />
+	<set-configuration-property name="gdx.assetpath" value="C:\Users\gilead\IdeaProjects\warp\warp-android\assets" />
     <set-configuration-property name="gdx.assetoutputpath" value="." />
 </module>
