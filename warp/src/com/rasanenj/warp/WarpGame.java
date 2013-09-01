@@ -47,7 +47,7 @@ public class WarpGame implements ApplicationListener {
         fpsLabel = new Label("fps:", skin);
 
         Window window = new Window("Chat", skin);
-        window.debug();
+        // window.debug();
         window.setPosition(0, 0);
         window.defaults().spaceBottom(10);
         window.row().fill().expandX();
