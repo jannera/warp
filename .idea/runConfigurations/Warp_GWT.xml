@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Warp GWT" type="GWT.ConfigurationType" factoryName="GWT Configuration" singleton="true">
     <module name="warp-html" />
+    <option name="VM_PARAMETERS" value="-Xmx512m -XX:MaxPermSize=256m" />
     <option name="RUN_PAGE" value="index.html" />
     <option name="BROWSER" value="Chrome" />
     <RunnerSettings RunnerId="Debug">

@@ -10,27 +10,14 @@ import com.sksamuel.gwt.websockets.Websocket;
 import com.sksamuel.gwt.websockets.WebsocketListener;
 
 public class WarpGame implements ApplicationListener {
-	Skin skin;
+    Skin skin;
     Stage stage;
     SpriteBatch batch;
+    Label fpsLabel;
 
-	@Override
+
+    @Override
 	public void create() {
-        batch = new SpriteBatch();
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
-        // Create a table that fills the screen. Everything else will go inside this table.
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
-
-        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-
-        final TextField chatInput = new TextField("asdf", skin);
-
-        table.add(chatInput);
-
         final Websocket socket = new Websocket("ws://localhost:8887");
 
         socket.addListener(new WebsocketListener() {
@@ -46,21 +33,39 @@ public class WarpGame implements ApplicationListener {
 
             @Override
             public void onOpen() {
-                socket.send("lol");
             }
         });
         socket.open();
 
-        chatInput.setTextFieldListener(new TextField.TextFieldListener() {
-            @Override
-            public void keyTyped(TextField textField, char key) {
+        batch = new SpriteBatch();
+        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        Gdx.input.setInputProcessor(stage);
+
+        TextField textfield = new TextField("", skin);
+        textfield.setMessageText("Write your messages here");
+        fpsLabel = new Label("fps:", skin);
+
+        Window window = new Window("Chat", skin);
+        window.debug();
+        window.setPosition(0, 0);
+        window.defaults().spaceBottom(10);
+        window.row().fill().expandX();
+        window.add(textfield).minWidth(100).expandX().fillX().colspan(3);
+        window.row();
+        window.add(fpsLabel).colspan(4);
+        window.pack();
+
+        stage.addActor(window);
+
+        textfield.setTextFieldListener(new TextField.TextFieldListener() {
+            public void keyTyped (TextField textField, char key) {
                 if (key == '\n' || key == '\r') {
-                    socket.send(chatInput.getText());
-                    chatInput.setText("");
+                    socket.send(textField.getText());
+                    textField.setText("");
                 }
             }
         });
-        // socket.close();
 	}
 
 	@Override
@@ -73,9 +78,11 @@ public class WarpGame implements ApplicationListener {
 	public void render() {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        fpsLabel.setText("fps: " + Gdx.graphics.getFramesPerSecond());
+
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
-        Table.drawDebug(stage);
 	}
 
 	@Override

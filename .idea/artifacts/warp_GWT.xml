@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact name="warp:GWT">
-    <output-path>$PROJECT_DIR$/out/artifacts/warp_GWT</output-path>
-    <root id="root">
-      <element id="gwt-compiler-output" facet="warp/gwt/GWT" />
-    </root>
-  </artifact>
-</component>
