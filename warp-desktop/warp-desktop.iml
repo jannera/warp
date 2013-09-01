@@ -15,7 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="warp" />
+    <orderEntry type="module" module-name="warp-client" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
       <library name="gdx-backend-lwjgl.jar">

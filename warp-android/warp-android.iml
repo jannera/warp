@@ -28,15 +28,15 @@
     </content>
     <orderEntry type="jdk" jdkName="Android 2.1 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="warp" exported="" />
+    <orderEntry type="module" module-name="warp-client" exported="" />
     <orderEntry type="module-library" exported="">
       <library name="gdx.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/gdx.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/gdx-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -54,22 +54,22 @@
     <orderEntry type="module-library" exported="">
       <library name="tween-engine-api.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/tween-engine-api.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/tween-engine-api.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/tween-engine-api-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/tween-engine-api-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="bodyeditor-loader.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/bodyeditor-loader.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/bodyeditor-loader.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/bodyeditor-loader-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/bodyeditor-loader-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

@@ -42,23 +42,23 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="warp" />
+    <orderEntry type="module" module-name="warp-client" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
       <library name="gdx.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/gdx.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/gdx-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library name="gdx-sources.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/gdx-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx-sources.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -87,18 +87,18 @@
     <orderEntry type="module-library">
       <library name="tween-engine-api.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/tween-engine-api.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/tween-engine-api.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/tween-engine-api-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/tween-engine-api-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library name="tween-engine-api-sources.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/tween-engine-api-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/tween-engine-api-sources.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -107,18 +107,18 @@
     <orderEntry type="module-library">
       <library name="bodyeditor-loader.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/bodyeditor-loader.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/bodyeditor-loader.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/bodyeditor-loader-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/bodyeditor-loader-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library name="bodyeditor-loader-sources.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp/libs/bodyeditor-loader-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/bodyeditor-loader-sources.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
