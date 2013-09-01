@@ -15,10 +15,45 @@ public class WarpGame implements ApplicationListener {
     SpriteBatch batch;
     Label fpsLabel;
 
-
     @Override
 	public void create() {
         final Websocket socket = new Websocket("ws://localhost:8887");
+
+        batch = new SpriteBatch();
+        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+        stage = new Stage(screenWidth, screenHeight, false);
+        Gdx.input.setInputProcessor(stage);
+
+        TextField textfield = new TextField("", skin);
+        textfield.setMessageText("Write your messages here");
+        fpsLabel = new Label("fps:", skin);
+
+        final Label chatMessages = new Label("test message", skin);
+        chatMessages.setFillParent(true);
+        chatMessages.setWrap(true);
+
+        final ScrollPane scrollPane = new ScrollPane(chatMessages, skin);
+
+        final int rows = 10;
+        Window window = new Window("Chat", skin);
+        // window.debug();
+        window.setPosition( (screenWidth - 300) /2f, (screenHeight - 200) /2f);
+        window.defaults().spaceBottom(10);
+        window.row().fill().expandX();
+        window.add(scrollPane).minWidth(300).minHeight(chatMessages.getHeight() * rows).expand().fill().colspan(2);
+        window.row();
+        window.add(textfield).minWidth(100).expandX().fillX().colspan(3);
+        window.row();
+        window.add(fpsLabel).colspan(4);
+        window.pack();
+
+        chatMessages.setText("");
+
+        // window.setPosition((screenWidth - window.getPrefWidth()) / 2f, (screenHeight - window.getPrefHeight()) / 2f);
+
+        stage.addActor(window);
 
         socket.addListener(new WebsocketListener() {
             @Override
@@ -28,40 +63,31 @@ public class WarpGame implements ApplicationListener {
 
             @Override
             public void onMessage(String msg) {
-                //To change body of implemented methods use File | Settings | File Templates.
+                String msgs = chatMessages.getText().toString();
+                if (!msgs.isEmpty()) {
+                    msgs += '\n';
+                }
+                msgs += msg;
+
+                chatMessages.setText(msgs);
+                scrollPane.setScrollPercentY(1);
             }
 
             @Override
             public void onOpen() {
             }
         });
+
         socket.open();
-
-        batch = new SpriteBatch();
-        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-        Gdx.input.setInputProcessor(stage);
-
-        TextField textfield = new TextField("", skin);
-        textfield.setMessageText("Write your messages here");
-        fpsLabel = new Label("fps:", skin);
-
-        Window window = new Window("Chat", skin);
-        // window.debug();
-        window.setPosition(0, 0);
-        window.defaults().spaceBottom(10);
-        window.row().fill().expandX();
-        window.add(textfield).minWidth(100).expandX().fillX().colspan(3);
-        window.row();
-        window.add(fpsLabel).colspan(4);
-        window.pack();
-
-        stage.addActor(window);
 
         textfield.setTextFieldListener(new TextField.TextFieldListener() {
             public void keyTyped (TextField textField, char key) {
                 if (key == '\n' || key == '\r') {
-                    socket.send(textField.getText());
+                    String msg = textField.getText();
+                    if (msg.isEmpty()) {
+                        return;
+                    }
+                    socket.send(msg);
                     textField.setText("");
                 }
             }
