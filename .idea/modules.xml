@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/warp-desktop/warp-desktop.iml" filepath="$PROJECT_DIR$/warp-desktop/warp-desktop.iml" />
       <module fileurl="file://$PROJECT_DIR$/warp-html/warp-html.iml" filepath="$PROJECT_DIR$/warp-html/warp-html.iml" />
       <module fileurl="file://$PROJECT_DIR$/warp-server/warp-server.iml" filepath="$PROJECT_DIR$/warp-server/warp-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/warp-shared/warp-shared.iml" filepath="$PROJECT_DIR$/warp-shared/warp-shared.iml" />
     </modules>
   </component>
 </project>

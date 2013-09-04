@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="gwt-websockets-1.0.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/warp-client/libs/gwt-websockets-1.0.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/warp-client/libs/gwt-websockets-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/warp-client/libs/gwt-websockets-1.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

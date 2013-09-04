@@ -6,19 +6,21 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.sksamuel.gwt.websockets.Websocket;
-import com.sksamuel.gwt.websockets.WebsocketListener;
+import com.rasanenj.warp.chat.ChatHandler;
+import com.rasanenj.warp.messaging.MessageDelegator;
+import com.rasanenj.warp.messaging.ServerConnection;
+
 
 public class WarpGame implements ApplicationListener {
     Skin skin;
     Stage stage;
     SpriteBatch batch;
     Label fpsLabel;
+    final MessageDelegator delegator = new MessageDelegator();
+    ServerConnection serverConnection;
 
     @Override
 	public void create() {
-        final Websocket socket = new Websocket("ws://localhost:8887");
-
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         float screenWidth = Gdx.graphics.getWidth();
@@ -55,43 +57,10 @@ public class WarpGame implements ApplicationListener {
 
         stage.addActor(window);
 
-        socket.addListener(new WebsocketListener() {
-            @Override
-            public void onClose() {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+        serverConnection = new ServerConnection("ws://localhost:8887", delegator);
 
-            @Override
-            public void onMessage(String msg) {
-                String msgs = chatMessages.getText().toString();
-                if (!msgs.isEmpty()) {
-                    msgs += '\n';
-                }
-                msgs += msg;
-
-                chatMessages.setText(msgs);
-                scrollPane.setScrollPercentY(1);
-            }
-
-            @Override
-            public void onOpen() {
-            }
-        });
-
-        socket.open();
-
-        textfield.setTextFieldListener(new TextField.TextFieldListener() {
-            public void keyTyped (TextField textField, char key) {
-                if (key == '\n' || key == '\r') {
-                    String msg = textField.getText();
-                    if (msg.isEmpty()) {
-                        return;
-                    }
-                    socket.send(msg);
-                    textField.setText("");
-                }
-            }
-        });
+        ChatHandler chatHandler = new ChatHandler(serverConnection, chatMessages, scrollPane, textfield);
+        chatHandler.register(delegator);
 	}
 
 	@Override
