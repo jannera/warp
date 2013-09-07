@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start Super Dev Mode" type="GWT.ConfigurationType" factoryName="GWT Configuration">
+    <module name="warp-html" />
+    <option name="VM_PARAMETERS" value="-Xmx512m" />
+    <option name="RUN_PAGE" value="index.html" />
+    <option name="USE_SUPER_DEV_MODE" value="true" />
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method />
+  </configuration>
+</component>
