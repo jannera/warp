@@ -13,6 +13,8 @@ public class MessageFactory {
                 return new JoinServerMessage(msg);
             case CHAT_MSG:
                 return new ChatMessage(msg);
+            case DISCONNECT_MSG:
+                return new DisconnectMsg(msg);
         }
         System.out.println("MessageFactory could not decode type " + type);
         return null;

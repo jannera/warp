@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * @author gilead
  */
-public class JoinServerMessage extends StringMessage {
+public class JoinServerMessage extends TextMessage {
     public JoinServerMessage(ByteBuffer b) {
         super(b);
     }

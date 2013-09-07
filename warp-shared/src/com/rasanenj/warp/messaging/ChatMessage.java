@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * @author gilead
  */
-public class ChatMessage extends StringMessage {
+public class ChatMessage extends TextMessage {
     public ChatMessage(String msg) {
         super(msg);
     }

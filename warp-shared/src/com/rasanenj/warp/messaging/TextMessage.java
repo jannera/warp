@@ -5,14 +5,14 @@ import java.nio.ByteBuffer;
 /**
  * @author gilead
  */
-public abstract class StringMessage extends Message {
+public abstract class TextMessage extends Message {
     protected String msg;
 
-    public StringMessage(String msg) {
+    public TextMessage(String msg) {
         this.msg = msg;
     }
 
-    public StringMessage(ByteBuffer b) {
+    public TextMessage(ByteBuffer b) {
         byte[] newArr = new byte[b.remaining()];
         b.get(newArr);
         msg = Message.decode(newArr);

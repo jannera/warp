@@ -44,9 +44,10 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        System.out.println( conn + " disconnect" );
-        // TODO: send some kind of DC message to everyone interested
-        // also remove the player from the pool of connected players
+        Player player = getPlayer(conn);
+        System.out.println(player.getName() + " disconnected");
+        remove(player);
+        sendToAll(new DisconnectMsg(player));
     }
 
     @Override
@@ -69,6 +70,7 @@ public class WSServer extends WebSocketServer {
         if (msg.getType() == Message.MessageType.JOIN_SERVER) {
             JoinServerMessage joinServerMsg = (JoinServerMessage)msg;
             player = new ServerPlayer(conn, joinServerMsg.getMsg());
+            System.out.println(player.getName() + " joined server");
             players.add(player);
         }
         else {
@@ -91,5 +93,9 @@ public class WSServer extends WebSocketServer {
         for (ServerPlayer player : players) {
             player.send(message);
         }
+    }
+
+    private void remove(Player player) {
+        players.remove(player);
     }
 }

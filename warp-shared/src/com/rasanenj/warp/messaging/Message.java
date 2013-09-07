@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
  */
 public abstract class Message {
     public enum MessageType {
-        JOIN_SERVER, CHAT_MSG
+        JOIN_SERVER, CHAT_MSG, DISCONNECT_MSG
     }
 
     public abstract MessageType getType();

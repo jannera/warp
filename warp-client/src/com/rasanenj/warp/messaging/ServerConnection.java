@@ -15,9 +15,8 @@ public class ServerConnection implements WebsocketListener {
 
     public ServerConnection(String host, MessageDelegator delegator) {
         this.delegator = delegator;
-        socket = new Websocket("ws://localhost:8887");
+        socket = new Websocket(host);
         socket.addListener(this);
-        socket.open();
     }
 
     public void send(Message message) {
@@ -39,5 +38,13 @@ public class ServerConnection implements WebsocketListener {
     @Override
     public void onOpen() {
         send(new JoinServerMessage("gilead"));
+    }
+
+    public void open() {
+        socket.open();
+    }
+
+    public MessageDelegator getDelegator() {
+        return delegator;
     }
 }

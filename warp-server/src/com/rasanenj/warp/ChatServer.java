@@ -14,7 +14,7 @@ public class ChatServer implements MessageConsumer {
 
     @Override
     public void consume(Player player, Message message) {
-        System.out.println("Received " + message.getType());
+        System.out.println("ChatServer: Received " + message.getType());
         if (message.getType() == Message.MessageType.JOIN_SERVER) {
             server.sendToAll(message);
         }

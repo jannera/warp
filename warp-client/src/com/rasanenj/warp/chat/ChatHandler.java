@@ -26,11 +26,15 @@ public class ChatHandler implements MessageConsumer, TextField.TextFieldListener
     @Override
     public void consume(Player player, Message msg) {
         String chatMsg;
+
         if (msg.getType() == Message.MessageType.JOIN_SERVER) {
-            chatMsg = ((JoinServerMessage) msg).getMsg() + " joined channel";
+            chatMsg = ((TextMessage) msg).getMsg() + " joined channel";
+        }
+        else if (msg.getType() == Message.MessageType.DISCONNECT_MSG) {
+            chatMsg = ((TextMessage) msg).getMsg() + " left channel";
         }
         else if (msg.getType() == Message.MessageType.CHAT_MSG) {
-            chatMsg = ((ChatMessage) msg).getMsg();
+            chatMsg = ((TextMessage) msg).getMsg();
         }
         else {
             return;
@@ -50,6 +54,7 @@ public class ChatHandler implements MessageConsumer, TextField.TextFieldListener
     public void register(MessageDelegator delegator) {
         delegator.register(this, Message.MessageType.JOIN_SERVER);
         delegator.register(this, Message.MessageType.CHAT_MSG);
+        delegator.register(this, Message.MessageType.DISCONNECT_MSG);
     }
 
     @Override
