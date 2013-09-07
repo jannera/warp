@@ -9,8 +9,8 @@ Demo: http://warp.ext.vincit.fi (not operational atm)
 
 Steps
 ===
-X Done GWT based Chat Server + Client
-X Better messaging system
+* DONE GWT based Chat Server + Client
+* DONE Better messaging system
 * Change Websocket library to one that really supports byte[] messaging
 * Screen where you can move a spaceship around: UI, messaging, server side handling
 * Integrate Artemis (Entity System framework) to (at least) server
