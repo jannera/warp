@@ -7,14 +7,19 @@ Status
 Just starting out. Chat-server works.
 Demo: http://warp.ext.vincit.fi (not operational atm)
 
+Steps before Hackfest
+===
+* Screen where you can move a spaceship around: UI, messaging, server side handling
+* Integrate Artemis (Entity System framework) to (at least) server
+* Chat-screen to list online users
+* Demo running to ext.vincit.fi
+
 Steps
 ===
 * DONE GWT based Chat Server + Client
 * DONE Better messaging system
 * Change Websocket library to one that really supports byte[] messaging
-* Screen where you can move a spaceship around: UI, messaging, server side handling
-* Integrate Artemis (Entity System framework) to (at least) server
-* Demo running
+* Ship/fleet building window
 
 Stuff Learned
 ===
