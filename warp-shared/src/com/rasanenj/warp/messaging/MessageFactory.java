@@ -1,6 +1,9 @@
 package com.rasanenj.warp.messaging;
 
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -13,10 +16,16 @@ public class MessageFactory {
                 return new JoinServerMessage(msg);
             case CHAT_MSG:
                 return new ChatMessage(msg);
-            case DISCONNECT_MSG:
-                return new DisconnectMsg(msg);
+            case DISCONNECT:
+                return new DisconnectMessage(msg);
+            case UPDATE_SHIP_PHYSICS:
+                return new ShipPhysicsMessage(msg);
+            case CREATE_SHIP:
+                return new CreateShipMessage(msg);
+            case SET_ACCELERATION:
+                return new AccelerationMessage(msg);
         }
-        System.out.println("MessageFactory could not decode type " + type);
+        log(Level.SEVERE, "MessageFactory could not decode type " + type);
         return null;
     }
 

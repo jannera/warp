@@ -64,6 +64,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="warp-shared" exported="" />
     <orderEntry type="library" exported="" name="gwt-websockets-1.0.3" level="project" />
+    <orderEntry type="library" name="gwt-user" level="project" />
   </component>
 </module>
 

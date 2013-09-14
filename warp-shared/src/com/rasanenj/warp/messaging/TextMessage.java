@@ -21,7 +21,7 @@ public abstract class TextMessage extends Message {
     @Override
     public byte[] encode() {
         byte[] nameInBytes = Message.encode(msg);
-        ByteBuffer b = Message.create(getType(), nameInBytes.length);
+        ByteBuffer b = create(nameInBytes.length);
         b.put(nameInBytes);
         return b.array();
     }

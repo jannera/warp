@@ -30,7 +30,7 @@ public class ChatHandler implements MessageConsumer, TextField.TextFieldListener
         if (msg.getType() == Message.MessageType.JOIN_SERVER) {
             chatMsg = ((TextMessage) msg).getMsg() + " joined channel";
         }
-        else if (msg.getType() == Message.MessageType.DISCONNECT_MSG) {
+        else if (msg.getType() == Message.MessageType.DISCONNECT) {
             chatMsg = ((TextMessage) msg).getMsg() + " left channel";
         }
         else if (msg.getType() == Message.MessageType.CHAT_MSG) {
@@ -54,7 +54,7 @@ public class ChatHandler implements MessageConsumer, TextField.TextFieldListener
     public void register(MessageDelegator delegator) {
         delegator.register(this, Message.MessageType.JOIN_SERVER);
         delegator.register(this, Message.MessageType.CHAT_MSG);
-        delegator.register(this, Message.MessageType.DISCONNECT_MSG);
+        delegator.register(this, Message.MessageType.DISCONNECT);
     }
 
     @Override

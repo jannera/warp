@@ -3,13 +3,17 @@ package com.rasanenj.warp.messaging;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
+
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
  */
 public abstract class Message {
     public enum MessageType {
-        JOIN_SERVER, CHAT_MSG, DISCONNECT_MSG
+        JOIN_SERVER, CHAT_MSG, DISCONNECT, START_BATTLE, CREATE_SHIP,
+        UPDATE_SHIP_PHYSICS, SET_ACCELERATION
     }
 
     public abstract MessageType getType();
@@ -35,10 +39,10 @@ public abstract class Message {
 
     abstract public byte[] encode();
 
-    public static ByteBuffer create(MessageType type, int capacity) {
+    protected ByteBuffer create(int capacity) {
         ByteBuffer b = ByteBuffer.allocate(capacity + Integer.SIZE/8);
         b.order(ByteOrder.BIG_ENDIAN);
-        b.putInt(type.ordinal());
+        b.putInt(getType().ordinal());
         return b;
     }
 
@@ -48,7 +52,7 @@ public abstract class Message {
             first = msg.getInt();
         }
         catch (IndexOutOfBoundsException e) {
-            System.out.println("IndexOutOfBoundsException when trying to read type from a message");
+            log(Level.SEVERE, "IndexOutOfBoundsException when trying to read type from a message");
             return null;
         }
 
@@ -57,7 +61,7 @@ public abstract class Message {
                 return t;
             }
         }
-        System.out.println("Unknown type when trying to read type from a message: " + first);
+        log(Level.SEVERE, "Unknown type when trying to read type from a message: " + first);
         return null;
     }
 

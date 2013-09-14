@@ -3,6 +3,10 @@ package com.rasanenj.warp.messaging;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -28,12 +32,14 @@ public class MessageDelegator {
     public void delegate(Player player, Message msg) {
         Message.MessageType type = msg.getType();
         Collection<MessageConsumer> consumers = consumerLists.get(type);
+        Logger logger = Logger.getLogger("WarpGame");
+        logger.log(Level.WARNING, type.name() + ":" + consumers);
         if (consumers == null) {
-            System.out.println("No consumer list for message of type " + type);
+            log(Level.SEVERE, "No consumer list for message of type " + type);
             return;
         }
         if (consumers.isEmpty()) {
-            System.out.println("Empty consumer list for message of type " + type);
+            log(Level.SEVERE, "Empty consumer list for message of type " + type);
             return;
         }
         for (MessageConsumer c : consumers) {

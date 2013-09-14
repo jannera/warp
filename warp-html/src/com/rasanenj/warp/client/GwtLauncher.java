@@ -1,5 +1,6 @@
 package com.rasanenj.warp.client;
 
+import com.google.gwt.user.client.Window;
 import com.rasanenj.warp.WarpGame;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
@@ -8,7 +9,9 @@ import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 public class GwtLauncher extends GwtApplication {
 	@Override
 	public GwtApplicationConfiguration getConfig () {
-		GwtApplicationConfiguration cfg = new GwtApplicationConfiguration(800, 600);
+        int width = WarpGame.scaleSize(Window.getClientWidth());
+        int height = WarpGame.scaleSize(Window.getClientHeight());
+		GwtApplicationConfiguration cfg = new GwtApplicationConfiguration(width, height);
 		return cfg;
 	}
 

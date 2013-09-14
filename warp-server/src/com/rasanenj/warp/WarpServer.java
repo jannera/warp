@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import static com.rasanenj.warp.Log.log;
+
 /**
  * @author gilead
  */
@@ -20,13 +22,17 @@ public class WarpServer {
 
         MessageDelegator delegator = new MessageDelegator();
 
-        WSServer wsServer= new WSServer(port, delegator);
+        WSServer wsServer = new WSServer(port, delegator);
 
         ChatServer chatServer = new ChatServer(wsServer);
         chatServer.register(delegator);
         wsServer.start();
 
-        System.out.println("server started on port: " + wsServer.getPort());
+        BattleLoop battleLoop = new BattleLoop(delegator, wsServer);
+        new Thread(battleLoop).start();
+
+
+        log("server started on port: " + wsServer.getPort());
 
         BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
         while ( true ) {

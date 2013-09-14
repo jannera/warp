@@ -11,6 +11,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.rasanenj.warp.Log.log;
+
 /**
  * @author gilead
  */
@@ -39,15 +41,17 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected server!" );
+        log( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected server!" );
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         Player player = getPlayer(conn);
-        System.out.println(player.getName() + " disconnected");
+        log(player.getName() + " disconnected");
         remove(player);
-        sendToAll(new DisconnectMsg(player));
+        DisconnectMessage msg = new DisconnectMessage(player);
+        sendToAll(msg);
+        delegator.delegate(player, msg);
     }
 
     @Override
@@ -70,7 +74,7 @@ public class WSServer extends WebSocketServer {
         if (msg.getType() == Message.MessageType.JOIN_SERVER) {
             JoinServerMessage joinServerMsg = (JoinServerMessage)msg;
             player = new ServerPlayer(conn, joinServerMsg.getMsg());
-            System.out.println(player.getName() + " joined server");
+            log(player.getName() + " joined server");
             players.add(player);
         }
         else {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.messaging.ServerConnection;
 
 /**
@@ -13,13 +14,22 @@ import com.rasanenj.warp.messaging.ServerConnection;
 public class BattleScreen implements Screen {
 
     private Stage stage;
+    private BattleHandler battleHandler;
 
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
+
+        battleHandler = new BattleHandler(this, conn);
+        battleHandler.register(conn.getDelegator());
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     @Override
     public void render(float delta) {
+        battleHandler.update(delta);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();

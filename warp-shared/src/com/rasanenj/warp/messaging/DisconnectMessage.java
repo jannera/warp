@@ -5,17 +5,17 @@ import java.nio.ByteBuffer;
 /**
  * @author gilead
  */
-public class DisconnectMsg extends TextMessage {
-    public DisconnectMsg(Player player) {
+public class DisconnectMessage extends TextMessage {
+    public DisconnectMessage(Player player) {
         super(player.getName());
     }
 
-    public DisconnectMsg(ByteBuffer b) {
+    public DisconnectMessage(ByteBuffer b) {
         super(b);
     }
 
     @Override
     public MessageType getType() {
-        return MessageType.DISCONNECT_MSG;
+        return MessageType.DISCONNECT;
     }
 }
