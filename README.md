@@ -5,6 +5,9 @@ Warp is a multiplayer browser game that’s based on GWT, Websockets and libgdx.
 Status
 ===
 Just starting out. Chat-server works.
+
+ATM all code written is throw-away proto code. If more permanent solution will be looked at, language(s) and frameworks might totally change.
+
 Demo: http://warp.ext.vincit.fi (not operational atm)
 
 Steps before Hackfest
