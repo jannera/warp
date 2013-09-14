@@ -7,14 +7,19 @@ Status
 Just starting out. Chat-server works.
 Demo: http://warp.ext.vincit.fi (not operational atm)
 
+Steps before Hackfest
+===
+* Screen where you can move a spaceship around: UI, messaging, server side handling
+* Integrate Artemis (Entity System framework) to (at least) server
+* Chat-screen to list online users
+* Demo running to ext.vincit.fi
+
 Steps
 ===
 * DONE GWT based Chat Server + Client
 * DONE Better messaging system
 * Change Websocket library to one that really supports byte[] messaging
-* Screen where you can move a spaceship around: UI, messaging, server side handling
-* Integrate Artemis (Entity System framework) to (at least) server
-* Demo running
+* Ship/fleet building window
 
 Stuff Learned
 ===
@@ -35,3 +40,4 @@ Future Ideas
 * Tournaments
 * Other game modes, for example king of the hill
 * Continuous game mode, where every player has fixed amount of warps per day. Every “warp” connects to another player 1v1. Based on how well the fight went, each player gets points. Points are used to build the fleet.
+* Later on, maybe transfer all authentication + fleet management (+ possibly also chat) to a web application, maybe Spring + Backbone/Marionette or Meteor. Then combat screen somehow accesses this data stored in DB, maybe via REST API
