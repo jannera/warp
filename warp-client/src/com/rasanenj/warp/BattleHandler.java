@@ -9,13 +9,73 @@ import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.systems.ShipDriver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
  */
-public class BattleHandler extends InputListener implements MessageConsumer {
+public class BattleHandler {
+    private final BattleMessageConsumer consumer;
+    private final BattleInputListener listener;
+
+    private class BattleMessageConsumer extends MessageConsumer {
+        public BattleMessageConsumer(MessageDelegator delegator) {
+            super(delegator);
+        }
+
+        @Override
+        public void consume(Player player, Message msg) {
+            if (msg.getType() == Message.MessageType.UPDATE_SHIP_PHYSICS) {
+                ShipPhysicsMessage shipPhysicsMessage = (ShipPhysicsMessage) msg;
+                ClientShip ship = getShip(shipPhysicsMessage.getId());
+                ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
+                ship.setRotation(shipPhysicsMessage.getAngle());
+                ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
+                ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity());
+                ship.updateArrows();
+            }
+            else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
+                CreateShipMessage message = (CreateShipMessage) msg;
+                ClientShip ship = new ClientShip(message.getId(), message.getWidth(),
+                        message.getHeight(), message.getMass());
+                ships.add(ship);
+                screen.getStage().addActor(ship);
+                ship.attach(screen.getStage());
+                ship.addListener(listener);
+            }
+        }
+
+        @Override
+        public Collection<Message.MessageType> getMessageTypes() {
+            return Arrays.asList(Message.MessageType.UPDATE_SHIP_PHYSICS, Message.MessageType.CREATE_SHIP);
+        }
+    }
+
+    private class BattleInputListener extends InputListener {
+        public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            return true;
+        }
+
+        @Override
+        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+            Actor target = event.getTarget();
+
+            log("touchUp: " + event.getTarget() + " @ (" + x + ", " + y + ")");
+
+            if (target instanceof ClientShip) {
+                selectedShip = (ClientShip) target;
+            }
+            else {
+                if (selectedShip != null) {
+                    selectedShip.setTargetPos(x, y);
+                }
+            }
+        }
+    }
+
     private final ServerConnection conn;
     private final BattleScreen screen;
     private final ShipDriver shipDriver;
@@ -27,27 +87,11 @@ public class BattleHandler extends InputListener implements MessageConsumer {
     public BattleHandler(BattleScreen screen, ServerConnection conn) {
         this.screen = screen;
         this.conn = conn;
-        screen.getStage().addListener(this);
+        this.listener = new BattleInputListener();
+        screen.getStage().addListener(listener);
         shipDriver = new ShipDriver(ships, conn);
+        this.consumer = new BattleMessageConsumer(conn.getDelegator());
     }
-
-    @Override
-    public void consume(Player player, Message msg) {
-        if (msg.getType() == Message.MessageType.UPDATE_SHIP_PHYSICS) {
-            ShipPhysicsMessage shipPhysicsMessage = (ShipPhysicsMessage) msg;
-            ClientShip ship = getShip(shipPhysicsMessage.getId());
-            ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
-        }
-        else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
-            CreateShipMessage message = (CreateShipMessage) msg;
-            ClientShip ship = new ClientShip(message.getId());
-            ships.add(ship);
-            screen.getStage().addActor(ship);
-            screen.getStage().addActor(ship.getTargetImg());
-            ship.addListener(this);
-        }
-    }
-
 
     private ClientShip getShip(long id) {
         for (ClientShip ship : ships) {
@@ -58,33 +102,8 @@ public class BattleHandler extends InputListener implements MessageConsumer {
         return null;
     }
 
-    @Override
-    public void register(MessageDelegator delegator) {
-        delegator.register(this, Message.MessageType.UPDATE_SHIP_PHYSICS);
-        delegator.register(this, Message.MessageType.CREATE_SHIP);
-    }
-
-    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-        return true;
-    }
-
-    @Override
-    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-        Actor target = event.getTarget();
-
-        log("touchUp: " + event.getTarget() + " @ (" + x + ", " + y + ")");
-
-        if (target instanceof ClientShip) {
-            selectedShip = (ClientShip) target;
-        }
-        else {
-            if (selectedShip != null) {
-                selectedShip.setTargetPos(x, y);
-            }
-        }
-    }
-
     public void update(float delta) {
+        consumer.consumeStoredMessages();
         shipDriver.update();
     }
 }

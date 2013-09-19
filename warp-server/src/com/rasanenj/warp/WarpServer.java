@@ -24,8 +24,7 @@ public class WarpServer {
 
         WSServer wsServer = new WSServer(port, delegator);
 
-        ChatServer chatServer = new ChatServer(wsServer);
-        chatServer.register(delegator);
+        ChatServer chatServer = new ChatServer(wsServer, delegator);
         wsServer.start();
 
         BattleLoop battleLoop = new BattleLoop(delegator, wsServer);

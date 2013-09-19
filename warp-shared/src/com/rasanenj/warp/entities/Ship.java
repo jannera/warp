@@ -1,14 +1,18 @@
 package com.rasanenj.warp.entities;
 
+import static com.rasanenj.warp.Log.log;
+
 /**
  * @author gilead
  */
-public class Ship extends Entity {
-    protected float x,y, accX, accY;
+public abstract class Ship extends Entity {
+    protected float x,y, velX, velY, width, height;
 
-    public Ship(float x, float y) {
+    public Ship(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
     public Ship(long id) {
@@ -23,12 +27,12 @@ public class Ship extends Entity {
         this.y = y;
     }
 
-    public void setAccX(float accX) {
-        this.accX = accX;
+    public void setVelX(float velX) {
+        this.velX = velX;
     }
 
-    public void setAccY(float accY) {
-        this.accY = accY;
+    public void setVelY(float velY) {
+        this.velY = velY;
     }
 
     public float getX() {
@@ -39,11 +43,27 @@ public class Ship extends Entity {
         return y;
     }
 
-    public float getAccX() {
-        return accX;
+    public float getVelX() {
+        return velX;
     }
 
-    public float getAccY() {
-        return accY;
+    public float getVelY() {
+        return velY;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getAngle() {
+        return 0;
+    }
+
+    public float getMass() {
+        return 0;
     }
 }

@@ -30,17 +30,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library" exported="">
-      <library name="gdx.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/gdx.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/libs/gdx-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
       <library name="tween-engine-api.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/tween-engine-api.jar!/" />

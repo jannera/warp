@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -32,8 +31,6 @@ public class MessageDelegator {
     public void delegate(Player player, Message msg) {
         Message.MessageType type = msg.getType();
         Collection<MessageConsumer> consumers = consumerLists.get(type);
-        Logger logger = Logger.getLogger("WarpGame");
-        logger.log(Level.WARNING, type.name() + ":" + consumers);
         if (consumers == null) {
             log(Level.SEVERE, "No consumer list for message of type " + type);
             return;
@@ -43,7 +40,7 @@ public class MessageDelegator {
             return;
         }
         for (MessageConsumer c : consumers) {
-            c.consume(player, msg);
+            c.store(player, msg);
         }
     }
 

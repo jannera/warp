@@ -8,12 +8,20 @@ import java.nio.ByteBuffer;
  * @author gilead
  */
 public class CreateShipMessage extends EntityMessage {
+    float width, height, mass;
+
     public CreateShipMessage(Ship ship) {
         super(ship.getId());
+        this.width = ship.getWidth();
+        this.height = ship.getHeight();
+        this.mass = ship.getMass();
     }
 
     public CreateShipMessage(ByteBuffer msg) {
         super(msg.getLong());
+        this.width = msg.getFloat();
+        this.height = msg.getFloat();
+        this.mass = msg.getFloat();
     }
 
     @Override
@@ -23,8 +31,20 @@ public class CreateShipMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Long.SIZE/8);
-        b.putLong(id);
+        ByteBuffer b = create(Long.SIZE/8 + 3* Long.SIZE/8);
+        b.putLong(id).putFloat(width).putFloat(height).putFloat(mass);
         return b.array();
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getMass() {
+        return mass;
     }
 }

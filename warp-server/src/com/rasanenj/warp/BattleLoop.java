@@ -24,8 +24,7 @@ public class BattleLoop implements Runnable {
     private long lastTime, nextTime;
 
     public BattleLoop(MessageDelegator delegator, WSServer wsServer) {
-        this.battleServer = new BattleServer(this, wsServer);
-        battleServer.register(delegator);
+        this.battleServer = new BattleServer(this, wsServer, delegator);
         nextTime = System.currentTimeMillis();
         lastTime = System.currentTimeMillis();
     }
@@ -74,5 +73,28 @@ public class BattleLoop implements Runnable {
 
     public void removePlayer(Player player) {
         players.remove(player);
+    }
+
+    public void removeAllShips(Player player) {
+        ServerShip foundShip = null;
+        // TODO: make this actually remove all ships, not just one
+        for (ServerShip ship : ships) {
+            if (ship.getPlayer() == player) {
+                foundShip = ship;
+                break;
+            }
+        }
+        if (foundShip != null) {
+            ships.remove(foundShip);
+        }
+    }
+
+    public ServerShip getShip(long id) {
+        for (ServerShip ship : ships) {
+            if (ship.getId() == id) {
+                return ship;
+            }
+        }
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package com.rasanenj.warp.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.messaging.ServerConnection;
@@ -16,11 +17,12 @@ public class BattleScreen implements Screen {
     private Stage stage;
     private BattleHandler battleHandler;
 
+    private Vector2 vec = new Vector2();
+
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
 
         battleHandler = new BattleHandler(this, conn);
-        battleHandler.register(conn.getDelegator());
     }
 
     public Stage getStage() {

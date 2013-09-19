@@ -15,7 +15,7 @@ public class Entity {
     }
 
     private static long idCount = 0;
-    private static synchronized long generateId() {
+    private static long generateId() {
         return idCount++;
     }
 

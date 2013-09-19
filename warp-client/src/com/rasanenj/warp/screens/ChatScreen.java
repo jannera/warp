@@ -56,7 +56,6 @@ public class ChatScreen implements Screen {
         stage.addActor(window);
 
         ChatHandler chatHandler = new ChatHandler(serverConnection, chatMessages, scrollPane, textfield);
-        chatHandler.register(serverConnection.getDelegator());
     }
 
     @Override
