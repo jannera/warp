@@ -19,7 +19,7 @@ public class ShipDriver extends Task {
     private static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
 
     private final Vector2 pos = new Vector2();
-    private final Vector2 currVelocity = new Vector2();
+    private final Vector2 tgt = new Vector2();
 
     private final Collection<ClientShip> ships;
     private final ServerConnection connection;
@@ -33,11 +33,28 @@ public class ShipDriver extends Task {
     @Override
     protected void run() {
         for (ClientShip ship : ships) {
-            Vector2 tgt = ship.getTargetPos();
-            if (Float.isNaN(tgt.x)) {
+            tgt.set(ship.getTargetPos());
+            if (!ship.hasTargetPos()) {
                 continue;
             }
 
+            // log(tgt.x + ", " + tgt.y);
+            // log("speed:" + ship.getVelocity().len());
+
+            ship.getCenterPos(pos);
+
+            tgt.sub(pos);
+            pos.set(tgt);
+            pos.nor();
+            pos.scl(ship.getMaxSpeed());
+            pos.sub(ship.getVelocity());
+            pos.scl(ship.getMass());
+            // float maxImpulse = ship.getMaxImpulse();
+            // pos.clamp(-maxImpulse, maxImpulse);
+
+            AccelerationMessage msg = new AccelerationMessage(ship.getId(), 0, pos.x, pos.y);
+            log(pos.x + "," + pos.y);
+            /*
             ship.getCenterPos(pos);
             tgt.sub(pos);
 
@@ -82,6 +99,7 @@ public class ShipDriver extends Task {
 
             // based on desired velocity and current velocity, work out impulse to send to engines
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), angular, 0, 0);
+            */
             // AccelerationMessage msg = new AccelerationMessage(ship.getId(), angular, currVelocity.x, currVelocity.y);
             connection.send(msg);
         }

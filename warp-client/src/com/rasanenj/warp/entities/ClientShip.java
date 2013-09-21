@@ -46,9 +46,8 @@ public class ClientShip extends Image {
         this.headingArrow.setVisible(true);
         this.velocityArrow.setVisible(false);
         this.impulseArrow.setVisible(false);
-        this.targetImg.setVisible(false);
         this.targetImg.setBounds(0, 0, 24, 24);
-        targetPos.set(Float.NaN, Float.NaN);
+        clearTargetPos();
         this.headingArrow.setColor(0f, 191f/255, 1f, 1f);
         this.mass = mass;
 
@@ -82,6 +81,7 @@ public class ClientShip extends Image {
     }
 
     public void setTargetPos(float x, float y) {
+        log(x + ", " + y);
         targetPos.set(x, y);
         targetImg.setPosition(x - targetImg.getHeight()/2f, y - targetImg.getWidth()/2f);
         targetImg.setVisible(true);
@@ -108,6 +108,10 @@ public class ClientShip extends Image {
         return mass;
     }
 
+    public float getMaxImpulse() {
+        return getMass() * getMaxSpeed() * 0.025f;
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -123,5 +127,18 @@ public class ClientShip extends Image {
 
     public float getAngularVelocity() {
         return angularVelocity;
+    }
+
+    public float getMaxSpeed() {
+        return 50f;
+    }
+
+    public void clearTargetPos() {
+        targetPos.set(Float.NaN, Float.NaN);
+        this.targetImg.setVisible(false);
+    }
+
+    public boolean hasTargetPos() {
+        return !Float.isNaN(targetPos.x);
     }
 }

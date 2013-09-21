@@ -67,6 +67,7 @@ public class BattleHandler {
 
             if (target instanceof ClientShip) {
                 selectedShip = (ClientShip) target;
+                selectedShip.clearTargetPos();
             }
             else {
                 if (selectedShip != null) {
