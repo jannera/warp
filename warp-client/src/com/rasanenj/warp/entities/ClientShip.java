@@ -35,6 +35,8 @@ public class ClientShip extends Image {
 
     public ClientShip(long id, float width, float height, float mass) {
         super(shipTexture);
+        width *= 50f;
+        height *= 50f;
         this.id = id;
         this.setWidth(width);
         this.setHeight(height);
@@ -130,7 +132,7 @@ public class ClientShip extends Image {
     }
 
     public float getMaxSpeed() {
-        return 50f;
+        return 5000f;
     }
 
     public void clearTargetPos() {

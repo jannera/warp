@@ -22,6 +22,8 @@ public class ServerShip extends Ship {
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.active = true;
+        bodyDef.linearDamping = 0f;
+        bodyDef.angularDamping = 0f;
     }
 
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player) {

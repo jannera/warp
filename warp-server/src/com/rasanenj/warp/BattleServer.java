@@ -39,7 +39,7 @@ public class BattleServer extends Task {
                 }
 
                 // add a new ship for the new player
-                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 50, 100, serverPlayer);
+                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 0.1f, 0.2f, serverPlayer);
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
                 sendToAll(new CreateShipMessage(ship));
@@ -60,9 +60,11 @@ public class BattleServer extends Task {
 
                 Body b = ship.getBody();
                 b.applyAngularImpulse(message.getAngular(), true);
-                b.applyLinearImpulse(message.getX(), message.getY(),
-                        ship.getEngineLocation().x, ship.getEngineLocation().y, true);
-                // TODO: fix the location of the engine to the end of the spaceship
+                b.applyForceToCenter(message.getX(), message.getY(), true);
+                log("speed:" + b.getLinearVelocity().len());
+                // log(message.getX() +"," + message.getY());
+                //b.applyLinearImpulse(message.getX(), message.getY(),
+                //        ship.getEngineLocation().x, ship.getEngineLocation().y, true);
             }
         }
 

@@ -30,13 +30,21 @@ public class ShipDriver extends Task {
         this.connection = conn;
     }
 
+    boolean firstDone = false;
     @Override
     protected void run() {
         for (ClientShip ship : ships) {
             tgt.set(ship.getTargetPos());
             if (!ship.hasTargetPos()) {
+                firstDone = false;
                 continue;
             }
+
+            /*
+            if (firstDone) {
+                return;
+            }
+            */
 
             // log(tgt.x + ", " + tgt.y);
             // log("speed:" + ship.getVelocity().len());
@@ -54,6 +62,7 @@ public class ShipDriver extends Task {
 
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), 0, pos.x, pos.y);
             log(pos.x + "," + pos.y);
+            firstDone = true;
             /*
             ship.getCenterPos(pos);
             tgt.sub(pos);
