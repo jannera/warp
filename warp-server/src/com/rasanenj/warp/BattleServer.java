@@ -39,7 +39,7 @@ public class BattleServer extends Task {
                 }
 
                 // add a new ship for the new player
-                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 0.1f, 0.2f, serverPlayer);
+                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 2f, serverPlayer);
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
                 sendToAll(new CreateShipMessage(ship));
@@ -76,17 +76,16 @@ public class BattleServer extends Task {
         }
     }
 
-    private static final float MESSAGES_IN_SECOND = 4f;
+    private static final float MESSAGES_IN_SECOND = 40;
     private final BattleLoop battleLoop;
     private final WSServer wsServer;
     private final World world;
 
-    public BattleServer(BattleLoop battleLoop, WSServer wsServer, MessageDelegator delegator) {
+    public BattleServer(BattleLoop battleLoop, WSServer wsServer, MessageDelegator delegator, World world) {
         super(MESSAGES_IN_SECOND);
         this.battleLoop = battleLoop;
         this.wsServer = wsServer;
-        GdxNativesLoader.load();
-        this.world = new World(new Vector2(0,0), true);
+        this.world = world;
         this.consumer = new BattleMsgConsumer(delegator);
     }
 
@@ -109,7 +108,6 @@ public class BattleServer extends Task {
     @Override
     protected void run() {
         consumer.consumeStoredMessages();
-        world.step(1/MESSAGES_IN_SECOND, 0, 0);
         // log("Sending ship updates");
         ArrayList<ServerShip> ships = battleLoop.getShips();
         ArrayList<Message> messages = new ArrayList<Message>(ships.size());

@@ -35,7 +35,6 @@ public class BattleHandler {
                 ship.setRotation(shipPhysicsMessage.getAngle());
                 ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
                 ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity());
-                ship.updateArrows();
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
@@ -104,6 +103,9 @@ public class BattleHandler {
     }
 
     public void update(float delta) {
+        for (ClientShip s : ships) {
+            s.updatePos(delta);
+        }
         consumer.consumeStoredMessages();
         shipDriver.update();
     }

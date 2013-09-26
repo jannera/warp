@@ -69,6 +69,12 @@ public class ClientShip extends Image {
             setVisible(true);
         }
         super.setPosition(x, y);
+        updateArrows();
+    }
+
+    public void setRotation(float angle) {
+        super.setRotation(angle);
+        updateArrows();
     }
 
     public long getId() {
@@ -142,5 +148,9 @@ public class ClientShip extends Image {
 
     public boolean hasTargetPos() {
         return !Float.isNaN(targetPos.x);
+    }
+
+    public void updatePos(float delta) {
+        setPosition(getX() + delta * velocity.x, getY() + delta * velocity.y);
     }
 }
