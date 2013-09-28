@@ -3,10 +3,10 @@ package com.rasanenj.warp.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.messaging.ServerConnection;
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -17,10 +17,13 @@ public class BattleScreen implements Screen {
     private Stage stage;
     private BattleHandler battleHandler;
 
-    private Vector2 vec = new Vector2();
+    private static final int CAMERA_SIZE = 30;
+    private static final float zoomStep = 0.05f;
+    private float zoom = 1f;
 
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
+        stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
 
         battleHandler = new BattleHandler(this, conn);
     }
@@ -39,7 +42,7 @@ public class BattleScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.setViewport(width, height, true);
+        //stage.setViewport(width, height, true);
     }
 
     @Override
@@ -65,5 +68,17 @@ public class BattleScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    public void setCameraPos(float x, float y) {
+        float dx = x - stage.getCamera().position.x;
+        float dy = y - stage.getCamera().position.y;
+        stage.getCamera().translate(dx, dy, 0);
+    }
+
+    public void zoom(int amount) {
+        zoom += zoomStep * amount;
+        log("zoom:" + zoom);
+        stage.setViewport(CAMERA_SIZE * zoom, CAMERA_SIZE * zoom, true);
     }
 }

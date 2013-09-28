@@ -1,5 +1,8 @@
 package com.rasanenj.warp;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -20,11 +23,14 @@ import static com.rasanenj.warp.Log.log;
 public class BattleHandler {
     private final BattleMessageConsumer consumer;
     private final BattleInputListener listener;
+    private final Vector2 tmp = new Vector2();
 
     private class BattleMessageConsumer extends MessageConsumer {
         public BattleMessageConsumer(MessageDelegator delegator) {
             super(delegator);
         }
+
+        private boolean firstPosSet = false;
 
         @Override
         public void consume(Player player, Message msg) {
@@ -35,6 +41,11 @@ public class BattleHandler {
                 ship.setRotation(shipPhysicsMessage.getAngle());
                 ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
                 ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity());
+                if (!firstPosSet) {
+                    ship.getCenterPos(tmp);
+                    screen.setCameraPos(tmp.x, tmp.y);
+                    firstPosSet = true;
+                }
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
@@ -71,8 +82,28 @@ public class BattleHandler {
             else {
                 if (selectedShip != null) {
                     selectedShip.setTargetPos(x, y);
+                    screen.setCameraPos(x, y);
                 }
             }
+        }
+
+        @Override
+        public boolean scrolled(InputEvent event, float x, float y, int amount) {
+            screen.zoom(amount);
+            return true;
+        }
+
+        @Override
+        public boolean keyDown (InputEvent event, int keycode) {
+            if (keycode == Input.Keys.Z) {
+                screen.zoom(1);
+                return true;
+            }
+            if (keycode == Input.Keys.X) {
+                screen.zoom(-1);
+                return true;
+            }
+            return false;
         }
     }
 
@@ -104,7 +135,9 @@ public class BattleHandler {
 
     public void update(float delta) {
         for (ClientShip s : ships) {
-            s.updatePos(delta);
+            // TODO: make this update depend on the time has elapsed from last position update
+            // TODO: maybe also include acceleration data
+            // s.updatePos(delta);
         }
         consumer.consumeStoredMessages();
         shipDriver.update();

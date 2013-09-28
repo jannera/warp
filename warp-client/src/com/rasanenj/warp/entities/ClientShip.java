@@ -35,8 +35,6 @@ public class ClientShip extends Image {
 
     public ClientShip(long id, float width, float height, float mass) {
         super(shipTexture);
-        width *= 50f;
-        height *= 50f;
         this.id = id;
         this.setWidth(width);
         this.setHeight(height);
@@ -48,9 +46,12 @@ public class ClientShip extends Image {
         this.headingArrow.setVisible(true);
         this.velocityArrow.setVisible(false);
         this.impulseArrow.setVisible(false);
-        this.targetImg.setBounds(0, 0, 24, 24);
+        float tgtImgBound = Math.max(width, height);
+        this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
         clearTargetPos();
+        this.headingArrow.setBounds(0, 0, width, height);
         this.headingArrow.setColor(0f, 191f/255, 1f, 1f);
+
         this.mass = mass;
 
         getCenterPos(tmp);
@@ -138,7 +139,7 @@ public class ClientShip extends Image {
     }
 
     public float getMaxSpeed() {
-        return 5000f;
+        return 10;
     }
 
     public void clearTargetPos() {

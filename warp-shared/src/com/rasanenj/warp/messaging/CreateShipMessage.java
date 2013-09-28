@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 /**
  * @author gilead
  */
+// TODO: this should include correct location as well
 public class CreateShipMessage extends EntityMessage {
     float width, height, mass;
 
