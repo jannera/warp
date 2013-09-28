@@ -76,12 +76,19 @@ public class BattleLoop implements Runnable {
         }
 
         while (physicsTimeLeft >= TIME_STEP) {
+            storeOldShipPositions();
             world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
             physicsTimeLeft -= TIME_STEP;
             //TaskHandler.update(TIME_STEP);
         }
 
         battleServer.update();
+    }
+
+    private void storeOldShipPositions() {
+        for (ServerShip ship : ships) {
+            ship.storeOldPosition();
+        }
     }
 
     public void addPlayer(Player player) {
@@ -125,5 +132,9 @@ public class BattleLoop implements Runnable {
             }
         }
         return null;
+    }
+
+    public float getRelativePhysicsTimeLeft() {
+        return physicsTimeLeft / TIME_STEP;
     }
 }

@@ -1,5 +1,6 @@
 package com.rasanenj.warp.messaging;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.rasanenj.warp.entities.Ship;
 
@@ -11,14 +12,14 @@ import java.nio.ByteBuffer;
 public class ShipPhysicsMessage extends EntityMessage {
     private float x,y, velX, velY, angle, angularVelocity;
 
-    public ShipPhysicsMessage(long id, Body body) {
+    public ShipPhysicsMessage(long id, Vector2 pos, float angle, Vector2 linearVelocity, float angularVelocity) {
         super(id);
-        this.x = body.getPosition().x;
-        this.y = body.getPosition().y;
-        this.velX = body.getLinearVelocity().x;
-        this.velY = body.getLinearVelocity().y;
-        this.angle = body.getAngle();
-        this.angularVelocity = body.getAngularVelocity();
+        this.x = pos.x;
+        this.y = pos.y;
+        this.velX = linearVelocity.x;
+        this.velY = linearVelocity.y;
+        this.angle = angle;
+        this.angularVelocity = angularVelocity;
     }
 
     public ShipPhysicsMessage(ByteBuffer b) {

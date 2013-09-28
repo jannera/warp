@@ -3,7 +3,6 @@ package com.rasanenj.warp;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.tasks.Task;
@@ -20,6 +19,7 @@ import static com.rasanenj.warp.Log.log;
  */
 public class BattleServer extends Task {
     private final BattleMsgConsumer consumer;
+    private final Vector2 pos = new Vector2();
 
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
@@ -111,9 +111,16 @@ public class BattleServer extends Task {
         // log("Sending ship updates");
         ArrayList<ServerShip> ships = battleLoop.getShips();
         ArrayList<Message> messages = new ArrayList<Message>(ships.size());
+        final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
+        final float lerp2 = 1f - lerp1;
         for (ServerShip ship : ships) {
-            // ship.setX(ship.getX() + 1.05f);
-            messages.add(new ShipPhysicsMessage(ship.getId(), ship.getBody()));
+            ship.getInterpolatedPosition(pos, lerp1, lerp2);
+            float angle = ship.getInterpolatedAngle(lerp1, lerp2);
+            messages.add(new ShipPhysicsMessage(ship.getId(),
+                    pos,
+                    angle,
+                    ship.getBody().getLinearVelocity(),
+                    ship.getBody().getAngularVelocity()));
         }
         sendToAll(messages);
     }

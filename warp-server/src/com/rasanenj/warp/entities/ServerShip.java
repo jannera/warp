@@ -19,6 +19,9 @@ public class ServerShip extends Ship {
     private static final PolygonShape polygonShape = new PolygonShape();
     private static final float DENSITY = 1f;
 
+    private final Vector2 oldPos = new Vector2();
+    private float oldAngle = 0;
+
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.active = true;
@@ -33,6 +36,7 @@ public class ServerShip extends Ship {
         polygonShape.setAsBox(width, height);
         body.createFixture(polygonShape, DENSITY);
         this.player = player;
+        storeOldPosition();
     }
 
     public Body getBody() {
@@ -49,5 +53,20 @@ public class ServerShip extends Ship {
 
     public ServerPlayer getPlayer() {
         return player;
+    }
+
+    public void storeOldPosition() {
+        oldAngle = body.getAngle();
+        oldPos.set(body.getPosition());
+    }
+
+    public void getInterpolatedPosition(Vector2 result, float lerp1, float lerp2) {
+        result.set(body.getPosition());
+        result.scl(lerp1);
+        result.add(oldPos.x * lerp2, oldPos.y * lerp2);
+    }
+
+    public float getInterpolatedAngle(float lerp1, float lerp2) {
+        return body.getAngle() * lerp1 + oldAngle * lerp2;
     }
 }
