@@ -76,7 +76,7 @@ public class BattleServer extends Task {
         }
     }
 
-    private static final float MESSAGES_IN_SECOND = 40;
+    private static final float MESSAGES_IN_SECOND = 60;
     private final BattleLoop battleLoop;
     private final WSServer wsServer;
     private final World world;
@@ -120,7 +120,8 @@ public class BattleServer extends Task {
                     pos,
                     angle,
                     ship.getBody().getLinearVelocity(),
-                    ship.getBody().getAngularVelocity()));
+                    ship.getBody().getAngularVelocity()
+            ));
         }
         sendToAll(messages);
     }

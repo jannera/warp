@@ -1,7 +1,6 @@
 package com.rasanenj.warp.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -16,10 +15,10 @@ import static com.rasanenj.warp.Log.log;
 public class ClientShip extends Image {
     private static final Texture shipTexture = new Texture(Gdx.files.internal("data/grey_block.png"));
     private static final Texture targetTexture = new Texture(Gdx.files.internal("data/target_rectangle.png"));
-    private static final Texture arrowTexture = new Texture(Gdx.files.internal("data/arrow.png"));
-    private final Image targetImg, headingArrow, velocityArrow, impulseArrow;
+    private final Image targetImg;
     Vector2 targetPos = new Vector2();
     Vector2 velocity = new Vector2();
+    Vector2 impulse = new Vector2();
 
     Vector2 tmp = new Vector2();
 
@@ -32,6 +31,7 @@ public class ClientShip extends Image {
 
     private final float mass;
     private float angularVelocity;
+    private long updateTime;
 
     public ClientShip(long id, float width, float height, float mass) {
         super(shipTexture);
@@ -40,29 +40,14 @@ public class ClientShip extends Image {
         this.setHeight(height);
         setVisible(false);
         this.targetImg = new Image(targetTexture);
-        this.headingArrow = new Image(arrowTexture);
-        this.velocityArrow = new Image(arrowTexture);
-        this.impulseArrow = new Image(arrowTexture);
-        this.headingArrow.setVisible(true);
-        this.velocityArrow.setVisible(false);
-        this.impulseArrow.setVisible(false);
         float tgtImgBound = Math.max(width, height);
         this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
         clearTargetPos();
-        this.headingArrow.setBounds(0, 0, width, height);
-        this.headingArrow.setColor(0f, 191f/255, 1f, 1f);
 
         this.mass = mass;
 
         getCenterPos(tmp);
-        setOrigin(tmp.x - headingArrow.getWidth() / 2f, tmp.y);
-    }
-
-    public void updateArrows() {
-        getCenterPos(tmp);
-        float angle = getRotation();
-        headingArrow.setPosition(tmp.x - headingArrow.getWidth() / 2f, tmp.y);
-        headingArrow.setRotation(angle);
+        setOrigin(tmp.x, tmp.y);
     }
 
     public void setPosition(float x, float y) {
@@ -70,12 +55,6 @@ public class ClientShip extends Image {
             setVisible(true);
         }
         super.setPosition(x, y);
-        updateArrows();
-    }
-
-    public void setRotation(float angle) {
-        super.setRotation(angle);
-        updateArrows();
     }
 
     public long getId() {
@@ -84,9 +63,6 @@ public class ClientShip extends Image {
 
     public void attach(Stage stage) {
         stage.addActor(targetImg);
-        stage.addActor(headingArrow);
-        stage.addActor(impulseArrow);
-        stage.addActor(velocityArrow);
     }
 
     public void setTargetPos(float x, float y) {
@@ -151,7 +127,23 @@ public class ClientShip extends Image {
         return !Float.isNaN(targetPos.x);
     }
 
-    public void updatePos(float delta) {
+    public void updatePos(long timeNow) {
+        final float delta = (timeNow - updateTime) / 1000f;
+        log("delta:" + delta);
         setPosition(getX() + delta * velocity.x, getY() + delta * velocity.y);
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public void setImpulse(Vector2 i) {
+        impulse.set(i);
+        impulse.nor();
+        impulse.scl(i.len() / getMaxImpulse() * 0.1f); // TODO: fix the scaling once the maximum forces of ship are defined in vectors
+    }
+
+    public Vector2 getImpulse() {
+        return impulse;
     }
 }

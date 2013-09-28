@@ -34,6 +34,7 @@ public class BattleHandler {
 
         @Override
         public void consume(Player player, Message msg) {
+            long updateTime = System.currentTimeMillis();
             if (msg.getType() == Message.MessageType.UPDATE_SHIP_PHYSICS) {
                 ShipPhysicsMessage shipPhysicsMessage = (ShipPhysicsMessage) msg;
                 ClientShip ship = getShip(shipPhysicsMessage.getId());
@@ -41,6 +42,7 @@ public class BattleHandler {
                 ship.setRotation(shipPhysicsMessage.getAngle());
                 ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
                 ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity());
+                ship.setUpdateTime(updateTime);
                 if (!firstPosSet) {
                     ship.getCenterPos(tmp);
                     screen.setCameraPos(tmp.x, tmp.y);
@@ -134,12 +136,15 @@ public class BattleHandler {
     }
 
     public void update(float delta) {
+        long timeNow = System.currentTimeMillis();
         for (ClientShip s : ships) {
-            // TODO: make this update depend on the time has elapsed from last position update
-            // TODO: maybe also include acceleration data
-            // s.updatePos(delta);
+            // s.updatePos(timeNow);
         }
         consumer.consumeStoredMessages();
         shipDriver.update();
+    }
+
+    public ArrayList<ClientShip> getShips() {
+        return ships;
     }
 }

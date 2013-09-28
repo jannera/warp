@@ -60,6 +60,7 @@ public class ShipDriver extends Task {
             // float maxImpulse = ship.getMaxImpulse();
             // pos.clamp(-maxImpulse, maxImpulse);
 
+            ship.setImpulse(pos);
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), 0, pos.x, pos.y);
             log(pos.x + "," + pos.y);
             firstDone = true;
