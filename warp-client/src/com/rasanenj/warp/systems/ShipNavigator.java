@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.rasanenj.warp.Geometry;
 import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.entities.ClientShip.TurningState;
 import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.tasks.Task;
@@ -41,6 +42,7 @@ public class ShipNavigator extends Task {
                 continue;
             }
 
+            // === FIGURE OUT THE LINEAR IMPULSE ===
             // From Steering Behaviors:
             // desired_velocity = normalize (position - target) * max_speed
             // steering = desired_velocity - velocity
@@ -58,6 +60,7 @@ public class ShipNavigator extends Task {
 
             ship.setImpulse(pos);
 
+            // === FIGURE OUT THE ANGULAR IMPULSE ===
             float currAngle = Geometry.ensurePositiveDeg(ship.getRotation() + ship.getAngularVelocity() * STEP_LENGTH);
             float tgtAngle = Geometry.ensurePositiveDeg(tgt.angle());
 
@@ -66,49 +69,21 @@ public class ShipNavigator extends Task {
                 angleDiff -= 360;
             }
 
-
             float change;
 
             float maxAccelerationInTimestep = ship.maxAngularAcceleration() * STEP_LENGTH;
 
-            float minimumBreakingDistance = 5f;
-
-            if (Math.abs(angleDiff) > minimumBreakingDistance) {
-                ship.setStoppingImpulseSent(false);
-                float desiredVelocity = ship.getMaxAngularVelocity();
-                if (angleDiff > 0) {
-                    desiredVelocity *= -1f;
-                }
-                change = ship.getInertia() * (desiredVelocity - ship.getAngularVelocity());
-                change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
-            }
-            else {
-                if (ship.isStoppingImpulseSent()) {
-                    continue;
-                }
-                change = -1f * ship.getInertia() * ship.getAngularVelocity();
-                // TODO: this breaking should be done in chunks, in the max size of the maxAccelerationInTimestep
-                ship.setStoppingImpulseSent(true);
+            float minimumBreakingDistance = 0f;
+            for (float velocity = ship.getMaxAngularVelocity() - maxAccelerationInTimestep;
+                 velocity > 0;
+                 velocity -= maxAccelerationInTimestep) {
+                minimumBreakingDistance += STEP_LENGTH * velocity
+                        - 1/2f * maxAccelerationInTimestep * STEP_LENGTH * STEP_LENGTH;
             }
 
-            /*
-            // Below is an attempt at doing the braking correctly in parts.. does not work atm.
-            // Also estimates minimumBrakingDistance way too high
+            log(minimumBreakingDistance + " vs " + angleDiff);
 
-            float maxAcceleration = ship.maxAngularAcceleration();
-            float maxAccelerationInTimestep = ship.maxAngularAcceleration() * STEP_LENGTH;
-            float maxVelocity = ship.getMaxAngularVelocity();
-            float timeToFullStop = maxVelocity / maxAcceleration;
-            float minimumBreakingDistance = maxVelocity * timeToFullStop
-                    - 1/2f * maxAcceleration * timeToFullStop * timeToFullStop
-                     + STEP_LENGTH * maxVelocity
-                    ;
-
-            log (minimumBreakingDistance + " vs " + Math.abs(angleDiff));
-
-            // minimumBreakingDistance = 5f;
-
-            // log (minimumBreakingDistance + " vs " + Math.abs(angleDiff));
+            minimumBreakingDistance /= 2.5f; // TODO: minimum breaking distance is still too high, thus it's lowered a bit here
 
             if (Math.abs(angleDiff) > minimumBreakingDistance) {
                 ship.setTurningState(TurningState.FULL_SPEED);
@@ -117,6 +92,7 @@ public class ShipNavigator extends Task {
                     desiredVelocity *= -1f;
                 }
                 change = ship.getInertia() * (desiredVelocity - ship.getAngularVelocity());
+                change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
             }
             else {
                 if (ship.getTurningState() == TurningState.DONE_BRAKING) {
@@ -136,7 +112,7 @@ public class ShipNavigator extends Task {
             }
 
             change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
-             */
+
             log(" currVel " + ship.getAngularVelocity() + " change: " + change);
 
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);

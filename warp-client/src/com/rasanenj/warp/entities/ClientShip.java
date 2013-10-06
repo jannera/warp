@@ -12,6 +12,16 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ClientShip extends Image {
+    private float brakingLeft;
+
+    public void setBrakingLeft(float brakingLeft) {
+        this.brakingLeft = brakingLeft;
+    }
+
+    public float getBrakingLeft() {
+        return brakingLeft;
+    }
+
     public enum TurningState {
         FULL_SPEED, BRAKING, DONE_BRAKING;
     }
@@ -40,7 +50,6 @@ public class ClientShip extends Image {
     private float angularVelocity;
     private long updateTime;
     private float angularAcceleration;
-    private boolean stoppingImpulseSent = false;
 
     public ClientShip(long id, float width, float height, float mass, float inertia) {
         super(Assets.shipTexture);
@@ -178,14 +187,6 @@ public class ClientShip extends Image {
 
     public float getInertia() {
         return inertia;
-    }
-
-    public void setStoppingImpulseSent(boolean stoppingImpulseSent) {
-        this.stoppingImpulseSent = stoppingImpulseSent;
-    }
-
-    public boolean isStoppingImpulseSent() {
-        return stoppingImpulseSent;
     }
 
     public TurningState getTurningState() {
