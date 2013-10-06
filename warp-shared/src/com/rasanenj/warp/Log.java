@@ -20,4 +20,12 @@ public class Log {
     public static void log(Level level, String msg) {
         logger.log(level, msg);
     }
+
+    public static void log(Object o) {
+        log(o.toString());
+    }
+
+    public static void log(Level level, Object o) {
+        log(level, o.toString());
+    }
 }

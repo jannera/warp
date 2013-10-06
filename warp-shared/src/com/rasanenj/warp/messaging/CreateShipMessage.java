@@ -1,7 +1,5 @@
 package com.rasanenj.warp.messaging;
 
-import com.rasanenj.warp.entities.Ship;
-
 import java.nio.ByteBuffer;
 
 /**
@@ -9,13 +7,14 @@ import java.nio.ByteBuffer;
  */
 // TODO: this should include correct location as well
 public class CreateShipMessage extends EntityMessage {
-    float width, height, mass;
+    float width, height, mass, inertia;
 
-    public CreateShipMessage(Ship ship) {
-        super(ship.getId());
-        this.width = ship.getWidth();
-        this.height = ship.getHeight();
-        this.mass = ship.getMass();
+    public CreateShipMessage(long id, float width, float height, float mass, float inertia) {
+        super(id);
+        this.width = width;
+        this.height = height;
+        this.mass = mass;
+        this.inertia = inertia;
     }
 
     public CreateShipMessage(ByteBuffer msg) {
@@ -23,6 +22,7 @@ public class CreateShipMessage extends EntityMessage {
         this.width = msg.getFloat();
         this.height = msg.getFloat();
         this.mass = msg.getFloat();
+        this.inertia = msg.getFloat();
     }
 
     @Override
@@ -32,8 +32,8 @@ public class CreateShipMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Long.SIZE/8 + 3* Long.SIZE/8);
-        b.putLong(id).putFloat(width).putFloat(height).putFloat(mass);
+        ByteBuffer b = create(Long.SIZE/8 + 4* Long.SIZE/8);
+        b.putLong(id).putFloat(width).putFloat(height).putFloat(mass).putFloat(inertia);
         return b.array();
     }
 
@@ -47,5 +47,9 @@ public class CreateShipMessage extends EntityMessage {
 
     public float getMass() {
         return mass;
+    }
+
+    public float getInertia() {
+        return inertia;
     }
 }

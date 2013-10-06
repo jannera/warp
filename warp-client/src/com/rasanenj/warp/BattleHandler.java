@@ -1,7 +1,7 @@
 package com.rasanenj.warp;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
-import com.rasanenj.warp.systems.ShipDriver;
+import com.rasanenj.warp.systems.ShipNavigator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class BattleHandler {
                 ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
                 ship.setRotation(shipPhysicsMessage.getAngle());
                 ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
-                ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity());
+                ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity(), updateTime);
                 ship.setUpdateTime(updateTime);
                 if (!firstPosSet) {
                     ship.getCenterPos(tmp);
@@ -52,7 +52,7 @@ public class BattleHandler {
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
                 ClientShip ship = new ClientShip(message.getId(), message.getWidth(),
-                        message.getHeight(), message.getMass());
+                        message.getHeight(), message.getMass(), message.getInertia());
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.attach(screen.getStage());
@@ -105,13 +105,22 @@ public class BattleHandler {
                 screen.zoom(-1);
                 return true;
             }
+
+            if (keycode == Input.Keys.A) {
+                shipNavigator.singlePulse = MathUtils.random(-8f, 8f);
+            }
+
+            if (keycode == Input.Keys.S) {
+                shipNavigator.stop = true;
+            }
+
             return false;
         }
     }
 
     private final ServerConnection conn;
     private final BattleScreen screen;
-    private final ShipDriver shipDriver;
+    private final ShipNavigator shipNavigator;
 
     private final ArrayList<ClientShip> ships = new ArrayList<ClientShip>();
 
@@ -122,7 +131,7 @@ public class BattleHandler {
         this.conn = conn;
         this.listener = new BattleInputListener();
         screen.getStage().addListener(listener);
-        shipDriver = new ShipDriver(ships, conn);
+        shipNavigator = new ShipNavigator(ships, conn);
         this.consumer = new BattleMessageConsumer(conn.getDelegator());
     }
 
@@ -141,7 +150,7 @@ public class BattleHandler {
             // s.updatePos(timeNow);
         }
         consumer.consumeStoredMessages();
-        shipDriver.update();
+        shipNavigator.update();
     }
 
     public ArrayList<ClientShip> getShips() {

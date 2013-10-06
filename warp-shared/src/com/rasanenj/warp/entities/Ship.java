@@ -63,7 +63,5 @@ public abstract class Ship extends Entity {
         return 0;
     }
 
-    public float getMass() {
-        return 0;
-    }
+    public abstract float getMass();
 }

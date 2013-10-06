@@ -105,6 +105,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="gwt-user" level="project" />
+    <orderEntry type="library" name="mockito-all-1.9.5" level="project" />
   </component>
 </module>
 

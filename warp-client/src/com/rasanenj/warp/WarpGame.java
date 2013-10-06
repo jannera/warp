@@ -23,6 +23,7 @@ public class WarpGame extends Game implements ResizeHandler {
 
     @Override
 	public void create() {
+        Assets.load();
         Window.addResizeHandler(this);
         serverConnection = new ServerConnection("ws://localhost:8887", delegator);
 

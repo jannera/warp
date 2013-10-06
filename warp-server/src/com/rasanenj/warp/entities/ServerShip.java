@@ -12,7 +12,7 @@ import static com.rasanenj.warp.Log.log;
 /**
  * @author gilead
  */
-public class ServerShip extends Ship {
+public class ServerShip extends Entity {
     private ServerPlayer player;
     private final Body body;
     private static final BodyDef bodyDef = new BodyDef();
@@ -22,6 +22,8 @@ public class ServerShip extends Ship {
     private final Vector2 oldPos = new Vector2();
     private float oldAngle = 0;
 
+    private float width, height;
+
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.active = true;
@@ -30,7 +32,8 @@ public class ServerShip extends Ship {
     }
 
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player) {
-        super(x, y, width, height);
+        this.width = width;
+        this.height = height;
         body = world.createBody(bodyDef);
         body.setTransform(x, y, angleRad);
         polygonShape.setAsBox(width, height);
@@ -68,5 +71,17 @@ public class ServerShip extends Ship {
 
     public float getInterpolatedAngle(float lerp1, float lerp2) {
         return body.getAngle() * lerp1 + oldAngle * lerp2;
+    }
+
+    public float getInertia() {
+        return body.getInertia();
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 }

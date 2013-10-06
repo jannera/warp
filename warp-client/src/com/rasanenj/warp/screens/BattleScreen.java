@@ -21,7 +21,7 @@ public class BattleScreen implements Screen {
     private Stage stage;
     private BattleHandler battleHandler;
 
-    private static final int CAMERA_SIZE = 30;
+    private static final int CAMERA_SIZE = 20;
     private static final float zoomStep = 0.05f;
     private float zoom = 1f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
