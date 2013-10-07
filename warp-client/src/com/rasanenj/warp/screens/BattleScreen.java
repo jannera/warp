@@ -25,7 +25,7 @@ public class BattleScreen implements Screen {
     private static final float zoomStep = 0.05f;
     private float zoom = 1f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
-    private final Vector2 tmp = new Vector2();
+    private final Vector2 tmp = new Vector2(), force = new Vector2();
 
     private static final Color DODGER_BLUE = new Color(30f/255f, 191f/255f, 1, 1);
 
@@ -53,13 +53,33 @@ public class BattleScreen implements Screen {
         shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
         for (ClientShip ship : battleHandler.getShips()) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(DODGER_BLUE);
             ship.getCenterPos(tmp);
+            /*
+            shapeRenderer.setColor(DODGER_BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
                     tmp.x + ship.getVelocity().x, tmp.y + ship.getVelocity().y);
+                    */
+
+
+            // render max force vectors
             shapeRenderer.setColor(Color.YELLOW);
+            ship.getMaxForceForward(force);
+            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
+            ship.getMaxForceBackward(force);
+            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
+            ship.getMaxForceLeft(force);
+            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
+            ship.getMaxForceRight(force);
+            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
+
+            shapeRenderer.setColor(Color.BLUE);
+            shapeRenderer.line(tmp.x, tmp.y,
+                    tmp.x + ship.getImpulseOriginal().x, tmp.y + ship.getImpulseOriginal().y);
+
+            shapeRenderer.setColor(DODGER_BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
                     tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);
+
             shapeRenderer.end();
         }
     }

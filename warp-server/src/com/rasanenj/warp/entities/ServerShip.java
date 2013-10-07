@@ -24,6 +24,8 @@ public class ServerShip extends Entity {
 
     private float width, height;
 
+    private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
+
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.active = true;
@@ -31,7 +33,9 @@ public class ServerShip extends Entity {
         bodyDef.angularDamping = 0f;
     }
 
-    public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player) {
+    public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
+                      float maxLinearForceForward, float maxLinearForceBackward,
+                      float maxLinearForceLeft, float maxLinearForceRight) {
         this.width = width;
         this.height = height;
         body = world.createBody(bodyDef);
@@ -40,6 +44,10 @@ public class ServerShip extends Entity {
         body.createFixture(polygonShape, DENSITY);
         this.player = player;
         storeOldPosition();
+        this.maxLinearForceForward = maxLinearForceForward;
+        this.maxLinearForceBackward = maxLinearForceBackward;
+        this.maxLinearForceLeft = maxLinearForceLeft;
+        this.maxLinearForceRight = maxLinearForceRight;
     }
 
     public Body getBody() {
@@ -83,5 +91,21 @@ public class ServerShip extends Entity {
 
     public float getHeight() {
         return height;
+    }
+
+    public float getMaxLinearForceLeft() {
+        return maxLinearForceLeft;
+    }
+
+    public float getMaxLinearForceBackward() {
+        return maxLinearForceBackward;
+    }
+
+    public float getMaxLinearForceForward() {
+        return maxLinearForceForward;
+    }
+
+    public float getMaxLinearForceRight() {
+        return maxLinearForceRight;
     }
 }

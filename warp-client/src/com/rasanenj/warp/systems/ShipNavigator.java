@@ -17,11 +17,13 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ShipNavigator extends Task {
-    private static final float MESSAGES_IN_SECOND = 5f;
+    private static final float MESSAGES_IN_SECOND = 60f;
     private static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
 
     private final Vector2 pos = new Vector2();
     private final Vector2 tgt = new Vector2();
+    private final Vector2 projectionTemp = new Vector2();
+    private final Vector2 finalPos = new Vector2();
 
     private final Collection<ClientShip> ships;
     private final ServerConnection connection;
@@ -50,11 +52,72 @@ public class ShipNavigator extends Task {
 
             tgt.sub(pos);
             pos.set(tgt);
-            pos.nor();
-            pos.scl(ship.getMaxSpeed());
+            // pos.nor();
+            // pos.scl(ship.getMaxSpeed());
             pos.sub(ship.getVelocity());
             pos.scl(ship.getMass());
-            // TODO: limit the force by the maximum force vectors of the Ship
+
+            ship.setImpulseOriginal(pos);
+            float scaleTo = Float.MAX_VALUE;
+
+            // limit the force by the maximum force vectors of the Ship
+            // the wanted force is projected for every four limiting vectors each ship has
+            String out = pos + " -> ";
+            ship.getMaxForceForward(projectionTemp);
+            float limitLength = projectionTemp.len();
+            out += projectionTemp + " -> ";
+            float len = pos.dot(projectionTemp) / projectionTemp.len2();
+            projectionTemp.scl(len);
+            out += projectionTemp;
+            float projectionLength = projectionTemp.len();
+            if (projectionLength > limitLength) {
+                if (limitLength < scaleTo) {
+                    scaleTo = limitLength;
+                }
+            }
+
+            finalPos.set(projectionTemp);
+            /*
+            ship.getMaxForceBackward(projectionTemp);
+            projLen = projectionTemp.len();
+            out += " back: " + projectionTemp + " -> ";
+            len = pos.dot(projectionTemp) / projectionTemp.len2();
+            projectionTemp.scl(len);
+            projectionTemp.limit(projLen);
+            out += " projected: " + projectionTemp + " -> ";
+            finalPos.add(projectionTemp);
+            out += projectionTemp;
+            log(out);
+
+            ship.getMaxForceRight(projectionTemp);
+            projLen = projectionTemp.len();
+            len = pos.dot(projectionTemp) / projectionTemp.len2();
+            projectionTemp.scl(len);
+            projectionTemp.limit(projLen);
+            finalPos.add(projectionTemp);
+            */
+            ship.getMaxForceLeft(projectionTemp);
+            limitLength = projectionTemp.len();
+            len = pos.dot(projectionTemp) / projectionTemp.len2();
+            projectionTemp.scl(len);
+            // projectionTemp.limit(projLen);
+            finalPos.add(projectionTemp);
+            projectionLength = projectionTemp.len();
+            if (projectionLength > limitLength) {
+                if (limitLength < scaleTo) {
+                    scaleTo = limitLength;
+                }
+            }
+            if (scaleTo != Float.MAX_VALUE) {
+                finalPos.limit(scaleTo);
+            }
+
+            pos.set(finalPos);
+
+
+
+
+
 
             // pos.set(0, 0);
 
@@ -81,7 +144,7 @@ public class ShipNavigator extends Task {
                         - 1/2f * maxAccelerationInTimestep * STEP_LENGTH * STEP_LENGTH;
             }
 
-            log(minimumBreakingDistance + " vs " + angleDiff);
+            // log(minimumBreakingDistance + " vs " + angleDiff);
 
             minimumBreakingDistance /= 2.5f; // TODO: minimum breaking distance is still too high, thus it's lowered a bit here
 
@@ -96,26 +159,30 @@ public class ShipNavigator extends Task {
             }
             else {
                 if (ship.getTurningState() == TurningState.DONE_BRAKING) {
-                    continue;
+                    change = 0;
                 }
-                if (ship.getTurningState() == TurningState.FULL_SPEED) {
-                    ship.setBrakingLeft(-1f * ship.getInertia() * ship.getAngularVelocity());
-                    ship.setTurningState(TurningState.BRAKING);
-                }
+                else {
+                    if (ship.getTurningState() == TurningState.FULL_SPEED) {
+                        ship.setBrakingLeft(-1f * ship.getInertia() * ship.getAngularVelocity());
+                        ship.setTurningState(TurningState.BRAKING);
+                    }
 
-                change = ship.getBrakingLeft();
-                if (Math.abs(change) < maxAccelerationInTimestep) {
-                    ship.setTurningState(TurningState.DONE_BRAKING);
+                    change = ship.getBrakingLeft();
+                    if (Math.abs(change) < maxAccelerationInTimestep) {
+                        ship.setTurningState(TurningState.DONE_BRAKING);
+                    }
+                    change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
+                    ship.setBrakingLeft(ship.getBrakingLeft() - change);
                 }
-                change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
-                ship.setBrakingLeft(ship.getBrakingLeft() - change);
             }
 
             change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
 
-            log(" currVel " + ship.getAngularVelocity() + " change: " + change);
+            // log(" currVel " + ship.getAngularVelocity() + " change: " + change);
 
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);
+
+            // log(pos.x +"," + pos.y);
 
             connection.send(msg);
         }

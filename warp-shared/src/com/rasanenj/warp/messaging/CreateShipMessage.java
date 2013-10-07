@@ -7,14 +7,21 @@ import java.nio.ByteBuffer;
  */
 // TODO: this should include correct location as well
 public class CreateShipMessage extends EntityMessage {
+    private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
     float width, height, mass, inertia;
 
-    public CreateShipMessage(long id, float width, float height, float mass, float inertia) {
+    public CreateShipMessage(long id, float width, float height, float mass, float inertia,
+                             float maxLinearForceForward, float maxLinearForceBackward,
+                             float maxLinearForceLeft, float maxLinearForceRight) {
         super(id);
         this.width = width;
         this.height = height;
         this.mass = mass;
         this.inertia = inertia;
+        this.maxLinearForceForward = maxLinearForceForward;
+        this.maxLinearForceBackward = maxLinearForceBackward;
+        this.maxLinearForceLeft = maxLinearForceLeft;
+        this.maxLinearForceRight = maxLinearForceRight;
     }
 
     public CreateShipMessage(ByteBuffer msg) {
@@ -23,6 +30,10 @@ public class CreateShipMessage extends EntityMessage {
         this.height = msg.getFloat();
         this.mass = msg.getFloat();
         this.inertia = msg.getFloat();
+        this.maxLinearForceForward = msg.getFloat();
+        this.maxLinearForceBackward = msg.getFloat();
+        this.maxLinearForceLeft = msg.getFloat();
+        this.maxLinearForceRight = msg.getFloat();
     }
 
     @Override
@@ -32,8 +43,9 @@ public class CreateShipMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Long.SIZE/8 + 4* Long.SIZE/8);
+        ByteBuffer b = create(Long.SIZE/8 + 8* Long.SIZE/8);
         b.putLong(id).putFloat(width).putFloat(height).putFloat(mass).putFloat(inertia);
+        b.putFloat(maxLinearForceForward).putFloat(maxLinearForceBackward).putFloat(maxLinearForceLeft).putFloat(maxLinearForceRight);
         return b.array();
     }
 

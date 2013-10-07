@@ -35,14 +35,16 @@ public class BattleServer extends Task {
 
                 // notify the new player about existing ships
                 for (ServerShip ship : battleLoop.getShips()) {
-                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia()));
+                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
+                            ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight()));
                 }
 
                 // add a new ship for the new player
-                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 0.4f, serverPlayer);
+                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 0.4f, serverPlayer, 2f, 1f, 0.3f, 0.3f);
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
-                sendToAll(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia()));
+                sendToAll(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
+                        ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight()));
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
                 battleLoop.removePlayer(player);

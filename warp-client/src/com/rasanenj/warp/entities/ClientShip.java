@@ -13,6 +13,7 @@ import static com.rasanenj.warp.Log.log;
  */
 public class ClientShip extends Image {
     private float brakingLeft;
+    private Vector2 impulseOriginal = new Vector2();
 
     public void setBrakingLeft(float brakingLeft) {
         this.brakingLeft = brakingLeft;
@@ -20,6 +21,14 @@ public class ClientShip extends Image {
 
     public float getBrakingLeft() {
         return brakingLeft;
+    }
+
+    public void setImpulseOriginal(Vector2 impulseOriginal) {
+        this.impulseOriginal.set(impulseOriginal);
+    }
+
+    public Vector2 getImpulseOriginal() {
+        return impulseOriginal;
     }
 
     public enum TurningState {
@@ -173,8 +182,8 @@ public class ClientShip extends Image {
 
     public void setImpulse(Vector2 i) {
         impulse.set(i);
-        impulse.nor();
-        impulse.scl(i.len() / getMaxImpulse() * 0.1f); // TODO: fix the scaling once the maximum forces of ship are defined in vectors
+        // impulse.nor();
+        // impulse.scl(i.len() / getMaxImpulse() * 0.1f); // TODO: fix the scaling once the maximum forces of ship are defined in vectors
     }
 
     public Vector2 getImpulse() {
@@ -195,5 +204,28 @@ public class ClientShip extends Image {
 
     public void setTurningState(TurningState turningState) {
         this.turningState = turningState;
+    }
+
+    private final float maxLinearForceRight = 0.8f, maxLinearForceForward = 2f, maxLinearForceBackward = maxLinearForceForward, maxLinearForceLeft = maxLinearForceRight;
+
+    private void getForce(Vector2 tgt, float angleDeg, float length) {
+        final float angleRad = angleDeg * MathUtils.degreesToRadians;
+        tgt.set(MathUtils.cos(angleRad) * length, MathUtils.sin(angleRad) * length);
+    }
+
+    public void getMaxForceForward(Vector2 tgt) {
+        getForce(tgt, getRotation(), maxLinearForceForward);
+    }
+
+    public void getMaxForceBackward(Vector2 tgt) {
+        getForce(tgt, getRotation() + 180, maxLinearForceBackward);
+    }
+
+    public void getMaxForceLeft(Vector2 tgt) {
+        getForce(tgt, getRotation() - 90, maxLinearForceLeft);
+    }
+
+    public void getMaxForceRight(Vector2 tgt) {
+        getForce(tgt, getRotation() + 90, maxLinearForceRight);
     }
 }
