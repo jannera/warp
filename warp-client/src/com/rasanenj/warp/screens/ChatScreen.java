@@ -17,6 +17,7 @@ public class ChatScreen implements Screen {
     Stage stage;
     SpriteBatch batch;
     Label fpsLabel;
+    ChatHandler chatHandler;
 
 
     public ChatScreen(ServerConnection serverConnection) {
@@ -55,11 +56,12 @@ public class ChatScreen implements Screen {
 
         stage.addActor(window);
 
-        ChatHandler chatHandler = new ChatHandler(serverConnection, chatMessages, scrollPane, textfield);
+        this.chatHandler = new ChatHandler(serverConnection, chatMessages, scrollPane, textfield);
     }
 
     @Override
     public void render(float delta) {
+        chatHandler.processArrivedMessages();
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 

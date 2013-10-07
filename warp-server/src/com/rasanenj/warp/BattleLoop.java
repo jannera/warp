@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.MessageDelegator;
 import com.rasanenj.warp.messaging.Player;
+import com.rasanenj.warp.tasks.RunnableFPS;
 
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  *
  * Uses static frame length
  */
-public class BattleLoop implements Runnable {
+public class BattleLoop extends RunnableFPS {
     private final BattleServer battleServer;
     private final World world;
     private ArrayList<Player> players = new ArrayList<Player>(); // TODO: make it concurrent (because players can join at any time)
@@ -23,7 +24,6 @@ public class BattleLoop implements Runnable {
 
 
     static private final float FPS = 25;
-    static private final long FRAME_LENGTH = (long) (1 / FPS * 1000f);
 
     private final static int MIN_FPS = 10;
     private final static float TIME_STEP = 1f / FPS;
@@ -34,41 +34,20 @@ public class BattleLoop implements Runnable {
     private final static int VELOCITY_ITERS = 8;
     private final static int POSITION_ITERS = 3;
 
-    private long lastTime, nextTime;
-
     public BattleLoop(MessageDelegator delegator, WSServer wsServer) {
         GdxNativesLoader.load();
         this.world = new World(new Vector2(0,0), true);
         this.battleServer = new BattleServer(this, wsServer, delegator, world);
-        nextTime = System.currentTimeMillis();
-        lastTime = System.currentTimeMillis();
     }
 
     public float physicsTimeLeft = 0f;
 
     @Override
-    public void run() {
-        while (true) {
-            if (System.currentTimeMillis() > lastTime + FRAME_LENGTH) {
-                long currTime = System.currentTimeMillis();
-                float delta = (currTime - lastTime) / 1000f; // in seconds
-                update(delta);
-                lastTime = currTime;
-            }
-            else {
-
-                try {
-                    Thread.sleep(FRAME_LENGTH / 3);
-                } catch (InterruptedException e) {
-                    // do nothing
-                }
-
-            }
-        }
-
+    protected float getFPS() {
+        return FPS;
     }
 
-    private void update(float delta) {
+    protected void update(float delta) {
 
         physicsTimeLeft += delta;
         if (physicsTimeLeft > MAX_TIME_PER_FRAME) {

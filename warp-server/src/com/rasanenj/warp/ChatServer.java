@@ -1,6 +1,7 @@
 package com.rasanenj.warp;
 
 import com.rasanenj.warp.messaging.*;
+import com.rasanenj.warp.tasks.RunnableFPS;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,8 +11,18 @@ import static com.rasanenj.warp.Log.log;
 /**
  * @author gilead
  */
-public class ChatServer {
+public class ChatServer extends RunnableFPS {
     private final ChatMessageConsumer consumer;
+
+    @Override
+    protected float getFPS() {
+        return 20;
+    }
+
+    @Override
+    protected void update(float delta) {
+        consumer.consumeStoredMessages();
+    }
 
     private class ChatMessageConsumer extends MessageConsumer {
         public ChatMessageConsumer(MessageDelegator delegator) {
@@ -43,6 +54,4 @@ public class ChatServer {
         this.server = server;
         this.consumer = new ChatMessageConsumer(delegator);
     }
-
-    // TODO: needs somekind of update, to be able to consume stored messages
 }
