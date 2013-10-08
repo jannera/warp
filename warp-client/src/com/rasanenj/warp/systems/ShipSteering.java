@@ -15,25 +15,31 @@ import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
+ *
+ * TODO: ATM the update rate of this Task is the multiplier on the forces used.
+ * Should be fixed somehow.
  */
-public class ShipNavigator extends Task {
+public class ShipSteering extends Task {
     private static final float MESSAGES_IN_SECOND = 60f;
     private static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
 
     private final Vector2 pos = new Vector2();
     private final Vector2 tgt = new Vector2();
     private final Vector2 projectionTemp = new Vector2();
-    private final Vector2 finalPos = new Vector2();
+
+    private final Vector2 vecP = new Vector2(), vecR = new Vector2(), vecQ = new Vector2(), vecS = new Vector2();
 
     private final Collection<ClientShip> ships;
     private final ServerConnection connection;
-    public float singlePulse;
-    public boolean stop = false;
+    private final Vector2 corners[] = new Vector2[4];
 
-    public ShipNavigator(Collection<ClientShip> ships, ServerConnection conn) {
+    public ShipSteering(Collection<ClientShip> ships, ServerConnection conn) {
         super(MESSAGES_IN_SECOND);
         this.ships = ships;
         this.connection = conn;
+        for (int i=0; i < 4; i++) {
+            corners[i] = new Vector2();
+        }
     }
 
     @Override
@@ -50,76 +56,39 @@ public class ShipNavigator extends Task {
             // steering = desired_velocity - velocity
             ship.getCenterPos(pos);
 
+            // figure out the force that would be ideal to use in this situation
             tgt.sub(pos);
             pos.set(tgt);
-            // pos.nor();
-            // pos.scl(ship.getMaxSpeed());
             pos.sub(ship.getVelocity());
             pos.scl(ship.getMass());
 
-            ship.setImpulseOriginal(pos);
-            float scaleTo = Float.MAX_VALUE;
+            ship.setImpulseIdeal(pos);
 
-            // limit the force by the maximum force vectors of the Ship
-            // the wanted force is projected for every four limiting vectors each ship has
-            String out = pos + " -> ";
-            ship.getMaxForceForward(projectionTemp);
-            float limitLength = projectionTemp.len();
-            out += projectionTemp + " -> ";
-            float len = pos.dot(projectionTemp) / projectionTemp.len2();
-            projectionTemp.scl(len);
-            out += projectionTemp;
-            float projectionLength = projectionTemp.len();
-            if (projectionLength > limitLength) {
-                if (limitLength < scaleTo) {
-                    scaleTo = limitLength;
+            // limit the ideal force by maximum forces a ship can put out
+            // this is figured out by
+            ship.getCenterPos(vecP);
+            vecR.set(pos);
+
+            ship.getForceLimitCorners(corners);
+            for (int i=0; i < 4; i++) {
+                // first we make a vector from i'th corner to i+1'th corner
+                int next = i+1;
+                if (next == 4) {
+                    next = 0; // last vector is from first point to the last point
+                }
+                vecQ.set(corners[i]);
+                vecS.set(corners[next]);
+                vecS.sub(corners[i]);
+
+                if (Geometry.getIntersectionPoint(vecQ, vecS, vecP, vecR, projectionTemp)) {
+                    // since the sides of a rectangle only touch each other at the corners,
+                    // intersection with just one vector is fine
+                    ship.getCenterPos(pos);
+                    projectionTemp.sub(pos);
+                    pos.set(projectionTemp);
+                    break;
                 }
             }
-
-            finalPos.set(projectionTemp);
-            /*
-            ship.getMaxForceBackward(projectionTemp);
-            projLen = projectionTemp.len();
-            out += " back: " + projectionTemp + " -> ";
-            len = pos.dot(projectionTemp) / projectionTemp.len2();
-            projectionTemp.scl(len);
-            projectionTemp.limit(projLen);
-            out += " projected: " + projectionTemp + " -> ";
-            finalPos.add(projectionTemp);
-            out += projectionTemp;
-            log(out);
-
-            ship.getMaxForceRight(projectionTemp);
-            projLen = projectionTemp.len();
-            len = pos.dot(projectionTemp) / projectionTemp.len2();
-            projectionTemp.scl(len);
-            projectionTemp.limit(projLen);
-            finalPos.add(projectionTemp);
-            */
-            ship.getMaxForceLeft(projectionTemp);
-            limitLength = projectionTemp.len();
-            len = pos.dot(projectionTemp) / projectionTemp.len2();
-            projectionTemp.scl(len);
-            // projectionTemp.limit(projLen);
-            finalPos.add(projectionTemp);
-            projectionLength = projectionTemp.len();
-            if (projectionLength > limitLength) {
-                if (limitLength < scaleTo) {
-                    scaleTo = limitLength;
-                }
-            }
-            if (scaleTo != Float.MAX_VALUE) {
-                finalPos.limit(scaleTo);
-            }
-
-            pos.set(finalPos);
-
-
-
-
-
-
-            // pos.set(0, 0);
 
             ship.setImpulse(pos);
 
@@ -134,7 +103,7 @@ public class ShipNavigator extends Task {
 
             float change;
 
-            float maxAccelerationInTimestep = ship.maxAngularAcceleration() * STEP_LENGTH;
+            float maxAccelerationInTimestep = ship.getMaxAngularAcceleration() * STEP_LENGTH;
 
             float minimumBreakingDistance = 0f;
             for (float velocity = ship.getMaxAngularVelocity() - maxAccelerationInTimestep;
@@ -178,11 +147,8 @@ public class ShipNavigator extends Task {
 
             change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
 
-            // log(" currVel " + ship.getAngularVelocity() + " change: " + change);
-
+            // pos.scl(STEP_LENGTH);
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);
-
-            // log(pos.x +"," + pos.y);
 
             connection.send(msg);
         }

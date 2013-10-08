@@ -26,6 +26,7 @@ public class BattleScreen implements Screen {
     private float zoom = 1f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
+    private final Vector2 corners[] = new Vector2[4];
 
     private static final Color DODGER_BLUE = new Color(30f/255f, 191f/255f, 1, 1);
 
@@ -34,6 +35,9 @@ public class BattleScreen implements Screen {
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
 
         battleHandler = new BattleHandler(this, conn);
+        for (int i=0; i < 4; i++) {
+            corners[i] = new Vector2();
+        }
     }
 
     public Stage getStage() {
@@ -55,27 +59,32 @@ public class BattleScreen implements Screen {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             ship.getCenterPos(tmp);
             /*
+            // render the velocity of the ship
             shapeRenderer.setColor(DODGER_BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
                     tmp.x + ship.getVelocity().x, tmp.y + ship.getVelocity().y);
                     */
 
 
-            // render max force vectors
+            // render the rectangle that limits the maximum force vector
+            ship.getForceLimitCorners(corners);
             shapeRenderer.setColor(Color.YELLOW);
-            ship.getMaxForceForward(force);
-            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
-            ship.getMaxForceBackward(force);
-            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
-            ship.getMaxForceLeft(force);
-            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
-            ship.getMaxForceRight(force);
-            shapeRenderer.line(tmp.x, tmp.y, tmp.x + force.x, tmp.y + force.y);
+            for (int i=0; i < 4; i++) {
+                // first we make a vector from i'th corner to i+1'th corner
+                int next = i+1;
+                if (next == 4) {
+                    next = 0; // last vector is from first point to the last point
+                }
+                shapeRenderer.line(corners[i].x, corners[i].y,
+                             corners[next].x, corners[next].y);
+            }
 
+            // render the ideal impulse
             shapeRenderer.setColor(Color.BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
-                    tmp.x + ship.getImpulseOriginal().x, tmp.y + ship.getImpulseOriginal().y);
+                    tmp.x + ship.getImpulseIdeal().x, tmp.y + ship.getImpulseIdeal().y);
 
+            // render the impulse
             shapeRenderer.setColor(DODGER_BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
                     tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);

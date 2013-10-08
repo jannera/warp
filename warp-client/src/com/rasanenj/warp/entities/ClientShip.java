@@ -13,7 +13,7 @@ import static com.rasanenj.warp.Log.log;
  */
 public class ClientShip extends Image {
     private float brakingLeft;
-    private Vector2 impulseOriginal = new Vector2();
+    private Vector2 impulseIdeal = new Vector2();
 
     public void setBrakingLeft(float brakingLeft) {
         this.brakingLeft = brakingLeft;
@@ -23,12 +23,41 @@ public class ClientShip extends Image {
         return brakingLeft;
     }
 
-    public void setImpulseOriginal(Vector2 impulseOriginal) {
-        this.impulseOriginal.set(impulseOriginal);
+    public void setImpulseIdeal(Vector2 impulseIdeal) {
+        this.impulseIdeal.set(impulseIdeal);
     }
 
-    public Vector2 getImpulseOriginal() {
-        return impulseOriginal;
+    public Vector2 getImpulseIdeal() {
+        return impulseIdeal;
+    }
+
+    /**
+     * Returns the corners of a rotated rectangle that limits the
+     * maximum force a ship can have for moving around.
+     *
+     * Corners will be in world-coordinates and centered on
+     * the center of the ship.
+     *
+     * @param corners where corners will be stored
+     */
+    public void getForceLimitCorners(Vector2[] corners) {
+        corners[0].x = maxLinearForceForward;
+        corners[0].y = maxLinearForceLeft;
+
+        corners[1].x = maxLinearForceForward;
+        corners[1].y = -maxLinearForceRight;
+
+        corners[2].x = -maxLinearForceBackward;
+        corners[2].y = -maxLinearForceRight;
+
+        corners[3].x = -maxLinearForceBackward;
+        corners[3].y = maxLinearForceLeft;
+
+        getCenterPos(tmp);
+        for (int i=0; i < 4; i++) {
+            corners[i].rotate(getRotation());
+            corners[i].add(tmp);
+        }
     }
 
     public enum TurningState {
@@ -47,11 +76,6 @@ public class ClientShip extends Image {
     private static final float ACC_FREQ = 1f /10f;
     private float oldAngularVelocity = 0;
     private long accRefresh = 0;
-
-    private static final float MAX_ANGULAR_CHANGE = 5f;
-    public static final float MAX_SPEED = 5f;
-
-    private final float maxAngularForce = 1000;
 
     private final long id;
 
@@ -110,15 +134,15 @@ public class ClientShip extends Image {
         pos.add(getWidth() / 2f, getHeight() / 2f);
     }
 
-    public float maxAngularAcceleration() {
-        return 12f;
+    public float getMaxAngularAcceleration() {
+        return maxAngularAcceleration;
     }
 
     /**
      * in degrees per second
       */
     public float getMaxAngularVelocity() {
-        return 35f;
+        return maxAngularVelocity;
     }
 
     public void setVelocity(float velX, float velY) {
@@ -127,10 +151,6 @@ public class ClientShip extends Image {
 
     public float getMass() {
         return mass;
-    }
-
-    public float getMaxImpulse() {
-        return getMass() * getMaxSpeed() * 0.025f;
     }
 
     public Vector2 getVelocity() {
@@ -157,10 +177,6 @@ public class ClientShip extends Image {
         return angularVelocity;
     }
 
-    public float getMaxSpeed() {
-        return 2;
-    }
-
     public void clearTargetPos() {
         targetPos.set(Float.NaN, Float.NaN);
         this.targetImg.setVisible(false);
@@ -182,8 +198,6 @@ public class ClientShip extends Image {
 
     public void setImpulse(Vector2 i) {
         impulse.set(i);
-        // impulse.nor();
-        // impulse.scl(i.len() / getMaxImpulse() * 0.1f); // TODO: fix the scaling once the maximum forces of ship are defined in vectors
     }
 
     public Vector2 getImpulse() {
@@ -206,26 +220,8 @@ public class ClientShip extends Image {
         this.turningState = turningState;
     }
 
-    private final float maxLinearForceRight = 0.8f, maxLinearForceForward = 2f, maxLinearForceBackward = maxLinearForceForward, maxLinearForceLeft = maxLinearForceRight;
-
-    private void getForce(Vector2 tgt, float angleDeg, float length) {
-        final float angleRad = angleDeg * MathUtils.degreesToRadians;
-        tgt.set(MathUtils.cos(angleRad) * length, MathUtils.sin(angleRad) * length);
-    }
-
-    public void getMaxForceForward(Vector2 tgt) {
-        getForce(tgt, getRotation(), maxLinearForceForward);
-    }
-
-    public void getMaxForceBackward(Vector2 tgt) {
-        getForce(tgt, getRotation() + 180, maxLinearForceBackward);
-    }
-
-    public void getMaxForceLeft(Vector2 tgt) {
-        getForce(tgt, getRotation() - 90, maxLinearForceLeft);
-    }
-
-    public void getMaxForceRight(Vector2 tgt) {
-        getForce(tgt, getRotation() + 90, maxLinearForceRight);
-    }
+    // TODO: create all these when the ship is created, given from Server
+    private final float maxAngularAcceleration = 12f;
+    private final float maxAngularVelocity = 35f;
+    private final float maxLinearForceRight = 0.5f, maxLinearForceForward = 2f, maxLinearForceBackward = 1f, maxLinearForceLeft = maxLinearForceRight;
 }

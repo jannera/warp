@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
-import com.rasanenj.warp.systems.ShipNavigator;
+import com.rasanenj.warp.systems.ShipSteering;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,21 +106,13 @@ public class BattleHandler {
                 return true;
             }
 
-            if (keycode == Input.Keys.A) {
-                shipNavigator.singlePulse = MathUtils.random(-8f, 8f);
-            }
-
-            if (keycode == Input.Keys.S) {
-                shipNavigator.stop = true;
-            }
-
             return false;
         }
     }
 
     private final ServerConnection conn;
     private final BattleScreen screen;
-    private final ShipNavigator shipNavigator;
+    private final ShipSteering shipSteering;
 
     private final ArrayList<ClientShip> ships = new ArrayList<ClientShip>();
 
@@ -131,7 +123,7 @@ public class BattleHandler {
         this.conn = conn;
         this.listener = new BattleInputListener();
         screen.getStage().addListener(listener);
-        shipNavigator = new ShipNavigator(ships, conn);
+        shipSteering = new ShipSteering(ships, conn);
         this.consumer = new BattleMessageConsumer(conn.getDelegator());
     }
 
@@ -150,7 +142,7 @@ public class BattleHandler {
             // s.updatePos(timeNow);
         }
         consumer.consumeStoredMessages();
-        shipNavigator.update();
+        shipSteering.update();
     }
 
     public ArrayList<ClientShip> getShips() {
