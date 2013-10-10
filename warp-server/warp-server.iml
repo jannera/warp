@@ -20,7 +20,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="gdx-natives" level="project" />
-    <orderEntry type="library" name="gdx" level="project" />
   </component>
 </module>
 

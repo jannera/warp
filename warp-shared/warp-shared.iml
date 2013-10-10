@@ -29,7 +29,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="gdx" level="project" />
+    <orderEntry type="library" exported="" name="gdx" level="project" />
   </component>
 </module>
 
