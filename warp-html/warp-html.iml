@@ -45,17 +45,6 @@
     <orderEntry type="module" module-name="warp-client" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
-      <library name="gdx.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="gdx-sources.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx-sources.jar!/" />
@@ -125,6 +114,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="gwt-user" level="project" />
+    <orderEntry type="library" name="gdx" level="project" />
   </component>
 </module>
 
