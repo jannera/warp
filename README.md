@@ -48,7 +48,7 @@ Future Ideas
 
 MVProto
 ===
-DONE voimien rajoittaminen aluksen suunnan perusteella
+* DONE voimien rajoittaminen aluksen suunnan perusteella
 * Kameraan liikuttelu (ja zoomaus?)
 * Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
 * Laivojen omistaminen
