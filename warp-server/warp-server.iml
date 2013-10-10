@@ -22,14 +22,15 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../warp-shared/libs/gdx.jar!/" />
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../warp-client/libs/gdx-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="library" name="gdx-natives" level="project" />
-    <orderEntry type="library" name="mockito-all-1.9.5" level="project" />
   </component>
 </module>
 
