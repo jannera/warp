@@ -4,18 +4,18 @@ Warp is a multiplayer browser game that’s based on GWT, Websockets and libgdx.
 
 Status
 ===
-Just starting out. Chat-server works.
+You can chat, you can move the ships, and the demoserver works too. Maybe you can do some shooting soon too ;)
 
 ATM all code written is throw-away proto code. If more permanent solution will be looked at, language(s) and frameworks might totally change.
 
-Demo: http://warp.ext.vincit.fi (not operational atm)
+Demo: http://warp.ext.vincit.fi (operational only when I start the server)
 
 Steps before Hackfest
 ===
-* Screen where you can move a spaceship around: UI, messaging, server side handling
+* DONE Screen where you can move a spaceship around: UI, messaging, server side handling
 * Integrate Artemis (Entity System framework) to (at least) server
 * Chat-screen to list online users
-* Demo running to ext.vincit.fi
+* DONE Demo running to ext.vincit.fi
 
 Steps
 ===
@@ -27,6 +27,7 @@ Steps
 Stuff Learned
 ===
 Super Dev Mode is nice! (and not too hard to set up)
+Making GWT artefacts with Intellij Idea is occultism (and maybe not the best idea)
 
 Idea
 ===
