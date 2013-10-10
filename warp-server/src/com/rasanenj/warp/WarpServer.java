@@ -14,7 +14,7 @@ import static com.rasanenj.warp.Log.log;
 public class WarpServer {
 
     public static void main( String[] args ) throws InterruptedException , IOException {
-        int port = 8887; // 843 flash policy port
+        int port = 9091; // 843 flash policy port
         try {
             port = Integer.parseInt( args[ 0 ] );
         } catch ( Exception ex ) {
