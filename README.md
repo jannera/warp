@@ -58,8 +58,8 @@ MVProto
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Ampumisen UI:
     * klikkaa alusta, klikkaa kohdetta
-    * näytetään tgt*marker kohteen päällä
-* Alukset törmäämään toisiinsa server*päässä.. ei ramming speediä kuitenkaan?
+    * näytetään tgt-marker kohteen päällä
+* Alukset törmäämään toisiinsa server-päässä.. ei ramming speediä kuitenkaan?
 * Ampumissysteemi
     * aseiden statit: sykli, lämä
     * ampumiskomento clientilta
@@ -76,7 +76,7 @@ MVProto
 * Kyky pyörittää useita pelejä samaan aikaan
 * maksimivoimien antaminen Serveriltä aluksen luonnin yhteydessä
 * arrival liikkumiseen
-* maksimi*impulsien pituudet pitäisi kertoa ShipSteering.STEP_LENGTH:in pituudella, jolloin aluksen maksimivoimat ilmaisisivat käytetyn maksimivoiman (keskiarvon) sekunnissa
+* maksimi-impulsien pituudet pitäisi kertoa ShipSteering.STEP_LENGTH:in pituudella, jolloin aluksen maksimivoimat ilmaisisivat käytetyn maksimivoiman (keskiarvon) sekunnissa
 * aseiden rangen näyttäminen ympyrällä
 * usean laivan kerralla
     * valitseminen
