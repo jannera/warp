@@ -54,11 +54,11 @@ MVProto
 * Laivojen omistaminen
 * Eri tyyppien laivojen värittäminen
 * Valitun aluksen korostaminen
-* Ainoastaan omien laivojen käskyttäminen client*puolelle
+* Ainoastaan omien laivojen käskyttäminen client-puolelle
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Ampumisen UI:
-  * klikkaa alusta, klikkaa kohdetta
-  * näytetään tgt*marker kohteen päällä
+    * klikkaa alusta, klikkaa kohdetta
+    * näytetään tgt*marker kohteen päällä
 * Alukset törmäämään toisiinsa server*päässä.. ei ramming speediä kuitenkaan?
 * Ampumissysteemi
     * aseiden statit: sykli, lämä
