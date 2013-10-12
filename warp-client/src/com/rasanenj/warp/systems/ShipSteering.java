@@ -7,7 +7,7 @@ import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.entities.ClientShip.TurningState;
 import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
-import com.rasanenj.warp.tasks.Task;
+import com.rasanenj.warp.tasks.IntervalTask;
 
 import java.util.Collection;
 
@@ -19,7 +19,7 @@ import static com.rasanenj.warp.Log.log;
  * TODO: ATM the update rate of this Task is the multiplier on the forces used.
  * Should be fixed somehow.
  */
-public class ShipSteering extends Task {
+public class ShipSteering extends IntervalTask {
     private static final float MESSAGES_IN_SECOND = 60f;
     private static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
 

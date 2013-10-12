@@ -18,9 +18,8 @@ import java.util.ArrayList;
 public class BattleLoop extends RunnableFPS {
     private final BattleServer battleServer;
     private final World world;
-    private ArrayList<Player> players = new ArrayList<Player>(); // TODO: make it concurrent (because players can join at any time)
-    // TODO: also make it ServerPlayers
-    private ArrayList<ServerShip> ships = new ArrayList<ServerShip>(); // TODO: this too
+    private ArrayList<Player> players = new ArrayList<Player>(); // TODO: make it ServerPlayers
+    private ArrayList<ServerShip> ships = new ArrayList<ServerShip>();
 
 
     static private final float FPS = 25;

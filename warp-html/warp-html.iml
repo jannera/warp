@@ -17,7 +17,7 @@
   <component name="FacetManager">
     <facet type="gwt" name="GWT">
       <configuration>
-        <setting name="compilerParameters" value="-logLevel TRACE" />
+        <setting name="compilerParameters" value="-logLevel TRACE -draftCompile" />
         <setting name="compilerMaxHeapSize" value="512" />
         <setting name="gwtScriptOutputStyle" value="DETAILED" />
         <setting name="gwtSdkUrl" value="file://C:/gwt-2.5.1" />

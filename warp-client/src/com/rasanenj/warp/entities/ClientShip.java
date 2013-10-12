@@ -220,6 +220,38 @@ public class ClientShip extends Image {
         this.turningState = turningState;
     }
 
+    /**
+     *
+     * 0     1
+     *  +---+
+     *  |   |
+     *  |   |
+     *  +---+
+     * 3     2
+     *
+     * @param corners
+     */
+    public void getBoundingBox(Vector2 [] corners) {
+        getCenterPos(corners[0]);
+        for (int i=1; i < 4; i++) {
+            corners[i].set(corners[i-1]);
+        }
+
+        float halfWidth = getWidth() / 2f;
+        float halfHeight = getHeight() / 2f;
+        corners[0].x -= halfWidth;
+        corners[0].y += halfHeight;
+
+        corners[1].x += halfWidth;
+        corners[1].y += halfHeight;
+
+        corners[2].x += halfWidth;
+        corners[2].y -= halfHeight;
+
+        corners[3].x -= halfWidth;
+        corners[3].y -= halfHeight;
+    }
+
     // TODO: create all these when the ship is created, given from Server
     private final float maxAngularAcceleration = 12f;
     private final float maxAngularVelocity = 35f;

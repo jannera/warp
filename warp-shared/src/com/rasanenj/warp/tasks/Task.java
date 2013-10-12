@@ -1,24 +1,24 @@
 package com.rasanenj.warp.tasks;
 
 /**
- * @author gilead
+ * @author Janne Rasanen
  */
-public abstract class Task {
-    private final long MSG_INTERVAL;
-    private long lastRunTime = 0;
+public interface Task {
 
-    public Task(float msgsInSeconds) {
-        this.MSG_INTERVAL = (long) (1f / msgsInSeconds * 1000f);
-    }
+    /**
+     * Updates task by given time delta. If the task is finished and thus
+     * ready for deletion, returns false.
+     *
+     * @param delta
+     *             Given time delta since last update.
+     * @return
+     *             If the task is finished, returns False. Otherwise True.
+     */
+    public boolean update(float delta);
 
-    public void update() {
-        long timeNow = System.currentTimeMillis();
-        if (timeNow - lastRunTime > MSG_INTERVAL) {
-            lastRunTime = timeNow;
-            run();
-        }
-    }
-
-    protected abstract void run();
-
+    /**
+     * Removes dynamic content where applicable.
+     *
+     */
+    public void removeSafely();
 }

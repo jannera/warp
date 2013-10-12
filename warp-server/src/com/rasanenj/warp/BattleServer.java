@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.*;
-import com.rasanenj.warp.tasks.Task;
+import com.rasanenj.warp.tasks.IntervalTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import static com.rasanenj.warp.Log.log;
 /**
  * @author gilead
  */
-public class BattleServer extends Task {
+public class BattleServer extends IntervalTask {
     private final BattleMsgConsumer consumer;
     private final Vector2 pos = new Vector2();
 

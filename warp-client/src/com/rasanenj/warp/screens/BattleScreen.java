@@ -2,10 +2,13 @@ package com.rasanenj.warp.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.entities.ClientShip;
@@ -51,12 +54,92 @@ public class BattleScreen implements Screen {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         renderVectors();
+        renderOffScreenShips();
+    }
+
+    private static final float TRIANGLE_SIDE = 0.5f;
+
+    public void renderOffScreenShips() {
+        // renders a triangle for every ship that is not shown on the screen
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        final Vector3 cameraPosition = stage.getCamera().position;
+        final float halfViewPortWidth = stage.getCamera().viewportWidth / 2f;
+        final float halfViewPortHeight = stage.getCamera().viewportHeight / 2f;
+
+        float cameraLeft =   cameraPosition.x - halfViewPortWidth;
+        float cameraRight =  cameraPosition.x + halfViewPortWidth;
+        float cameraTop =    cameraPosition.y  + halfViewPortHeight;
+        float cameraBottom = cameraPosition.y - halfViewPortHeight;
+
+        boolean top = false, left = false, right = false, bottom = false;
+
+        for (ClientShip ship : battleHandler.getShips()) {
+            if (isOnScreen(ship)) {
+                continue;
+            }
+            ship.getCenterPos(tmp);
+
+            if (tmp.x < cameraLeft) {
+                left = true;
+            }
+            else if (tmp.x > cameraRight) {
+                right = true;
+            }
+
+            if (tmp.y > cameraTop) {
+                top = true;
+            }
+            else if (tmp.y < cameraBottom) {
+                bottom = true;
+            }
+
+            tmp.x = MathUtils.clamp(tmp.x, cameraLeft, cameraRight);
+            tmp.y = MathUtils.clamp(tmp.y, cameraBottom, cameraTop);
+
+            if (top) {
+                corners[0].set(tmp.x - TRIANGLE_SIDE / 2f, tmp.y - TRIANGLE_SIDE);
+                corners[1].set(tmp.x + TRIANGLE_SIDE / 2f, tmp.y - TRIANGLE_SIDE);
+            }
+            else if (bottom) {
+                corners[0].set(tmp.x - TRIANGLE_SIDE / 2f, tmp.y + TRIANGLE_SIDE);
+                corners[1].set(tmp.x + TRIANGLE_SIDE / 2f, tmp.y + TRIANGLE_SIDE);
+            }
+            else if (right) {
+                corners[0].set(tmp.x - TRIANGLE_SIDE, tmp.y + TRIANGLE_SIDE / 2f);
+                corners[1].set(tmp.x - TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
+            }
+            else if (left) {
+                corners[0].set(tmp.x + TRIANGLE_SIDE, tmp.y + TRIANGLE_SIDE / 2f);
+                corners[1].set(tmp.x + TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
+            }
+
+            shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
+
+
+
+        }
+        shapeRenderer.end();
+    }
+
+    private final Vector3 tmp3 = new Vector3();
+
+    private boolean isOnScreen(ClientShip ship) {
+        ship.getBoundingBox(corners);
+
+        final Camera camera = stage.getCamera();
+        for (int i=0; i < corners.length; i++) {
+            tmp3.set(corners[i].x, corners[i].y, 0);
+            if (camera.frustum.pointInFrustum(tmp3)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void renderVectors() {
         shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (ClientShip ship : battleHandler.getShips()) {
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             ship.getCenterPos(tmp);
             /*
             // render the velocity of the ship
@@ -88,9 +171,8 @@ public class BattleScreen implements Screen {
             shapeRenderer.setColor(DODGER_BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
                     tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);
-
-            shapeRenderer.end();
         }
+        shapeRenderer.end();
     }
 
     @Override
@@ -126,6 +208,10 @@ public class BattleScreen implements Screen {
     public void setCameraPos(float x, float y) {
         float dx = x - stage.getCamera().position.x;
         float dy = y - stage.getCamera().position.y;
+        stage.getCamera().translate(dx, dy, 0);
+    }
+
+    public void translateCamera(float dx, float dy) {
         stage.getCamera().translate(dx, dy, 0);
     }
 
