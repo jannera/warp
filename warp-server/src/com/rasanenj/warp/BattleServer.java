@@ -36,15 +36,9 @@ public class BattleServer extends IntervalTask {
                 // notify the new player about existing ships
                 for (ServerShip ship : battleLoop.getShips()) {
                     serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
-                            ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight()));
+                            ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
+                            ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity()));
                 }
-
-                // add a new ship for the new player
-                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 0.4f, serverPlayer, 2f, 1f, 0.3f, 0.3f);
-                battleLoop.addShip(ship);
-                // notify everyone about the new ship
-                sendToAll(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
-                        ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight()));
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
                 battleLoop.removePlayer(player);
@@ -65,10 +59,26 @@ public class BattleServer extends IntervalTask {
                 //b.applyTorque(message.getAngular(), true);
                 b.applyForceToCenter(message.getX(), message.getY(), true);
                 // log("speed:" + b.getLinearVelocity().len());
-                log("angular velocity:" + b.getAngularVelocity());
+                // log("angular velocity:" + b.getAngularVelocity());
                 // log(message.getX() +"," + message.getY());
                 //b.applyLinearImpulse(message.getX(), message.getY(),
                 //        ship.getEngineLocation().x, ship.getEngineLocation().y, true);
+            }
+            else if (msg.getType() == Message.MessageType.SHIP_STATS) {
+                ShipStatsMessage message = (ShipStatsMessage) msg;
+
+                log(message.getMaxHealth());
+
+                ServerPlayer serverPlayer = (ServerPlayer) player;
+
+                // add a new ship for the new player
+                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 0.4f, serverPlayer, message.getAcceleration(),
+                        message.getMaxHealth(), message.getMaxSpeed(), message.getTurnSpeed());
+                battleLoop.addShip(ship);
+                // notify everyone about the new ship
+                sendToAll(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
+                        ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
+                        ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity()));
             }
         }
 
@@ -76,7 +86,8 @@ public class BattleServer extends IntervalTask {
         public Collection<Message.MessageType> getMessageTypes() {
             return Arrays.asList(Message.MessageType.JOIN_SERVER,
                     Message.MessageType.SET_ACCELERATION,
-                    Message.MessageType.DISCONNECT);
+                    Message.MessageType.DISCONNECT,
+                    Message.MessageType.SHIP_STATS);
         }
     }
 

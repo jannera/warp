@@ -56,8 +56,12 @@ public class BattleHandler {
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
+                log("Creating " + message.getId());
                 ClientShip ship = new ClientShip(message.getId(), message.getWidth(),
-                        message.getHeight(), message.getMass(), message.getInertia());
+                        message.getHeight(), message.getMass(), message.getInertia(),
+                        message.getMaxLinearForceForward(), message.getMaxLinearForceBackward(),
+                        message.getMaxLinearForceLeft(), message.getMaxLinearForceRight(),
+                        message.getMaxHealth(), message.getMaxVelocity(), message.getMaxAngularVelocity());
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.attach(screen.getStage());

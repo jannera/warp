@@ -25,6 +25,7 @@ public class ServerShip extends Entity {
     private float width, height;
 
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
+    private final float maxHealth, maxVelocity, maxAngularVelocity;
 
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -33,9 +34,10 @@ public class ServerShip extends Entity {
         bodyDef.angularDamping = 0f;
     }
 
+
+
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
-                      float maxLinearForceForward, float maxLinearForceBackward,
-                      float maxLinearForceLeft, float maxLinearForceRight) {
+                      float acceleration, float maxHealth, float maxVelocity, float maxAngularVelocity) {
         this.width = width;
         this.height = height;
         body = world.createBody(bodyDef);
@@ -44,10 +46,19 @@ public class ServerShip extends Entity {
         body.createFixture(polygonShape, DENSITY);
         this.player = player;
         storeOldPosition();
-        this.maxLinearForceForward = maxLinearForceForward;
-        this.maxLinearForceBackward = maxLinearForceBackward;
-        this.maxLinearForceLeft = maxLinearForceLeft;
-        this.maxLinearForceRight = maxLinearForceRight;
+
+        log("id: " + getId() + "acceleration:" + acceleration);
+
+        // F = ma
+        float mass = body.getMass();
+        this.maxLinearForceForward = mass * acceleration;
+        this.maxLinearForceBackward = mass * acceleration / 2f;
+        this.maxLinearForceLeft = mass * acceleration / 4f;
+        this.maxLinearForceRight = mass * acceleration / 4f;
+
+        this.maxHealth = maxHealth;
+        this.maxVelocity = maxVelocity;
+        this.maxAngularVelocity = maxAngularVelocity;
     }
 
     public Body getBody() {
@@ -107,5 +118,17 @@ public class ServerShip extends Entity {
 
     public float getMaxLinearForceRight() {
         return maxLinearForceRight;
+    }
+
+    public float getMaxHealth() {
+        return maxHealth;
+    }
+
+    public float getMaxVelocity() {
+        return maxVelocity;
+    }
+
+    public float getMaxAngularVelocity() {
+        return maxAngularVelocity;
     }
 }

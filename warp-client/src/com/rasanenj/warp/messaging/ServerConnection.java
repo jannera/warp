@@ -1,10 +1,14 @@
 package com.rasanenj.warp.messaging;
 
+import com.badlogic.gdx.utils.Array;
+import com.rasanenj.warp.FleetStatsFetcher;
 import com.sksamuel.gwt.websockets.Base64Utils;
 import com.sksamuel.gwt.websockets.Websocket;
 import com.sksamuel.gwt.websockets.WebsocketListener;
 
 import java.nio.ByteBuffer;
+
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -12,11 +16,13 @@ import java.nio.ByteBuffer;
 public class ServerConnection implements WebsocketListener {
     final Websocket socket;
     private final MessageDelegator delegator;
+    private final FleetStatsFetcher statsFetcher;
 
     public ServerConnection(String host, MessageDelegator delegator) {
         this.delegator = delegator;
         socket = new Websocket(host);
         socket.addListener(this);
+        this.statsFetcher = new FleetStatsFetcher(2);
     }
 
     public void send(Message message) {
@@ -37,6 +43,8 @@ public class ServerConnection implements WebsocketListener {
 
     @Override
     public void onOpen() {
+        statsFetcher.loadJSON(this);
+
         send(new JoinServerMessage("gilead"));
     }
 
@@ -46,5 +54,12 @@ public class ServerConnection implements WebsocketListener {
 
     public MessageDelegator getDelegator() {
         return delegator;
+    }
+
+    public void sendShipStats(Array<ShipStatsMessage> msgs) {
+        for (ShipStatsMessage m : msgs) {
+            log(m.maxHealth);
+            send(m);
+        }
     }
 }

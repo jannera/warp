@@ -12,6 +12,8 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ClientShip extends Image {
+    private final float maxLinearVelocity;
+    private final float maxHealth;
     private float brakingLeft;
     private Vector2 impulseIdeal = new Vector2();
 
@@ -84,7 +86,10 @@ public class ClientShip extends Image {
     private long updateTime;
     private float angularAcceleration;
 
-    public ClientShip(long id, float width, float height, float mass, float inertia) {
+    public ClientShip(long id, float width, float height, float mass, float inertia,
+                      float maxLinearForceForward, float maxLinearForceBackward,
+                      float maxLinearForceLeft, float maxLinearForceRight,
+                      float maxHealth, float maxVelocity, float maxAngularVelocity) {
         super(Assets.shipTexture);
         this.id = id;
         this.setWidth(width);
@@ -101,6 +106,15 @@ public class ClientShip extends Image {
         getCenterPos(tmp);
         setOrigin(tmp.x, tmp.y);
         accRefresh = 0;
+
+        this.maxLinearForceForward = maxLinearForceForward;
+        this.maxLinearForceBackward = maxLinearForceBackward;
+        this.maxLinearForceLeft = maxLinearForceLeft;
+        this.maxLinearForceRight = maxLinearForceRight;
+
+        this.maxHealth = maxHealth;
+        this.maxLinearVelocity = maxVelocity;
+        this.maxAngularVelocity = maxAngularVelocity;
     }
 
     public void setPosition(float x, float y) {
@@ -254,6 +268,14 @@ public class ClientShip extends Image {
 
     // TODO: create all these when the ship is created, given from Server
     private final float maxAngularAcceleration = 12f;
-    private final float maxAngularVelocity = 35f;
-    private final float maxLinearForceRight = 0.5f, maxLinearForceForward = 2f, maxLinearForceBackward = 1f, maxLinearForceLeft = maxLinearForceRight;
+    private final float maxAngularVelocity;
+    private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
+
+    public float getMaxLinearVelocity() {
+        return maxLinearVelocity;
+    }
+
+    public float getMaxHealth() {
+        return maxHealth;
+    }
 }

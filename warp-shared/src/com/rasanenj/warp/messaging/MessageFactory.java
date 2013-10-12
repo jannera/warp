@@ -24,6 +24,8 @@ public class MessageFactory {
                 return new CreateShipMessage(msg);
             case SET_ACCELERATION:
                 return new AccelerationMessage(msg);
+            case SHIP_STATS:
+                return new ShipStatsMessage(msg);
         }
         log(Level.SEVERE, "MessageFactory could not decode type " + type);
         return null;
