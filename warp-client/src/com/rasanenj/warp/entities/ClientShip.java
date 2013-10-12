@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.rasanenj.warp.Assets;
+import com.rasanenj.warp.messaging.Player;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -12,15 +13,15 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ClientShip extends Image {
-    private final long ownerId;
+    private final Player owner;
 
-    public ClientShip(long id, long ownerId, float width, float height, float mass, float inertia,
+    public ClientShip(long id, Player owner, float width, float height, float mass, float inertia,
                       float maxLinearForceForward, float maxLinearForceBackward,
                       float maxLinearForceLeft, float maxLinearForceRight,
                       float maxHealth, float maxVelocity, float maxAngularVelocity) {
         super(Assets.shipTexture);
         this.id = id;
-        this.ownerId = ownerId;
+        this.owner = owner;
         this.setWidth(width);
         this.setHeight(height);
         setVisible(false);
@@ -283,6 +284,10 @@ public class ClientShip extends Image {
     }
 
     public long getOwnerId() {
-        return ownerId;
+        return owner.getId();
+    }
+
+    public Player getOwner() {
+        return owner;
     }
 }

@@ -32,7 +32,8 @@ public class BattleHandler {
     private final ShipClickListener shipClickListener;
     private final TaskHandler taskHandler;
     private final MoveCameraTask moveCameraTask;
-    private static final Color[] playerColors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
+    private static final Color[] playerColors = {new Color(0.5f, 0, 0, 1), new Color(0, 0.5f, 0, 1), new Color(0, 0, 0.5f, 1), new Color(0, 0.5f, 0.5f, 1)};
+    private static final Color[] hiliteColors = {new Color(1f, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0,0,1,1), new Color(0, 1, 1, 1)};
     private final Array<Player> players = new Array<Player>(true, 1);
 
     private class BattleMessageConsumer extends MessageConsumer {
@@ -62,7 +63,8 @@ public class BattleHandler {
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
                 log("Creating " + message.getId());
-                ClientShip ship = new ClientShip(message.getId(), message.getOwnerId(), message.getWidth(),
+                Player owningPlayer = getPlayer(message.getOwnerId());
+                ClientShip ship = new ClientShip(message.getId(), owningPlayer, message.getWidth(),
                         message.getHeight(), message.getMass(), message.getInertia(),
                         message.getMaxLinearForceForward(), message.getMaxLinearForceBackward(),
                         message.getMaxLinearForceLeft(), message.getMaxLinearForceRight(),
@@ -72,12 +74,12 @@ public class BattleHandler {
                 ship.attach(screen.getStage());
                 ship.addListener(shipClickListener);
 
-                Player owningPlayer = getPlayer(ship.getOwnerId());
+
                 if (owningPlayer == null) {
-                    log(Level.SEVERE, "Couldn't find player with id: " + ship.getOwnerId());
+                    log(Level.SEVERE, "Couldn't find player with id: " + message.getOwnerId());
                 }
                 else {
-                    Color c = playerColors[owningPlayer.getColorIndex()];
+                    Color c = getBasicColor(owningPlayer);
                     ship.setColor(c);
                 }
             }
@@ -104,10 +106,18 @@ public class BattleHandler {
         public void clicked (InputEvent event, float x, float y) {
             log("clicked Ship" + event.getTarget() + " @ (" + x + ", " + y + ")");
 
+            if (selectedShip != null) {
+                selectedShip.setColor(getBasicColor(selectedShip.getOwner()));
+            }
             selectedShip = (ClientShip) event.getTarget();
             selectedShip.clearTargetPos();
+            selectedShip.setColor(getHiliteColor(selectedShip.getOwner()));
             event.cancel();
         }
+    }
+
+    private Color getHiliteColor(Player player) {
+        return hiliteColors[player.getColorIndex()];
     }
 
     private class StageDragListener extends DragListener {
@@ -245,5 +255,9 @@ public class BattleHandler {
             }
         }
         return null;
+    }
+
+    private Color getBasicColor(Player player) {
+        return playerColors[player.getColorIndex()];
     }
 }
