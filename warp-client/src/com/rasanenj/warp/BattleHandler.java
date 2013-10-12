@@ -88,7 +88,7 @@ public class BattleHandler {
                 JoinServerMessage message = (JoinServerMessage) msg;
                 if (message.getId() != -1) {
                     // terrible hack in order to use JoinServerMessages in both battle and chat
-                    Player p = new Player(message.getPlayerName(), message.getId(), message.getColorIndex()); // TODO get the color index
+                    Player p = new Player(message.getPlayerName(), message.getId(), message.getColorIndex());
                     log("joined in battle:" + p);
                     players.add(p);
                 }

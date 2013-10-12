@@ -270,8 +270,8 @@ public class ClientShip extends Image {
         corners[3].y -= halfHeight;
     }
 
-    // TODO: create all these when the ship is created, given from Server
-    private final float maxAngularAcceleration = 12f;
+
+    private final float maxAngularAcceleration = 12f; // TODO: create all this when the ship is created, given from Server
     private final float maxAngularVelocity;
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
 

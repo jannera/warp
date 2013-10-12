@@ -68,7 +68,7 @@ public class ServerShip extends Entity {
     }
 
     public Vector2 getEngineLocation() {
-        return body.getWorldCenter(); // TODO FIX
+        return body.getWorldCenter();
     }
 
     public ServerPlayer getPlayer() {

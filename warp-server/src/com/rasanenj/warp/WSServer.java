@@ -63,7 +63,6 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onError(WebSocket conn, Exception ex) {
         ex.printStackTrace();
-        // TODO some error handling :p
     }
 
     @Override
@@ -84,7 +83,6 @@ public class WSServer extends WebSocketServer {
     }
 
     private ServerPlayer getPlayer(WebSocket conn) {
-        // TODO: replace this with a concurrent hashmap
         for(ServerPlayer player : players) {
             if (player.getConn() == conn) {
                 return player;
