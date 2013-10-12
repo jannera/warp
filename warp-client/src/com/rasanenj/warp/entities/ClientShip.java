@@ -12,6 +12,40 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ClientShip extends Image {
+    private final long ownerId;
+
+    public ClientShip(long id, long ownerId, float width, float height, float mass, float inertia,
+                      float maxLinearForceForward, float maxLinearForceBackward,
+                      float maxLinearForceLeft, float maxLinearForceRight,
+                      float maxHealth, float maxVelocity, float maxAngularVelocity) {
+        super(Assets.shipTexture);
+        this.id = id;
+        this.ownerId = ownerId;
+        this.setWidth(width);
+        this.setHeight(height);
+        setVisible(false);
+        this.targetImg = new Image(Assets.targetTexture);
+        float tgtImgBound = Math.max(width, height);
+        this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
+        clearTargetPos();
+
+        this.mass = mass;
+        this.inertia = inertia;
+
+        getCenterPos(tmp);
+        setOrigin(tmp.x, tmp.y);
+        accRefresh = 0;
+
+        this.maxLinearForceForward = maxLinearForceForward;
+        this.maxLinearForceBackward = maxLinearForceBackward;
+        this.maxLinearForceLeft = maxLinearForceLeft;
+        this.maxLinearForceRight = maxLinearForceRight;
+
+        this.maxHealth = maxHealth;
+        this.maxLinearVelocity = maxVelocity;
+        this.maxAngularVelocity = maxAngularVelocity;
+    }
+
     private final float maxLinearVelocity;
     private final float maxHealth;
     private float brakingLeft;
@@ -85,37 +119,6 @@ public class ClientShip extends Image {
     private float angularVelocity;
     private long updateTime;
     private float angularAcceleration;
-
-    public ClientShip(long id, float width, float height, float mass, float inertia,
-                      float maxLinearForceForward, float maxLinearForceBackward,
-                      float maxLinearForceLeft, float maxLinearForceRight,
-                      float maxHealth, float maxVelocity, float maxAngularVelocity) {
-        super(Assets.shipTexture);
-        this.id = id;
-        this.setWidth(width);
-        this.setHeight(height);
-        setVisible(false);
-        this.targetImg = new Image(Assets.targetTexture);
-        float tgtImgBound = Math.max(width, height);
-        this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
-        clearTargetPos();
-
-        this.mass = mass;
-        this.inertia = inertia;
-
-        getCenterPos(tmp);
-        setOrigin(tmp.x, tmp.y);
-        accRefresh = 0;
-
-        this.maxLinearForceForward = maxLinearForceForward;
-        this.maxLinearForceBackward = maxLinearForceBackward;
-        this.maxLinearForceLeft = maxLinearForceLeft;
-        this.maxLinearForceRight = maxLinearForceRight;
-
-        this.maxHealth = maxHealth;
-        this.maxLinearVelocity = maxVelocity;
-        this.maxAngularVelocity = maxAngularVelocity;
-    }
 
     public void setPosition(float x, float y) {
         if (!isVisible()) {
@@ -277,5 +280,9 @@ public class ClientShip extends Image {
 
     public float getMaxHealth() {
         return maxHealth;
+    }
+
+    public long getOwnerId() {
+        return ownerId;
     }
 }

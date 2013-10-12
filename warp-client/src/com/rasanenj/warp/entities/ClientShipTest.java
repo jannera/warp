@@ -17,7 +17,7 @@ public class ClientShipTest {
     public void testSetAngularVelocity() throws Exception {
         Assets.shipTexture = mock(Texture.class);
         Assets.targetTexture = mock(Texture.class);
-        ClientShip ship = new ClientShip(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+        ClientShip ship = new ClientShip(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
         ship.setAngularVelocity(1, 1000);
         ship.setAngularVelocity(2, 2000);
         assertEquals("Acceleration should've been set", 1f, ship.getAngularAcceleration(), epsilon);

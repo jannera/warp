@@ -113,6 +113,7 @@ public class BattleScreen implements Screen {
                 corners[1].set(tmp.x + TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
             }
 
+            shapeRenderer.setColor(ship.getColor());
             shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
 
 
@@ -150,6 +151,7 @@ public class BattleScreen implements Screen {
 
 
             // render the rectangle that limits the maximum force vector
+            /*
             ship.getForceLimitCorners(corners);
             shapeRenderer.setColor(Color.YELLOW);
             for (int i=0; i < 4; i++) {
@@ -161,11 +163,14 @@ public class BattleScreen implements Screen {
                 shapeRenderer.line(corners[i].x, corners[i].y,
                              corners[next].x, corners[next].y);
             }
+            */
 
             // render the ideal impulse
+            /*
             shapeRenderer.setColor(Color.BLUE);
             shapeRenderer.line(tmp.x, tmp.y,
                     tmp.x + ship.getImpulseIdeal().x, tmp.y + ship.getImpulseIdeal().y);
+            */
 
             // render the impulse
             shapeRenderer.setColor(DODGER_BLUE);

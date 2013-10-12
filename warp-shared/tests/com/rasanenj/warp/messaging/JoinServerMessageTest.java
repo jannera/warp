@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 public class JoinServerMessageTest {
     @org.junit.Test
     public void testEncode() throws Exception {
-        JoinServerMessage msg = new JoinServerMessage("name");
+        JoinServerMessage msg = new JoinServerMessage("name", 1, 0);
         byte[] arr = msg.encode();
         ByteBuffer b = ByteBuffer.wrap(arr);
         Message.MessageType type = Message.readType(b);
@@ -40,12 +40,12 @@ public class JoinServerMessageTest {
 
     @org.junit.Test
     public void testDecode() throws Exception {
-        JoinServerMessage msg = new JoinServerMessage("name");
+        JoinServerMessage msg = new JoinServerMessage("name", 1, 0);
         byte[] arr = msg.encode();
         ByteBuffer b = ByteBuffer.wrap(arr);
         Message.MessageType type = Message.readType(b);
         assertEquals(Message.MessageType.JOIN_SERVER, type);
         msg = new JoinServerMessage(b);
-        assertEquals("name", msg.msg);
+        assertEquals("name", msg.playerName);
     }
 }

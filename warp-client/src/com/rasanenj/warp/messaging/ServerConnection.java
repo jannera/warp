@@ -45,7 +45,7 @@ public class ServerConnection implements WebsocketListener {
     public void onOpen() {
         statsFetcher.loadJSON(this);
 
-        send(new JoinServerMessage("gilead"));
+        send(new JoinServerMessage("gilead", -1, -1));
     }
 
     public void open() {
@@ -58,7 +58,6 @@ public class ServerConnection implements WebsocketListener {
 
     public void sendShipStats(Array<ShipStatsMessage> msgs) {
         for (ShipStatsMessage m : msgs) {
-            log(m.maxHealth);
             send(m);
         }
     }

@@ -73,8 +73,8 @@ public class WSServer extends WebSocketServer {
         ServerPlayer player;
         if (msg.getType() == Message.MessageType.JOIN_SERVER) {
             JoinServerMessage joinServerMsg = (JoinServerMessage)msg;
-            player = new ServerPlayer(conn, joinServerMsg.getMsg());
-            log(player.getName() + " joined server");
+            player = new ServerPlayer(conn, joinServerMsg.getPlayerName());
+            log(player.getName() + " (" + player.getId() + ") joined server");
             players.add(player);
         }
         else {

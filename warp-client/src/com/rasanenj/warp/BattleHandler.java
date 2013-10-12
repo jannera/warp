@@ -1,11 +1,13 @@
 package com.rasanenj.warp;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
@@ -16,6 +18,7 @@ import com.rasanenj.warp.tasks.TaskHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -29,6 +32,8 @@ public class BattleHandler {
     private final ShipClickListener shipClickListener;
     private final TaskHandler taskHandler;
     private final MoveCameraTask moveCameraTask;
+    private static final Color[] playerColors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
+    private final Array<Player> players = new Array<Player>(true, 1);
 
     private class BattleMessageConsumer extends MessageConsumer {
         public BattleMessageConsumer(MessageDelegator delegator) {
@@ -57,7 +62,7 @@ public class BattleHandler {
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
                 log("Creating " + message.getId());
-                ClientShip ship = new ClientShip(message.getId(), message.getWidth(),
+                ClientShip ship = new ClientShip(message.getId(), message.getOwnerId(), message.getWidth(),
                         message.getHeight(), message.getMass(), message.getInertia(),
                         message.getMaxLinearForceForward(), message.getMaxLinearForceBackward(),
                         message.getMaxLinearForceLeft(), message.getMaxLinearForceRight(),
@@ -66,12 +71,31 @@ public class BattleHandler {
                 screen.getStage().addActor(ship);
                 ship.attach(screen.getStage());
                 ship.addListener(shipClickListener);
+
+                Player owningPlayer = getPlayer(ship.getOwnerId());
+                if (owningPlayer == null) {
+                    log(Level.SEVERE, "Couldn't find player with id: " + ship.getOwnerId());
+                }
+                else {
+                    Color c = playerColors[owningPlayer.getColorIndex()];
+                    ship.setColor(c);
+                }
+            }
+
+            else if (msg.getType() == Message.MessageType.JOIN_SERVER) {
+                JoinServerMessage message = (JoinServerMessage) msg;
+                if (message.getId() != -1) {
+                    // terrible hack in order to use JoinServerMessages in both battle and chat
+                    Player p = new Player(message.getPlayerName(), message.getId(), message.getColorIndex()); // TODO get the color index
+                    log("joined in battle:" + p);
+                    players.add(p);
+                }
             }
         }
 
         @Override
         public Collection<Message.MessageType> getMessageTypes() {
-            return Arrays.asList(Message.MessageType.UPDATE_SHIP_PHYSICS, Message.MessageType.CREATE_SHIP);
+            return Arrays.asList(Message.MessageType.UPDATE_SHIP_PHYSICS, Message.MessageType.CREATE_SHIP, Message.MessageType.JOIN_SERVER);
         }
     }
 
@@ -212,5 +236,14 @@ public class BattleHandler {
 
     public ArrayList<ClientShip> getShips() {
         return ships;
+    }
+
+    public Player getPlayer(long id) {
+        for (Player p : players) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
     }
 }

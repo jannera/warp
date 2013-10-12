@@ -49,10 +49,10 @@ Future Ideas
 MVProto
 ===
 * DONE voimien rajoittaminen aluksen suunnan perusteella
-* Kameraan liikuttelu (ja zoomaus?)
-* Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
-* Laivojen omistaminen
-* Eri tyyppien laivojen värittäminen
+* Kameran liikuttelu ei saisi tökkiä
+* DONE Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
+* DONE Laivojen omistaminen
+* DONE Eri tyyppien laivojen värittäminen
 * Valitun aluksen korostaminen
 * Ainoastaan omien laivojen käskyttäminen client-puolelle
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa

@@ -30,12 +30,31 @@ public class BattleServer extends IntervalTask {
         public void consume(Player player, Message msg) {
             if (msg.getType() == Message.MessageType.JOIN_SERVER) {
                 // TODO: send the player StartBattleMessage
-                battleLoop.addPlayer(player);
                 ServerPlayer serverPlayer = (ServerPlayer) player;
+
+                // notify the player about himself
+                serverPlayer.send(new JoinServerMessage(serverPlayer.getName(), serverPlayer.getId(), serverPlayer.getColorIndex()));
+
+                // notify the new player about existing players
+                for (Player p : battleLoop.getPlayers()) {
+                    log("notifying " + serverPlayer + " about " + p);
+                    serverPlayer.send(new JoinServerMessage(p.getName(), p.getId(), p.getColorIndex()));
+                }
+
+                // notify existing players about the new player
+                for (Player p : battleLoop.getPlayers()) {
+                    log("notifying " + p + " about " + serverPlayer);
+                    ((ServerPlayer) p).send(new JoinServerMessage(player.getName(), player.getId(), player.getColorIndex()));
+                }
+
+                //
+
+                battleLoop.addPlayer(player);
 
                 // notify the new player about existing ships
                 for (ServerShip ship : battleLoop.getShips()) {
-                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
+                    // log ("player id was " + ship.getPlayer().getId());
+                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
                             ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
                             ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity()));
                 }
@@ -67,16 +86,14 @@ public class BattleServer extends IntervalTask {
             else if (msg.getType() == Message.MessageType.SHIP_STATS) {
                 ShipStatsMessage message = (ShipStatsMessage) msg;
 
-                log(message.getMaxHealth());
-
                 ServerPlayer serverPlayer = (ServerPlayer) player;
 
-                // add a new ship for the new player
+                // add a new ship based on the stats
                 ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 0.4f, serverPlayer, message.getAcceleration(),
                         message.getMaxHealth(), message.getMaxSpeed(), message.getTurnSpeed());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
-                sendToAll(new CreateShipMessage(ship.getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
+                sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
                         ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
                         ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity()));
             }

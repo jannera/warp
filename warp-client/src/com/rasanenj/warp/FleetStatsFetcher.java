@@ -30,7 +30,7 @@ public class FleetStatsFetcher {
                 public void onResponseReceived(Request request, Response response) {
                     if (200 == response.getStatusCode()) {
                         String json = response.getText();
-                        log("Successfully loaded JSON: " + json);
+                        // log("Successfully loaded JSON: " + json);
 
                         int length = getFleetLength(json);
 

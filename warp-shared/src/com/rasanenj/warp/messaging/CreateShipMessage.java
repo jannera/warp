@@ -11,13 +11,15 @@ import static com.rasanenj.warp.Log.log;
 public class CreateShipMessage extends EntityMessage {
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
     private final float maxAngularVelocity, maxVelocity, maxHealth;
+    private final long ownerId;
     float width, height, mass, inertia;
 
-    public CreateShipMessage(long id, float width, float height, float mass, float inertia,
+    public CreateShipMessage(long id, long ownerId, float width, float height, float mass, float inertia,
                              float maxLinearForceForward, float maxLinearForceBackward,
                              float maxLinearForceLeft, float maxLinearForceRight,
                              float maxHealth, float maxVelocity, float maxAngularVelocity) {
         super(id);
+        this.ownerId = ownerId;
         this.width = width;
         this.height = height;
         this.mass = mass;
@@ -33,6 +35,7 @@ public class CreateShipMessage extends EntityMessage {
 
     public CreateShipMessage(ByteBuffer msg) {
         super(msg.getLong());
+        this.ownerId = msg.getLong();
         this.width = msg.getFloat();
         this.height = msg.getFloat();
         this.mass = msg.getFloat();
@@ -53,8 +56,9 @@ public class CreateShipMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Long.SIZE/8 + 11 * Long.SIZE/8);
-        b.putLong(id).putFloat(width).putFloat(height).putFloat(mass).putFloat(inertia);
+        ByteBuffer b = create(2 * Long.SIZE/8 + 11 * Float.SIZE/8);
+        // log("owner id in message " + ownerId);
+        b.putLong(id).putLong(ownerId).putFloat(width).putFloat(height).putFloat(mass).putFloat(inertia);
         b.putFloat(maxLinearForceForward).putFloat(maxLinearForceBackward).putFloat(maxLinearForceLeft).putFloat(maxLinearForceRight);
         b.putFloat(maxHealth).putFloat(maxVelocity).putFloat(maxAngularVelocity);
         return b.array();
@@ -102,5 +106,9 @@ public class CreateShipMessage extends EntityMessage {
 
     public float getMaxHealth() {
         return maxHealth;
+    }
+
+    public long getOwnerId() {
+        return ownerId;
     }
 }

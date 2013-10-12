@@ -47,8 +47,6 @@ public class ServerShip extends Entity {
         this.player = player;
         storeOldPosition();
 
-        log("id: " + getId() + "acceleration:" + acceleration);
-
         // F = ma
         float mass = body.getMass();
         this.maxLinearForceForward = mass * acceleration;
