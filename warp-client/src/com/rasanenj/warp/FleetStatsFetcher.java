@@ -18,11 +18,16 @@ public class FleetStatsFetcher {
     }
 
     public void loadJSON(final ServerConnection serverConnection) {
+        if (Settings.OFFLINE_MODE) {
+            parse(Constants.OFFLINE_FLEET, serverConnection);
+            return;
+        }
+
         String url = "http://" + Constants.PERSIST_SERVER_HOST + "/userships/1/?format=json";
         RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(url));
 
         try {
-            Request request = builder.sendRequest(null, new RequestCallback() {
+            builder.sendRequest(null, new RequestCallback() {
                 public void onError(Request request, Throwable exception) {
                     log("error fetching JSON");
                 }
@@ -31,32 +36,30 @@ public class FleetStatsFetcher {
                     if (200 == response.getStatusCode()) {
                         String json = response.getText();
                         // log("Successfully loaded JSON: " + json);
-                        parse(json);
+                        parse(json, serverConnection);
 
                     } else {
                         log("Error response while fetching Fleet JSON: " + response.getStatusText());
-                        log("Falling back to offline mode");
-                        parse(Constants.OFFLINE_FLEET);
+                        // parse(Constants.OFFLINE_FLEET, serverConnection);
                     }
-                }
-
-                public void parse(String json) {
-                    int length = getFleetLength(json);
-
-                    final Array<ShipStatsMessage> msgs = new Array<ShipStatsMessage>(false, length);
-
-                    for (int i=0; i < length; i++) {
-                        ShipJSON ship = parseJson(json, i);
-                        msgs.add(new ShipStatsMessage(ship.getMaxSpeed(), ship.getAcceleration(), ship.getTurnSpeed(), ship.getMaxHealth()));
-                    }
-
-                    serverConnection.sendShipStats(msgs);
                 }
             });
-
         } catch (RequestException e) {
             log("Couldn't contact server for fleet data");
         }
+    }
+
+    public void parse(String json, final ServerConnection serverConnection) {
+        int length = getFleetLength(json);
+
+        final Array<ShipStatsMessage> msgs = new Array<ShipStatsMessage>(false, length);
+
+        for (int i=0; i < length; i++) {
+            ShipJSON ship = parseJson(json, i);
+            msgs.add(new ShipStatsMessage(ship.getMaxSpeed(), ship.getAcceleration(), ship.getTurnSpeed(), ship.getMaxHealth()));
+        }
+
+        serverConnection.sendShipStats(msgs);
     }
 
     /**

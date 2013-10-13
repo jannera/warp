@@ -64,7 +64,14 @@ MVProto
     * ammusten näyttäminen clintissä
     * DONE lämän näyttäminen clientissä
 * DONE Ainoastaan omien laivojen käskyttäminen client-puolelle
-* Serverin pitäisi poistaa laivat siinä vaiheessa mikäli yhteys käyttäjään katkeaa tai tulee virhe tiedonsiirrossa
+* DONE Kun pelaaja poistetaan pelistä, pitää ilmoittaa peliin jääville pelaajille alusten tuhoutumisesta
+* Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
+* DONE Serveriin väri-indeksien kierrättäminen
+* Maksiminopeuden rajoittaminen (serveriin?)
+* Suurempi maksimikääntönopeus (lisää FPS:ää?)
+* Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
+    * DONE yhteys käyttäjään katkeaa
+    * tai tulee virhe tiedonsiirrossa
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Alukset törmäämään toisiinsa server-päässä.. ei ramming speediä kuitenkaan?
 * DONE healthin näyttäminen clientissä

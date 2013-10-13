@@ -43,9 +43,8 @@ public class ServerConnection implements WebsocketListener {
 
     @Override
     public void onOpen() {
-        statsFetcher.loadJSON(this);
-
         send(new JoinServerMessage("gilead", -1, -1));
+        statsFetcher.loadJSON(this);
     }
 
     public void open() {

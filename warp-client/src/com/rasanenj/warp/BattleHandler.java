@@ -132,6 +132,15 @@ public class BattleHandler {
                 else {
                     screen.getStage().getRoot().removeActor(removedShip);
                 }
+
+                // tell all shooting ships to stop shooting
+                for (ClientShip ship : ships) {
+                    if (ship.getFiringTarget() == removedShip) {
+                        ship.setFiringTarget(null);
+                    }
+                }
+
+
             }
         }
 

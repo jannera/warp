@@ -3,6 +3,7 @@ package com.rasanenj.warp;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.tasks.IntervalTask;
@@ -24,11 +25,11 @@ public class BattleServer extends IntervalTask {
 
     private final Vector2[] startingPositions = {new Vector2(400, 400), new Vector2(420, 400),
        new Vector2(400, 420), new Vector2(420, 420), new Vector2(440, 400), new Vector2(400, 440)};
-    private static final int[] ShipOffsetCounters = new int[8];
+    private static final int[] shipOffsetCounters = new int[8];
 
     static {
-        for (int i=0; i < ShipOffsetCounters.length; i++) {
-            ShipOffsetCounters[i] = 0;
+        for (int i=0; i < shipOffsetCounters.length; i++) {
+            shipOffsetCounters[i] = 0;
         }
     }
 
@@ -45,18 +46,20 @@ public class BattleServer extends IntervalTask {
                 // TODO: send the player StartBattleMessage
                 ServerPlayer serverPlayer = (ServerPlayer) player;
 
+                shipOffsetCounters[serverPlayer.getColorIndex()] = 0;
+
                 // notify the player about himself
                 serverPlayer.send(new JoinServerMessage(serverPlayer.getName(), serverPlayer.getId(), serverPlayer.getColorIndex()));
 
                 // notify the new player about existing players
                 for (Player p : battleLoop.getPlayers()) {
-                    log("notifying " + serverPlayer + " about " + p);
+                    // log("notifying " + serverPlayer + " about " + p);
                     serverPlayer.send(new JoinServerMessage(p.getName(), p.getId(), p.getColorIndex()));
                 }
 
                 // notify existing players about the new player
                 for (Player p : battleLoop.getPlayers()) {
-                    log("notifying " + p + " about " + serverPlayer);
+                    // log("notifying " + p + " about " + serverPlayer);
                     ((ServerPlayer) p).send(new JoinServerMessage(player.getName(), player.getId(), player.getColorIndex()));
                 }
 
@@ -72,7 +75,14 @@ public class BattleServer extends IntervalTask {
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
                 battleLoop.removePlayer(player);
-                battleLoop.removeAllShips(player);
+                ArrayList<ServerShip> ships = battleLoop.getShipsOwnedByPlayer(player);
+                for (ServerShip ship : ships) {
+                    // notify all players still left in the game to remove the ships
+                    // TODO: maybe in the future we want to do something else than remove players ships when he disconnects..
+                    // TODO: maybe give some time to reconnect
+                    sendToAll(new ShipDestructionMessage(ship.getId()));
+                }
+                battleLoop.removeAllShips(ships);
             }
             else if (msg.getType() == Message.MessageType.SET_ACCELERATION) {
                 AccelerationMessage message = (AccelerationMessage) msg;
@@ -101,9 +111,8 @@ public class BattleServer extends IntervalTask {
 
                 // add a new ship based on the stats
                 Vector2 position = startingPositions[serverPlayer.getColorIndex()];
-                float yOffSet = ShipOffsetCounters[serverPlayer.getColorIndex()] * SHIP_WIDTH * 5;
-                ShipOffsetCounters[serverPlayer.getColorIndex()]++;
-                log("offset: " + yOffSet);
+                float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * SHIP_WIDTH * 5;
+                shipOffsetCounters[serverPlayer.getColorIndex()]++;
                 ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT, serverPlayer, message.getAcceleration(),
                         message.getMaxHealth(), message.getMaxSpeed(), message.getTurnSpeed());
                 battleLoop.addShip(ship);

@@ -11,10 +11,9 @@ import org.java_websocket.exceptions.WebsocketNotConnectedException;
 public class ServerPlayer extends Player {
     private final WebSocket conn;
 
-    private static int colorIndexCounter = 0;
 
-    public ServerPlayer(WebSocket conn, String name) {
-        super(name, colorIndexCounter++);
+    public ServerPlayer(WebSocket conn, String name, int colorIndex) {
+        super(name, colorIndex);
         this.conn = conn;
     }
 

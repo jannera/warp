@@ -1,5 +1,6 @@
 package com.rasanenj.warp;
 
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.messaging.*;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -72,13 +73,18 @@ public class WSServer extends WebSocketServer {
         ServerPlayer player;
         if (msg.getType() == Message.MessageType.JOIN_SERVER) {
             JoinServerMessage joinServerMsg = (JoinServerMessage)msg;
-            player = new ServerPlayer(conn, joinServerMsg.getPlayerName());
+            player = new ServerPlayer(conn, joinServerMsg.getPlayerName(), getNextFreeColorIndex());
             log(player.getName() + " (" + player.getId() + ") joined server");
             players.add(player);
         }
         else {
             player = getPlayer(conn);
         }
+        if (player == null) {
+            log("Couldn't find Player for connection " + conn + " msg " + msg.getType());
+            return;
+        }
+
         delegator.delegate(player, msg);
     }
 
@@ -99,5 +105,19 @@ public class WSServer extends WebSocketServer {
 
     private void remove(Player player) {
         players.remove(player);
+        takenColorIndices.removeValue(player.getColorIndex(), false);
+    }
+
+    private final Array<Integer> takenColorIndices = new Array<Integer>(true, 16);
+
+    private int getNextFreeColorIndex() {
+        for (int i=0; i < 256; i++) {
+            if (takenColorIndices.contains(i, false)) {
+                continue;
+            }
+            takenColorIndices.add(i);
+            return i;
+        }
+        return -1;
     }
 }

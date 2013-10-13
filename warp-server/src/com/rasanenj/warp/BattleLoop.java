@@ -85,6 +85,20 @@ public class BattleLoop extends RunnableFPS {
         return ships;
     }
 
+    /**
+     * Do NOT store reference to the returned list
+     */
+    public ArrayList<ServerShip> getShipsOwnedByPlayer(Player owner) {
+        removeList.clear();
+
+        for (ServerShip ship : ships) {
+            if (ship.getPlayer() == owner) {
+                removeList.add(ship);
+            }
+        }
+        return removeList;
+    }
+
     public void removePlayer(Player player) {
         players.remove(player);
     }
@@ -98,15 +112,9 @@ public class BattleLoop extends RunnableFPS {
 
     private ArrayList<ServerShip> removeList = new ArrayList<ServerShip> ();
 
-    public void removeAllShips(Player player) {
-        removeList.clear();
+    public void removeAllShips(ArrayList<ServerShip> toBeRemoved) {
 
-        for (ServerShip ship : ships) {
-            if (ship.getPlayer() == player) {
-                removeList.add(ship);
-            }
-        }
-        ships.removeAll(removeList);
+        ships.removeAll(toBeRemoved);
     }
 
     public ServerShip getShip(long id) {
