@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.Texture;
  */
 public class Assets {
     public static Texture shipTexture;
-    public static Texture targetTexture;
+    public static Texture moveTargetTexture;
+    public static Texture aimingTargetTexture;
 
     public static void load() {
         shipTexture = new Texture(Gdx.files.internal("data/grey_block.png"));
-        targetTexture = new Texture(Gdx.files.internal("data/target_rectangle.png"));
+        moveTargetTexture = new Texture(Gdx.files.internal("data/target_rectangle.png"));
+        aimingTargetTexture = new Texture(Gdx.files.internal("data/firing_target.png"));
     }
 }

@@ -53,21 +53,22 @@ MVProto
 * DONE Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
 * DONE Laivojen omistaminen
 * DONE Eri tyyppien laivojen värittäminen
-* Valitun aluksen korostaminen
-* Ainoastaan omien laivojen käskyttäminen client-puolelle
-* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
-* Ampumisen UI:
+* DONE Valitun aluksen korostaminen
+* DONE Ampumisen UI:
     * klikkaa alusta, klikkaa kohdetta
     * näytetään tgt-marker kohteen päällä
-* Alukset törmäämään toisiinsa server-päässä.. ei ramming speediä kuitenkaan?
 * Ampumissysteemi
     * aseiden statit: sykli, lämä
-    * ampumiskomento clientilta
+    * DONE ampumiskomento clientilta
     * loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
     * ammusten näyttäminen clintissä
-    * lämän näyttäminen clientissä
+    * DONE lämän näyttäminen clientissä
+* DONE Ainoastaan omien laivojen käskyttäminen client-puolelle
+* Serverin pitäisi poistaa laivat siinä vaiheessa mikäli yhteys käyttäjään katkeaa tai tulee virhe tiedonsiirrossa
+* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
+* Alukset törmäämään toisiinsa server-päässä.. ei ramming speediä kuitenkaan?
 * healthin näyttäminen clientissä
-* Oikea määrä pikseleitä chatti*ikkunalle
+* Oikea määrä pikseleitä chatti-ikkunalle
 * Chatissa olevien tyyppien nimien listaaminen
 * Pelin aloittaminen chatista:
     * Haasteen antaminen: /fight <player> <player> <player> ...

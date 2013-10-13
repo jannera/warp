@@ -7,8 +7,8 @@ public abstract class IntervalTask {
     private final long MSG_INTERVAL;
     private long lastRunTime = 0;
 
-    public IntervalTask(float msgsInSeconds) {
-        this.MSG_INTERVAL = (long) (1f / msgsInSeconds * 1000f);
+    public IntervalTask(float updatesInSecond) {
+        this.MSG_INTERVAL = (long) (1f / updatesInSecond * 1000f);
     }
 
     public void update() {

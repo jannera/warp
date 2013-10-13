@@ -31,21 +31,26 @@ public class FleetStatsFetcher {
                     if (200 == response.getStatusCode()) {
                         String json = response.getText();
                         // log("Successfully loaded JSON: " + json);
-
-                        int length = getFleetLength(json);
-
-                        final Array<ShipStatsMessage> msgs = new Array<ShipStatsMessage>(false, length);
-
-                        for (int i=0; i < length; i++) {
-                            ShipJSON ship = parseJson(json, i);
-                            msgs.add(new ShipStatsMessage(ship.getMaxSpeed(), ship.getAcceleration(), ship.getTurnSpeed(), ship.getMaxHealth()));
-                        }
-
-                        serverConnection.sendShipStats(msgs);
+                        parse(json);
 
                     } else {
                         log("Error response while fetching Fleet JSON: " + response.getStatusText());
+                        log("Falling back to offline mode");
+                        parse(Constants.OFFLINE_FLEET);
                     }
+                }
+
+                public void parse(String json) {
+                    int length = getFleetLength(json);
+
+                    final Array<ShipStatsMessage> msgs = new Array<ShipStatsMessage>(false, length);
+
+                    for (int i=0; i < length; i++) {
+                        ShipJSON ship = parseJson(json, i);
+                        msgs.add(new ShipStatsMessage(ship.getMaxSpeed(), ship.getAcceleration(), ship.getTurnSpeed(), ship.getMaxHealth()));
+                    }
+
+                    serverConnection.sendShipStats(msgs);
                 }
             });
 

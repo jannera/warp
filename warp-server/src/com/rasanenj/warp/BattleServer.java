@@ -20,6 +20,7 @@ import static com.rasanenj.warp.Log.log;
 public class BattleServer extends IntervalTask {
     private final BattleMsgConsumer consumer;
     private final Vector2 pos = new Vector2();
+    private final DamageModeler damage = new DamageModeler();
 
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
@@ -97,6 +98,27 @@ public class BattleServer extends IntervalTask {
                         ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
                         ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity()));
             }
+            else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {
+                ShootRequestMessage message = (ShootRequestMessage) msg;
+                ServerShip shooter = battleLoop.getShip(message.getId());
+                ServerShip target = battleLoop.getShip(message.getTarget());
+                if (shooter == null) {
+                    log("Couldn't find shooter with id " + message.getId());
+                }
+                if (target == null) {
+                    log("Couldnt find target with id " + message.getTarget());
+                }
+                if (shooter != null && target != null) {
+                    float dmg = damage.getDamage(shooter, target);
+                    sendToAll(new ShootDamageMessage(shooter.getId(), target.getId(), dmg));
+                    target.reduceHealth(dmg);
+                    if (target.getHealth() < 0) {
+                        sendToAll(new ShipDestructionMessage(target.getId()));
+                        battleLoop.removeShip(target.getId());
+                    }
+                }
+                log(message.getId() + " shot " + message.getTarget());
+            }
         }
 
         @Override
@@ -104,7 +126,8 @@ public class BattleServer extends IntervalTask {
             return Arrays.asList(Message.MessageType.JOIN_SERVER,
                     Message.MessageType.SET_ACCELERATION,
                     Message.MessageType.DISCONNECT,
-                    Message.MessageType.SHIP_STATS);
+                    Message.MessageType.SHIP_STATS,
+                    Message.MessageType.SHOOT_REQUEST);
         }
     }
 

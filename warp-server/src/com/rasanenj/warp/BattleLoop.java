@@ -89,18 +89,24 @@ public class BattleLoop extends RunnableFPS {
         players.remove(player);
     }
 
+    public void removeShip(long id) {
+        ServerShip s = getShip(id);
+        if (s != null) {
+            ships.remove(s);
+        }
+    }
+
+    private ArrayList<ServerShip> removeList = new ArrayList<ServerShip> ();
+
     public void removeAllShips(Player player) {
-        ServerShip foundShip = null;
-        // TODO: make this actually remove all ships, not just one
+        removeList.clear();
+
         for (ServerShip ship : ships) {
             if (ship.getPlayer() == player) {
-                foundShip = ship;
-                break;
+                removeList.add(ship);
             }
         }
-        if (foundShip != null) {
-            ships.remove(foundShip);
-        }
+        ships.removeAll(removeList);
     }
 
     public ServerShip getShip(long id) {

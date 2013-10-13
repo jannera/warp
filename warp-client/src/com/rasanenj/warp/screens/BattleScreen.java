@@ -5,14 +5,20 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
+
+
 import static com.rasanenj.warp.Log.log;
 
 /**
@@ -32,10 +38,19 @@ public class BattleScreen implements Screen {
     private final Vector2 corners[] = new Vector2[4];
 
     private static final Color DODGER_BLUE = new Color(30f/255f, 191f/255f, 1, 1);
+    final BitmapFont font;
+    private NumberFormat decimalFormatter = NumberFormat.getFormat("#.##");
+
+    private final Array<DamageText> damageMessages = new Array(false, 16);
+    private final Array<DamageText> removables = new Array<DamageText>(false, 16);
 
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
+
+        Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        font = skin.getFont("default-font");
+        font.setScale(0.25f);
 
         battleHandler = new BattleHandler(this, conn);
         for (int i=0; i < 4; i++) {
@@ -55,6 +70,33 @@ public class BattleScreen implements Screen {
         stage.draw();
         renderVectors();
         renderOffScreenShips();
+        renderDamageTexts();
+    }
+
+    private void renderDamageTexts() {
+        removables.clear();
+        long timeNow = System.currentTimeMillis();
+        for (DamageText damageText : damageMessages) {
+            if (timeNow - damageText.startTime > DamageText.FADEOUT_TIME) {
+                removables.add(damageText);
+            }
+        }
+
+        damageMessages.removeAll(removables, true);
+
+        if (damageMessages.size == 0) {
+            return;
+        }
+
+        stage.getSpriteBatch().begin();
+        for (DamageText damageText : damageMessages) {
+            float fade = 1f - (timeNow - damageText.startTime) / (float) DamageText.FADEOUT_TIME;
+            font.setColor(1f, 1f, 1f, fade);
+            String output = decimalFormatter.format(damageText.damage);
+            // String output = String.format("%f.2", damageText.damage);
+            font.draw(stage.getSpriteBatch(), output, damageText.target.getX(), damageText.target.getY());
+        }
+        stage.getSpriteBatch().end();
     }
 
     private static final float TRIANGLE_SIDE = 0.5f;
@@ -224,5 +266,22 @@ public class BattleScreen implements Screen {
         zoom += zoomStep * amount;
         log("zoom:" + zoom);
         stage.setViewport(CAMERA_SIZE * zoom, CAMERA_SIZE * zoom, true);
+    }
+
+    public void addDamageText(ClientShip target, float damage) {
+        damageMessages.add(new DamageText(target, damage));
+    }
+
+    private class DamageText {
+        public static final long FADEOUT_TIME = 1000; // in ms
+        final ClientShip target;
+        final float damage;
+        final long startTime;
+
+        public DamageText(ClientShip target, float damage) {
+            startTime = System.currentTimeMillis();
+            this.target = target;
+            this.damage = damage;
+        }
     }
 }

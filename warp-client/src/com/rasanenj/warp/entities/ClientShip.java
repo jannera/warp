@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.rasanenj.warp.Assets;
+import com.rasanenj.warp.ZOrder;
 import com.rasanenj.warp.messaging.Player;
 
 import static com.rasanenj.warp.Log.log;
@@ -14,6 +15,8 @@ import static com.rasanenj.warp.Log.log;
  */
 public class ClientShip extends Image {
     private final Player owner;
+    private ClientShip firingTarget;
+    private long lastFiringTime = 0;
 
     public ClientShip(long id, Player owner, float width, float height, float mass, float inertia,
                       float maxLinearForceForward, float maxLinearForceBackward,
@@ -25,9 +28,10 @@ public class ClientShip extends Image {
         this.setWidth(width);
         this.setHeight(height);
         setVisible(false);
-        this.targetImg = new Image(Assets.targetTexture);
+        this.targetImg = new Image(Assets.moveTargetTexture);
         float tgtImgBound = Math.max(width, height);
         this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
+        this.targetImg.setZIndex(ZOrder.steeringTarget.ordinal());
         clearTargetPos();
 
         this.mass = mass;
@@ -51,6 +55,8 @@ public class ClientShip extends Image {
     private final float maxHealth;
     private float brakingLeft;
     private Vector2 impulseIdeal = new Vector2();
+
+    private final float firingCooldown = 5f; // TODO create in constructor through message
 
     public void setBrakingLeft(float brakingLeft) {
         this.brakingLeft = brakingLeft;
@@ -95,6 +101,21 @@ public class ClientShip extends Image {
             corners[i].rotate(getRotation());
             corners[i].add(tmp);
         }
+    }
+
+    public void setFiringTarget(ClientShip firingTarget) {
+        this.firingTarget = firingTarget;
+    }
+
+    public ClientShip getFiringTarget() {
+        return firingTarget;
+    }
+
+    public boolean canFire() {
+        if (System.currentTimeMillis() - lastFiringTime > firingCooldown * 1000) {
+            return true;
+        }
+        return false;
     }
 
     public enum TurningState {
@@ -283,11 +304,15 @@ public class ClientShip extends Image {
         return maxHealth;
     }
 
-    public long getOwnerId() {
-        return owner.getId();
-    }
-
     public Player getOwner() {
         return owner;
+    }
+
+    public String toString() {
+        return "ClientShip " + getId();
+    }
+
+    public void setLastFiringTime(long lastFiringTime) {
+        this.lastFiringTime = lastFiringTime;
     }
 }

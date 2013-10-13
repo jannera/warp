@@ -27,6 +27,8 @@ public class ServerShip extends Entity {
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
     private final float maxHealth, maxVelocity, maxAngularVelocity;
 
+    private float health;
+
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.active = true;
@@ -57,6 +59,8 @@ public class ServerShip extends Entity {
         this.maxHealth = maxHealth;
         this.maxVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
+
+        this.health = maxHealth;
     }
 
     public Body getBody() {
@@ -128,5 +132,13 @@ public class ServerShip extends Entity {
 
     public float getMaxAngularVelocity() {
         return maxAngularVelocity;
+    }
+
+    public void reduceHealth(float damage) {
+        health -= damage;
+    }
+
+    public float getHealth() {
+        return health;
     }
 }

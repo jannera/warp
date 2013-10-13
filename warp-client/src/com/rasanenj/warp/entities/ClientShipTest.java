@@ -17,7 +17,7 @@ public class ClientShipTest {
     @Test
     public void testSetAngularVelocity() throws Exception {
         Assets.shipTexture = mock(Texture.class);
-        Assets.targetTexture = mock(Texture.class);
+        Assets.moveTargetTexture = mock(Texture.class);
         Player player = new Player("name", 0);
         ClientShip ship = new ClientShip(1, player, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
         ship.setAngularVelocity(1, 1000);
