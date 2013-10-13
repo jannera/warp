@@ -63,7 +63,7 @@ public class BattleHandler {
                     ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
                     ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity(), updateTime);
                     ship.setUpdateTime(updateTime);
-                    if (!firstPosSet) {
+                    if (!firstPosSet && ship.getOwner().getId() == myId) {
                         ship.getCenterPos(tmp);
                         screen.setCameraPos(tmp.x, tmp.y);
                         firstPosSet = true;
@@ -115,6 +115,7 @@ public class BattleHandler {
                     log("Couldn't find target with id " + message.getTarget());
                 }
                 else {
+                    target.reduceHealth(message.getDamage());
                     screen.addDamageText(target, message.getDamage());
                 }
             }
@@ -169,11 +170,15 @@ public class BattleHandler {
     }
 
     private class ShipClickListener extends ClickListener {
+        boolean clickedHostileShip = false;
+
         @Override
         public void clicked (InputEvent event, float x, float y) {
             log("clicked Ship" + event.getTarget() + " @ (" + x + ", " + y + ")");
 
             ClientShip clientShip = (ClientShip) event.getTarget();
+
+            clickedHostileShip = false;
 
             if (clientShip.getOwner().getId() == myId) {
                 // clicked friendly ship, so select it
@@ -185,6 +190,7 @@ public class BattleHandler {
                 selectedShip.setColor(getHiliteColor(selectedShip.getOwner()));
             }
             else {
+                clickedHostileShip = true;
                 // clicked non-friendly ship, so kill it
                 if (selectedShip != null) {
                     selectedShip.setFiringTarget(clientShip);
@@ -243,6 +249,9 @@ public class BattleHandler {
             }
             else {
                 if (selectedShip != null) {
+                    if (shipClickListener.clickedHostileShip) {
+                        return;
+                    }
                     selectedShip.setTargetPos(x, y);
                     screen.setCameraPos(x, y);
                     event.stop();

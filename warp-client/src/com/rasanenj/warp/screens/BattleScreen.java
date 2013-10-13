@@ -70,8 +70,29 @@ public class BattleScreen implements Screen {
         stage.draw();
         renderVectors();
         renderOffScreenShips();
+        renderHealthBars();
         renderDamageTexts();
     }
+
+    private void renderHealthBars() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (ClientShip ship : battleHandler.getShips()) {
+            float health = ship.getHealth();
+            float maxHealth = ship.getMaxHealth();
+
+            float startX = ship.getX();
+            float startY = ship.getY() - 0.4f;
+            shapeRenderer.setColor(healthBarBG);
+            shapeRenderer.rect(startX, startY, maxHealth * healthBarScale, healthBarHeight);
+
+            shapeRenderer.setColor(healthBar);
+            shapeRenderer.rect(startX, startY, health * healthBarScale, healthBarHeight);
+        }
+        shapeRenderer.end();
+    }
+
+    private static final Color healthBarBG = Color.RED, healthBar = Color.GREEN;
+    private static final float healthBarHeight = 0.05f, healthBarScale = 0.18f;
 
     private void renderDamageTexts() {
         removables.clear();

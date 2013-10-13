@@ -17,6 +17,7 @@ public class ClientShip extends Image {
     private final Player owner;
     private ClientShip firingTarget;
     private long lastFiringTime = 0;
+    private float health;
 
     public ClientShip(long id, Player owner, float width, float height, float mass, float inertia,
                       float maxLinearForceForward, float maxLinearForceBackward,
@@ -47,6 +48,7 @@ public class ClientShip extends Image {
         this.maxLinearForceRight = maxLinearForceRight;
 
         this.maxHealth = maxHealth;
+        this.health = maxHealth;
         this.maxLinearVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
     }
@@ -116,6 +118,10 @@ public class ClientShip extends Image {
             return true;
         }
         return false;
+    }
+
+    public void reduceHealth(float damage) {
+        health -= damage;
     }
 
     public enum TurningState {
@@ -314,5 +320,9 @@ public class ClientShip extends Image {
 
     public void setLastFiringTime(long lastFiringTime) {
         this.lastFiringTime = lastFiringTime;
+    }
+
+    public float getHealth() {
+        return health;
     }
 }

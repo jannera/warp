@@ -67,7 +67,7 @@ MVProto
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli yhteys käyttäjään katkeaa tai tulee virhe tiedonsiirrossa
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Alukset törmäämään toisiinsa server-päässä.. ei ramming speediä kuitenkaan?
-* healthin näyttäminen clientissä
+* DONE healthin näyttäminen clientissä
 * Oikea määrä pikseleitä chatti-ikkunalle
 * Chatissa olevien tyyppien nimien listaaminen
 * Pelin aloittaminen chatista:
@@ -75,7 +75,7 @@ MVProto
     * Haasteen hyväksyminen: /accept <player>
     * Pelin aloittaminen
 * Kyky pyörittää useita pelejä samaan aikaan
-* maksimivoimien antaminen Serveriltä aluksen luonnin yhteydessä
+* DONE maksimivoimien antaminen Serveriltä aluksen luonnin yhteydessä
 * arrival liikkumiseen
 * maksimi-impulsien pituudet pitäisi kertoa ShipSteering.STEP_LENGTH:in pituudella, jolloin aluksen maksimivoimat ilmaisisivat käytetyn maksimivoiman (keskiarvon) sekunnissa
 * aseiden rangen näyttäminen ympyrällä

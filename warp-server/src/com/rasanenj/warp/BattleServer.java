@@ -22,6 +22,18 @@ public class BattleServer extends IntervalTask {
     private final Vector2 pos = new Vector2();
     private final DamageModeler damage = new DamageModeler();
 
+    private final Vector2[] startingPositions = {new Vector2(400, 400), new Vector2(420, 400),
+       new Vector2(400, 420), new Vector2(420, 420), new Vector2(440, 400), new Vector2(400, 440)};
+    private static final int[] ShipOffsetCounters = new int[8];
+
+    static {
+        for (int i=0; i < ShipOffsetCounters.length; i++) {
+            ShipOffsetCounters[i] = 0;
+        }
+    }
+
+    private static final float SHIP_HEIGHT = 0.4f, SHIP_WIDTH = 1f;
+
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
             super(delegator);
@@ -47,8 +59,6 @@ public class BattleServer extends IntervalTask {
                     log("notifying " + p + " about " + serverPlayer);
                     ((ServerPlayer) p).send(new JoinServerMessage(player.getName(), player.getId(), player.getColorIndex()));
                 }
-
-                //
 
                 battleLoop.addPlayer(player);
 
@@ -90,7 +100,11 @@ public class BattleServer extends IntervalTask {
                 ServerPlayer serverPlayer = (ServerPlayer) player;
 
                 // add a new ship based on the stats
-                ServerShip ship = new ServerShip(world, 400f, 400f, 0, 1f, 0.4f, serverPlayer, message.getAcceleration(),
+                Vector2 position = startingPositions[serverPlayer.getColorIndex()];
+                float yOffSet = ShipOffsetCounters[serverPlayer.getColorIndex()] * SHIP_WIDTH * 5;
+                ShipOffsetCounters[serverPlayer.getColorIndex()]++;
+                log("offset: " + yOffSet);
+                ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT, serverPlayer, message.getAcceleration(),
                         message.getMaxHealth(), message.getMaxSpeed(), message.getTurnSpeed());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
