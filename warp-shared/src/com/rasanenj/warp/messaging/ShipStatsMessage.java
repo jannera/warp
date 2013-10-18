@@ -6,13 +6,15 @@ import java.nio.ByteBuffer;
  * @author Janne Rasanen
  */
 public class ShipStatsMessage extends Message {
-    final float maxSpeed, acceleration, turnSpeed, maxHealth;
+    final float maxSpeed, acceleration, turnSpeed, maxHealth, maxAngularAcceleration;
 
-    public ShipStatsMessage(float maxSpeed, float acceleration, float turnSpeed, float maxHealth) {
+    public ShipStatsMessage(float maxSpeed, float acceleration, float turnSpeed, float maxHealth,
+                            float maxAngularAcceleration) {
         this.maxSpeed = maxSpeed;
         this.acceleration = acceleration;
         this.turnSpeed = turnSpeed;
         this.maxHealth = maxHealth;
+        this.maxAngularAcceleration = maxAngularAcceleration;
     }
 
     public ShipStatsMessage(ByteBuffer b) {
@@ -20,7 +22,7 @@ public class ShipStatsMessage extends Message {
         acceleration = b.getFloat();
         turnSpeed = b.getFloat();
         maxHealth = b.getFloat();
-
+        maxAngularAcceleration = b.getFloat();
     }
 
     @Override
@@ -30,8 +32,9 @@ public class ShipStatsMessage extends Message {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Float.SIZE/8 * 6);
-        b.putFloat(maxSpeed).putFloat(acceleration).putFloat(turnSpeed).putFloat(maxHealth);
+        ByteBuffer b = create(Float.SIZE/8 * 5);
+        b.putFloat(maxSpeed).putFloat(acceleration).putFloat(turnSpeed).putFloat(maxHealth)
+        .putFloat(maxAngularAcceleration);
         return b.array();
     }
 
@@ -49,5 +52,9 @@ public class ShipStatsMessage extends Message {
 
     public float getMaxHealth() {
         return maxHealth;
+    }
+
+    public float getMaxAngularAcceleration() {
+        return maxAngularAcceleration;
     }
 }

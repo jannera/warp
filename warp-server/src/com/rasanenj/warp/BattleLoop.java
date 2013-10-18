@@ -7,8 +7,12 @@ import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.MessageDelegator;
 import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.tasks.RunnableFPS;
+import com.rasanenj.warp.tasks.TaskHandler;
+import com.rasanenj.warp.tasks.VelocityPrinter;
 
 import java.util.ArrayList;
+
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -18,11 +22,12 @@ import java.util.ArrayList;
 public class BattleLoop extends RunnableFPS {
     private final BattleServer battleServer;
     private final World world;
+    private final TaskHandler taskHandler;
     private ArrayList<Player> players = new ArrayList<Player>(); // TODO: make it ServerPlayers
     private ArrayList<ServerShip> ships = new ArrayList<ServerShip>();
 
 
-    static private final float FPS = 25;
+    static private final float FPS = 120;
 
     private final static int MIN_FPS = 10;
     private final static float TIME_STEP = 1f / FPS;
@@ -37,6 +42,8 @@ public class BattleLoop extends RunnableFPS {
         GdxNativesLoader.load();
         this.world = new World(new Vector2(0,0), true);
         this.battleServer = new BattleServer(this, wsServer, delegator, world);
+        this.taskHandler = new TaskHandler();
+        taskHandler.addToTaskList(new VelocityPrinter(ships));
     }
 
     public float physicsTimeLeft = 0f;
@@ -56,11 +63,37 @@ public class BattleLoop extends RunnableFPS {
         while (physicsTimeLeft >= TIME_STEP) {
             storeOldShipPositions();
             world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
+            slowDownShips();
             physicsTimeLeft -= TIME_STEP;
-            //TaskHandler.update(TIME_STEP);
+            taskHandler.update(TIME_STEP);
         }
 
+        for (ServerShip ship : ships) {
+            if (ship.getBody().getLinearVelocity().len() > 0) {
+                // log(ship.getId() + " speed " + ship.getBody().getLinearVelocity().len() + " vs " + ship.getMaxVelocity());
+            }
+        }
         battleServer.update();
+    }
+
+    private final Vector2 vel = new Vector2();
+    private void slowDownShips() {
+        for (ServerShip ship : ships) {
+            vel.set(ship.getBody().getLinearVelocity());
+            float speed = vel.len();
+            float limit = ship.getMaxVelocity();
+
+            if (speed > limit) {
+                // ship is going over the speed limit, slow it down
+                float deltaVelocity = speed - limit;
+                float impulseLength = deltaVelocity * ship.getMass();
+                String out = vel + " -> ";
+                vel.nor();
+                vel.scl(-impulseLength);
+                // log(out + vel);
+                ship.getBody().applyLinearImpulse(vel, ship.getBody().getWorldCenter(), true);
+            }
+        }
     }
 
     private void storeOldShipPositions() {

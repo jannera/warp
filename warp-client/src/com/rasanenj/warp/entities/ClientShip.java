@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.ZOrder;
 import com.rasanenj.warp.messaging.Player;
+import com.rasanenj.warp.systems.ShipSteering;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -19,11 +20,15 @@ public class ClientShip extends Image {
     private long lastFiringTime = 0;
     private float health;
 
+    private static long lastid = 0;
+
     public ClientShip(long id, Player owner, float width, float height, float mass, float inertia,
                       float maxLinearForceForward, float maxLinearForceBackward,
                       float maxLinearForceLeft, float maxLinearForceRight,
-                      float maxHealth, float maxVelocity, float maxAngularVelocity) {
+                      float maxHealth, float maxVelocity, float maxAngularVelocity,
+                      float maxAngularAcceleration) {
         super(Assets.shipTexture);
+        lastid = id;
         this.id = id;
         this.owner = owner;
         this.setWidth(width);
@@ -42,15 +47,16 @@ public class ClientShip extends Image {
         setOrigin(tmp.x, tmp.y);
         accRefresh = 0;
 
-        this.maxLinearForceForward = maxLinearForceForward;
-        this.maxLinearForceBackward = maxLinearForceBackward;
-        this.maxLinearForceLeft = maxLinearForceLeft;
-        this.maxLinearForceRight = maxLinearForceRight;
+        this.maxLinearForceForward = ShipSteering.STEP_LENGTH * maxLinearForceForward;
+        this.maxLinearForceBackward = ShipSteering.STEP_LENGTH *  maxLinearForceBackward;
+        this.maxLinearForceLeft = ShipSteering.STEP_LENGTH * maxLinearForceLeft;
+        this.maxLinearForceRight = ShipSteering.STEP_LENGTH * maxLinearForceRight;
 
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.maxLinearVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
+        this.maxAngularAcceleration = maxAngularAcceleration;
     }
 
     private final float maxLinearVelocity;
@@ -139,6 +145,7 @@ public class ClientShip extends Image {
 
     private static final float ACC_FREQ = 1f /10f;
     private float oldAngularVelocity = 0;
+    private float oldVelocity = 0;
     private long accRefresh = 0;
 
     private final long id;
@@ -147,6 +154,7 @@ public class ClientShip extends Image {
     private float angularVelocity;
     private long updateTime;
     private float angularAcceleration;
+    private float acceleration;
 
     public void setPosition(float x, float y) {
         if (!isVisible()) {
@@ -190,8 +198,24 @@ public class ClientShip extends Image {
         return maxAngularVelocity;
     }
 
-    public void setVelocity(float velX, float velY) {
+    public void setVelocity(float velX, float velY, float angularVelocity, long timeNow) {
         velocity.set(velX, velY);
+
+        final float delta = (timeNow - accRefresh) / 1000f;
+        if (delta > ACC_FREQ) {
+            if (getId() == lastid) {
+                //log("diff " + (angularVelocity - this.oldAngularVelocity));
+                // log(angularVelocity + " vs " + oldAngularVelocity);
+            }
+            // TODO: these could be taken as a sum of last n updates, stored in an array
+            // TODO: these are for some reason totally wrong. compare to VelocityPrinter
+            this.angularAcceleration =  (angularVelocity - this.oldAngularVelocity) / delta;
+            this.acceleration = (velocity.len() - oldVelocity) / delta;
+            accRefresh = timeNow;
+            oldAngularVelocity = angularVelocity;
+        }
+
+        this.angularVelocity = angularVelocity;
     }
 
     public float getMass() {
@@ -205,17 +229,6 @@ public class ClientShip extends Image {
     public void getHeadingVector(Vector2 vec, float angleDeg, float length) {
         float angleRad = angleDeg * MathUtils.degreesToRadians;
         vec.set(MathUtils.cos(angleRad) * length, MathUtils.sin(angleRad) * length);
-    }
-
-    public void setAngularVelocity(float angularVelocity, long timeNow) {
-        final float delta = (timeNow - accRefresh) / 1000f;
-        if (delta > ACC_FREQ) {
-            // log("diff " + (angularVelocity - this.oldAngularVelocity));
-            this.angularAcceleration =  (angularVelocity - this.oldAngularVelocity) / delta;
-            accRefresh = timeNow;
-            oldAngularVelocity = angularVelocity;
-        }
-        this.angularVelocity = angularVelocity;
     }
 
     public float getAngularVelocity() {
@@ -298,7 +311,7 @@ public class ClientShip extends Image {
     }
 
 
-    private final float maxAngularAcceleration = 12f; // TODO: create all this when the ship is created, given from Server
+    private final float maxAngularAcceleration;
     private final float maxAngularVelocity;
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
 
@@ -324,5 +337,9 @@ public class ClientShip extends Image {
 
     public float getHealth() {
         return health;
+    }
+
+    public float getAcceleration() {
+        return acceleration;
     }
 }

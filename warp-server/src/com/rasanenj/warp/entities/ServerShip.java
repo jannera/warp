@@ -17,7 +17,7 @@ public class ServerShip extends Entity {
     private final Body body;
     private static final BodyDef bodyDef = new BodyDef();
     private static final PolygonShape polygonShape = new PolygonShape();
-    private static final float DENSITY = 1f;
+    private static final float DENSITY = 10f;
 
     private final Vector2 oldPos = new Vector2();
     private float oldAngle = 0;
@@ -25,7 +25,7 @@ public class ServerShip extends Entity {
     private float width, height;
 
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
-    private final float maxHealth, maxVelocity, maxAngularVelocity;
+    private final float maxHealth, maxVelocity, maxAngularVelocity, maxAngularAcceleration;
 
     private float health;
 
@@ -39,7 +39,8 @@ public class ServerShip extends Entity {
 
 
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
-                      float acceleration, float maxHealth, float maxVelocity, float maxAngularVelocity) {
+                      float acceleration, float maxHealth, float maxVelocity, float maxAngularVelocity,
+                      float maxAngularAcceleration) {
         this.width = width;
         this.height = height;
         body = world.createBody(bodyDef);
@@ -59,6 +60,7 @@ public class ServerShip extends Entity {
         this.maxHealth = maxHealth;
         this.maxVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
+        this.maxAngularAcceleration = maxAngularAcceleration;
 
         this.health = maxHealth;
     }
@@ -69,10 +71,6 @@ public class ServerShip extends Entity {
 
     public float getMass() {
         return body.getMass();
-    }
-
-    public Vector2 getEngineLocation() {
-        return body.getWorldCenter();
     }
 
     public ServerPlayer getPlayer() {
@@ -140,5 +138,9 @@ public class ServerShip extends Entity {
 
     public float getHealth() {
         return health;
+    }
+
+    public float getMaxAngularAcceleration() {
+        return maxAngularAcceleration;
     }
 }

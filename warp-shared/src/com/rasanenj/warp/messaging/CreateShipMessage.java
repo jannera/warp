@@ -12,12 +12,14 @@ public class CreateShipMessage extends EntityMessage {
     private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
     private final float maxAngularVelocity, maxVelocity, maxHealth;
     private final long ownerId;
+    private final float maxAngularAcceleration;
     float width, height, mass, inertia;
 
     public CreateShipMessage(long id, long ownerId, float width, float height, float mass, float inertia,
                              float maxLinearForceForward, float maxLinearForceBackward,
                              float maxLinearForceLeft, float maxLinearForceRight,
-                             float maxHealth, float maxVelocity, float maxAngularVelocity) {
+                             float maxHealth, float maxVelocity, float maxAngularVelocity,
+                             float maxAngularAcceleration) {
         super(id);
         this.ownerId = ownerId;
         this.width = width;
@@ -31,6 +33,7 @@ public class CreateShipMessage extends EntityMessage {
         this.maxHealth = maxHealth;
         this.maxVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
+        this.maxAngularAcceleration = maxAngularAcceleration;
     }
 
     public CreateShipMessage(ByteBuffer msg) {
@@ -47,6 +50,7 @@ public class CreateShipMessage extends EntityMessage {
         this.maxHealth = msg.getFloat();
         this.maxVelocity = msg.getFloat();
         this.maxAngularVelocity = msg.getFloat();
+        this.maxAngularAcceleration = msg.getFloat();
     }
 
     @Override
@@ -56,11 +60,11 @@ public class CreateShipMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(2 * Long.SIZE/8 + 11 * Float.SIZE/8);
+        ByteBuffer b = create(2 * Long.SIZE/8 + 12 * Float.SIZE/8);
         // log("owner id in message " + ownerId);
         b.putLong(id).putLong(ownerId).putFloat(width).putFloat(height).putFloat(mass).putFloat(inertia);
         b.putFloat(maxLinearForceForward).putFloat(maxLinearForceBackward).putFloat(maxLinearForceLeft).putFloat(maxLinearForceRight);
-        b.putFloat(maxHealth).putFloat(maxVelocity).putFloat(maxAngularVelocity);
+        b.putFloat(maxHealth).putFloat(maxVelocity).putFloat(maxAngularVelocity).putFloat(maxAngularAcceleration);
         return b.array();
     }
 
@@ -110,5 +114,9 @@ public class CreateShipMessage extends EntityMessage {
 
     public long getOwnerId() {
         return ownerId;
+    }
+
+    public float getMaxAngularAcceleration() {
+        return maxAngularAcceleration;
     }
 }

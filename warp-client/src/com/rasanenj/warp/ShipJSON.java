@@ -14,4 +14,5 @@ public class ShipJSON extends JavaScriptObject {
     public final native float getMaxSpeed()  /*-{ return this.max_speed;  }-*/;
     public final native float getTurnSpeed()  /*-{ return this.turn_speed;  }-*/;
     public final native float getMaxHealth()  /*-{ return this.max_health;  }-*/;
+    public final native float getMaxAngularAcceleration()  /*-{ return this.maxAngularAcceleration;  }-*/;
 }

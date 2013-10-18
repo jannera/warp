@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.rasanenj.warp.BattleHandler;
+import com.rasanenj.warp.Settings;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
 
@@ -72,6 +73,7 @@ public class BattleScreen implements Screen {
         renderOffScreenShips();
         renderHealthBars();
         renderDamageTexts();
+        renderDebugText();
     }
 
     private void renderHealthBars() {
@@ -205,42 +207,58 @@ public class BattleScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (ClientShip ship : battleHandler.getShips()) {
             ship.getCenterPos(tmp);
-            /*
-            // render the velocity of the ship
-            shapeRenderer.setColor(DODGER_BLUE);
-            shapeRenderer.line(tmp.x, tmp.y,
-                    tmp.x + ship.getVelocity().x, tmp.y + ship.getVelocity().y);
-                    */
 
-
-            // render the rectangle that limits the maximum force vector
-            /*
-            ship.getForceLimitCorners(corners);
-            shapeRenderer.setColor(Color.YELLOW);
-            for (int i=0; i < 4; i++) {
-                // first we make a vector from i'th corner to i+1'th corner
-                int next = i+1;
-                if (next == 4) {
-                    next = 0; // last vector is from first point to the last point
-                }
-                shapeRenderer.line(corners[i].x, corners[i].y,
-                             corners[next].x, corners[next].y);
+            if (Settings.renderShipVelocity) {
+                shapeRenderer.setColor(DODGER_BLUE);
+                shapeRenderer.line(tmp.x, tmp.y,
+                        tmp.x + ship.getVelocity().x, tmp.y + ship.getVelocity().y);
             }
-            */
 
-            // render the ideal impulse
-            /*
-            shapeRenderer.setColor(Color.BLUE);
-            shapeRenderer.line(tmp.x, tmp.y,
-                    tmp.x + ship.getImpulseIdeal().x, tmp.y + ship.getImpulseIdeal().y);
-            */
 
-            // render the impulse
-            shapeRenderer.setColor(DODGER_BLUE);
-            shapeRenderer.line(tmp.x, tmp.y,
-                    tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);
+            if (Settings.renderMaxForceRectangle) {
+            // render the rectangle that limits the maximum force vector
+                ship.getForceLimitCorners(corners);
+                shapeRenderer.setColor(Color.YELLOW);
+                for (int i=0; i < 4; i++) {
+                    // first we make a vector from i'th corner to i+1'th corner
+                    int next = i+1;
+                    if (next == 4) {
+                        next = 0; // last vector is from first point to the last point
+                    }
+                    shapeRenderer.line(corners[i].x, corners[i].y,
+                                 corners[next].x, corners[next].y);
+                }
+            }
+
+            if (Settings.renderIdealImpulse) {
+                shapeRenderer.setColor(Color.BLUE);
+                shapeRenderer.line(tmp.x, tmp.y,
+                        tmp.x + ship.getImpulseIdeal().x, tmp.y + ship.getImpulseIdeal().y);
+            }
+
+            if (Settings.renderImpulse) {
+                shapeRenderer.setColor(DODGER_BLUE);
+                shapeRenderer.line(tmp.x, tmp.y,
+                        tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);
+
+            }
         }
         shapeRenderer.end();
+    }
+
+    private void renderDebugText() {
+        if (!Settings.renderAcceleration) {
+            return;
+        }
+
+        stage.getSpriteBatch().begin();
+        for (ClientShip ship : battleHandler.getShips()) {
+            font.setColor(1f, 1f, 1f, 1);
+            String output = decimalFormatter.format(ship.getAcceleration());
+            // String output = String.format("%f.2", damageText.damage);
+            font.draw(stage.getSpriteBatch(), output, ship.getX(), ship.getY());
+        }
+        stage.getSpriteBatch().end();
     }
 
     @Override

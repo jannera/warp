@@ -8,7 +8,8 @@ import java.nio.ByteBuffer;
  * @author gilead
  */
 public class ShipPhysicsMessage extends EntityMessage {
-    private float x,y, velX, velY, angle, angularVelocity;
+    private final float x,y, velX, velY, angle, angularVelocity;
+    private final long timestamp;
 
     public ShipPhysicsMessage(long id, Vector2 pos, float angle, Vector2 linearVelocity, float angularVelocity) {
         super(id);
@@ -18,6 +19,7 @@ public class ShipPhysicsMessage extends EntityMessage {
         this.velY = linearVelocity.y;
         this.angle = angle;
         this.angularVelocity = angularVelocity;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public ShipPhysicsMessage(ByteBuffer b) {
@@ -28,6 +30,7 @@ public class ShipPhysicsMessage extends EntityMessage {
         this.velY = b.getFloat();
         this.angle = b.getFloat();
         this.angularVelocity = b.getFloat();
+        this.timestamp = b.getLong();
     }
 
     @Override
@@ -37,9 +40,9 @@ public class ShipPhysicsMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Float.SIZE/8 * 6 + Long.SIZE/8);
+        ByteBuffer b = create(Float.SIZE/8 * 6 + 2* Long.SIZE/8);
         b.putLong(id).putFloat(x).putFloat(y).putFloat(velX).putFloat(velY).putFloat(angle)
-        .putFloat(angularVelocity);
+        .putFloat(angularVelocity).putLong(timestamp);
         return b.array();
     }
 
@@ -65,5 +68,9 @@ public class ShipPhysicsMessage extends EntityMessage {
 
     public float getAngularVelocity() {
         return angularVelocity;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }

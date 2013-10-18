@@ -48,33 +48,19 @@ Future Ideas
 
 MVProto
 ===
-* DONE voimien rajoittaminen aluksen suunnan perusteella
 * Kameran liikuttelu ei saisi tökkiä
-* DONE Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
-* DONE Laivojen omistaminen
-* DONE Eri tyyppien laivojen värittäminen
-* DONE Valitun aluksen korostaminen
-* DONE Ampumisen UI:
-    * klikkaa alusta, klikkaa kohdetta
-    * näytetään tgt-marker kohteen päällä
 * Ampumissysteemi
     * aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
     * loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
     * ammusten näyttäminen clintissä
     * DONE lämän näyttäminen clientissä
-* DONE Ainoastaan omien laivojen käskyttäminen client-puolelle
-* DONE Kun pelaaja poistetaan pelistä, pitää ilmoittaa peliin jääville pelaajille alusten tuhoutumisesta
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
-* DONE Serveriin väri-indeksien kierrättäminen
-* Maksiminopeuden rajoittaminen (serveriin?)
-* Suurempi maksimikääntönopeus (lisää FPS:ää?)
+* Parempi fontti ruudulle
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
-* Alukset törmäämään toisiinsa server-päässä.. ei ramming speediä kuitenkaan?
-* DONE healthin näyttäminen clientissä
 * Oikea määrä pikseleitä chatti-ikkunalle
 * Chatissa olevien tyyppien nimien listaaminen
 * Pelin aloittaminen chatista:
@@ -82,12 +68,30 @@ MVProto
     * Haasteen hyväksyminen: /accept <player>
     * Pelin aloittaminen
 * Kyky pyörittää useita pelejä samaan aikaan
-* DONE maksimivoimien antaminen Serveriltä aluksen luonnin yhteydessä
-* arrival liikkumiseen
-* maksimi-impulsien pituudet pitäisi kertoa ShipSteering.STEP_LENGTH:in pituudella, jolloin aluksen maksimivoimat ilmaisisivat käytetyn maksimivoiman (keskiarvon) sekunnissa
 * aseiden rangen näyttäminen ympyrällä
 * usean laivan kerralla
     * valitseminen
     * navigoiminen
     * hyökkäyskäskyn antaminen
     * asioiden visualisoiminen
+* BUGI: joskus lähestyessä pistettä, laiva töksähtää yllättäen kummalliseen suuntaan suht nopeasti
+* arrival liikkumiseen
+
+MVProto DONE
+===
+* DONE voimien rajoittaminen aluksen suunnan perusteella
+* DONE Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
+* DONE Laivojen omistaminen
+* DONE Eri tyyppien laivojen värittäminen
+* DONE Valitun aluksen korostaminen
+* DONE Ampumisen UI:
+    * klikkaa alusta, klikkaa kohdetta
+    * näytetään tgt-marker kohteen päällä
+* DONE Ainoastaan omien laivojen käskyttäminen client-puolelle
+* DONE Kun pelaaja poistetaan pelistä, pitää ilmoittaa peliin jääville pelaajille alusten tuhoutumisesta
+* DONE Serveriin väri-indeksien kierrättäminen
+* DONE Maksiminopeuden rajoittaminen (serveriin?)
+* DONE Suurempi maksimikääntönopeus (lisää FPS:ää?)
+* DONE healthin näyttäminen clientissä
+* DONE maksimivoimien antaminen Serveriltä aluksen luonnin yhteydessä
+* DONE maksimi-impulsien pituudet pitäisi kertoa ShipSteering.STEP_LENGTH:in pituudella, jolloin aluksen maksimivoimat ilmaisisivat käytetyn maksimivoiman (keskiarvon) sekunnissa

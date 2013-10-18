@@ -20,8 +20,8 @@ import static com.rasanenj.warp.Log.log;
  * Should be fixed somehow.
  */
 public class ShipSteering extends IntervalTask {
-    private static final float MESSAGES_IN_SECOND = 60f;
-    private static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
+    public static final float MESSAGES_IN_SECOND = 8f;
+    public static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
 
     private final Vector2 pos = new Vector2();
     private final Vector2 tgt = new Vector2();
@@ -90,6 +90,7 @@ public class ShipSteering extends IntervalTask {
                 }
             }
 
+            // pos.set(0, 0);
             ship.setImpulse(pos);
 
             // === FIGURE OUT THE ANGULAR IMPULSE ===
@@ -106,16 +107,20 @@ public class ShipSteering extends IntervalTask {
             float maxAccelerationInTimestep = ship.getMaxAngularAcceleration() * STEP_LENGTH;
 
             float minimumBreakingDistance = 0f;
-            for (float velocity = ship.getMaxAngularVelocity() - maxAccelerationInTimestep;
+
+            for (float velocity = Math.abs(ship.getAngularVelocity()) - maxAccelerationInTimestep;
                  velocity > 0;
                  velocity -= maxAccelerationInTimestep) {
                 minimumBreakingDistance += STEP_LENGTH * velocity
                         - 1/2f * maxAccelerationInTimestep * STEP_LENGTH * STEP_LENGTH;
             }
 
-            // log(minimumBreakingDistance + " vs " + angleDiff);
+            maxAccelerationInTimestep *= ship.getInertia();
 
-            minimumBreakingDistance /= 2.5f; // TODO: minimum breaking distance is still too high, thus it's lowered a bit here
+
+            log(minimumBreakingDistance + " vs " + angleDiff);
+
+            // minimumBreakingDistance /= 2.5f; // TODO: minimum breaking distance is still too high, thus it's lowered a bit here
 
             if (Math.abs(angleDiff) > minimumBreakingDistance) {
                 ship.setTurningState(TurningState.FULL_SPEED);
@@ -147,7 +152,6 @@ public class ShipSteering extends IntervalTask {
 
             change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
 
-            // pos.scl(STEP_LENGTH);
             AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);
 
             connection.send(msg);

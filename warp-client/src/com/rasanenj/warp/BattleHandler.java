@@ -50,7 +50,6 @@ public class BattleHandler {
 
         @Override
         public void consume(Player player, Message msg) {
-            long updateTime = System.currentTimeMillis();
             if (msg.getType() == Message.MessageType.UPDATE_SHIP_PHYSICS) {
                 ShipPhysicsMessage shipPhysicsMessage = (ShipPhysicsMessage) msg;
                 ClientShip ship = getShip(shipPhysicsMessage.getId());
@@ -58,10 +57,10 @@ public class BattleHandler {
                     log("Couldn't find a ship with id " + shipPhysicsMessage.getId());
                 }
                 else {
+                    long updateTime = shipPhysicsMessage.getTimestamp();
                     ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
                     ship.setRotation(shipPhysicsMessage.getAngle());
-                    ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY());
-                    ship.setAngularVelocity(shipPhysicsMessage.getAngularVelocity(), updateTime);
+                    ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY(), shipPhysicsMessage.getAngularVelocity(), updateTime);
                     ship.setUpdateTime(updateTime);
                     if (!firstPosSet && ship.getOwner().getId() == myId) {
                         ship.getCenterPos(tmp);
@@ -77,7 +76,8 @@ public class BattleHandler {
                         message.getHeight(), message.getMass(), message.getInertia(),
                         message.getMaxLinearForceForward(), message.getMaxLinearForceBackward(),
                         message.getMaxLinearForceLeft(), message.getMaxLinearForceRight(),
-                        message.getMaxHealth(), message.getMaxVelocity(), message.getMaxAngularVelocity());
+                        message.getMaxHealth(), message.getMaxVelocity(), message.getMaxAngularVelocity(),
+                        message.getMaxAngularAcceleration());
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.attach(screen.getStage());
