@@ -15,9 +15,6 @@ import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
- *
- * TODO: ATM the update rate of this Task is the multiplier on the forces used.
- * Should be fixed somehow.
  */
 public class ShipSteering extends IntervalTask {
     public static final float MESSAGES_IN_SECOND = 8f;
