@@ -21,17 +21,12 @@ public class ClientShip extends Image {
     private float health;
 
     private static long lastid = 0;
-    private final float signatureResolution;
-    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff;
 
-    public ClientShip(long id, Player owner, float width, float height, float mass, float inertia,
-                      float maxLinearForceForward, float maxLinearForceBackward,
-                      float maxLinearForceLeft, float maxLinearForceRight,
-                      float maxHealth, float maxVelocity, float maxAngularVelocity,
-                      float maxAngularAcceleration, float signatureResolution,
-                      float weaponTracking, float weaponSignatureRadius,
-                      float weaponOptimal, float weaponFalloff) {
+    private final ShipStats stats;
+
+    public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
         super(Assets.shipTexture);
+        this.stats = stats;
         lastid = id;
         this.id = id;
         this.owner = owner;
@@ -44,33 +39,14 @@ public class ClientShip extends Image {
         this.targetImg.setZIndex(ZOrder.steeringTarget.ordinal());
         clearTargetPos();
 
-        this.mass = mass;
-        this.inertia = inertia;
-
         getCenterPos(tmp);
         setOrigin(tmp.x, tmp.y);
         accRefresh = 0;
 
-        this.maxLinearForceForward = ShipSteering.STEP_LENGTH * maxLinearForceForward;
-        this.maxLinearForceBackward = ShipSteering.STEP_LENGTH *  maxLinearForceBackward;
-        this.maxLinearForceLeft = ShipSteering.STEP_LENGTH * maxLinearForceLeft;
-        this.maxLinearForceRight = ShipSteering.STEP_LENGTH * maxLinearForceRight;
-
-        this.maxHealth = maxHealth;
-        this.health = maxHealth;
-        this.maxLinearVelocity = maxVelocity;
-        this.maxAngularVelocity = maxAngularVelocity;
-        this.maxAngularAcceleration = maxAngularAcceleration;
-
-        this.weaponTracking = weaponTracking;
-        this.signatureResolution = signatureResolution;
-        this.weaponSignatureRadius = weaponSignatureRadius;
-        this.weaponOptimal = weaponOptimal;
-        this.weaponFalloff = weaponFalloff;
+        this.stats.scaleForces(ShipSteering.STEP_LENGTH);
+        this.health = stats.getMaxHealth();
     }
 
-    private final float maxLinearVelocity;
-    private final float maxHealth;
     private float brakingLeft;
     private Vector2 impulseIdeal = new Vector2();
 
@@ -102,17 +78,17 @@ public class ClientShip extends Image {
      * @param corners where corners will be stored
      */
     public void getForceLimitCorners(Vector2[] corners) {
-        corners[0].x = maxLinearForceForward;
-        corners[0].y = maxLinearForceLeft;
+        corners[0].x = stats.getMaxLinearForceForward();
+        corners[0].y = stats.getMaxLinearForceLeft();
 
-        corners[1].x = maxLinearForceForward;
-        corners[1].y = -maxLinearForceRight;
+        corners[1].x = stats.getMaxLinearForceForward();
+        corners[1].y = -stats.getMaxLinearForceRight();
 
-        corners[2].x = -maxLinearForceBackward;
-        corners[2].y = -maxLinearForceRight;
+        corners[2].x = -stats.getMaxLinearForceBackward();
+        corners[2].y = -stats.getMaxLinearForceRight();
 
-        corners[3].x = -maxLinearForceBackward;
-        corners[3].y = maxLinearForceLeft;
+        corners[3].x = -stats.getMaxLinearForceBackward();
+        corners[3].y = stats.getMaxLinearForceLeft();
 
         getCenterPos(tmp);
         for (int i=0; i < 4; i++) {
@@ -140,26 +116,6 @@ public class ClientShip extends Image {
         health -= damage;
     }
 
-    public float getSignatureResolution() {
-        return signatureResolution;
-    }
-
-    public float getWeaponTracking() {
-        return weaponTracking;
-    }
-
-    public float getWeaponSignatureRadius() {
-        return weaponSignatureRadius;
-    }
-
-    public float getWeaponOptimal() {
-        return weaponOptimal;
-    }
-
-    public float getWeaponFalloff() {
-        return weaponFalloff;
-    }
-
     public enum TurningState {
         FULL_SPEED, BRAKING, DONE_BRAKING;
     }
@@ -180,7 +136,6 @@ public class ClientShip extends Image {
 
     private final long id;
 
-    private final float mass, inertia;
     private float angularVelocity;
     private long updateTime;
     private float angularAcceleration;
@@ -217,17 +172,6 @@ public class ClientShip extends Image {
         pos.add(getWidth() / 2f, getHeight() / 2f);
     }
 
-    public float getMaxAngularAcceleration() {
-        return maxAngularAcceleration;
-    }
-
-    /**
-     * in degrees per second
-      */
-    public float getMaxAngularVelocity() {
-        return maxAngularVelocity;
-    }
-
     public void setVelocity(float velX, float velY, float angularVelocity, long timeNow) {
         velocity.set(velX, velY);
 
@@ -246,10 +190,6 @@ public class ClientShip extends Image {
         }
 
         this.angularVelocity = angularVelocity;
-    }
-
-    public float getMass() {
-        return mass;
     }
 
     public Vector2 getVelocity() {
@@ -296,10 +236,6 @@ public class ClientShip extends Image {
         return angularAcceleration;
     }
 
-    public float getInertia() {
-        return inertia;
-    }
-
     public TurningState getTurningState() {
         return turningState;
     }
@@ -341,17 +277,7 @@ public class ClientShip extends Image {
     }
 
 
-    private final float maxAngularAcceleration;
-    private final float maxAngularVelocity;
-    private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
 
-    public float getMaxLinearVelocity() {
-        return maxLinearVelocity;
-    }
-
-    public float getMaxHealth() {
-        return maxHealth;
-    }
 
     public Player getOwner() {
         return owner;
@@ -371,5 +297,9 @@ public class ClientShip extends Image {
 
     public float getAcceleration() {
         return acceleration;
+    }
+
+    public ShipStats getStats() {
+        return stats;
     }
 }

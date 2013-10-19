@@ -56,10 +56,7 @@ public class FleetStatsFetcher {
 
         for (int i=0; i < length; i++) {
             ShipJSON ship = parseJson(json, i);
-            msgs.add(new ShipStatsMessage(ship.getMaxSpeed(), ship.getAcceleration(), ship.getTurnSpeed(),
-                    ship.getMaxHealth(), ship.getMaxAngularAcceleration(), ship.getSignatureResolution(),
-                    ship.getWeaponTracking(), ship.getWeaponSignatureRadius(), ship.getWeaponOptimal(),
-                    ship.getWeaponFalloff()));
+            msgs.add(new ShipStatsMessage(ship.getStats(), ship.getAcceleration()));
         }
 
         serverConnection.sendShipStats(msgs);

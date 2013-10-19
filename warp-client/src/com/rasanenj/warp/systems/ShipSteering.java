@@ -57,7 +57,7 @@ public class ShipSteering extends IntervalTask {
             tgt.sub(pos);
             pos.set(tgt);
             pos.sub(ship.getVelocity());
-            pos.scl(ship.getMass());
+            pos.scl(ship.getStats().getMass());
 
             ship.setImpulseIdeal(pos);
 
@@ -87,7 +87,6 @@ public class ShipSteering extends IntervalTask {
                 }
             }
 
-            // pos.set(0, 0);
             ship.setImpulse(pos);
 
             // === FIGURE OUT THE ANGULAR IMPULSE ===
@@ -101,7 +100,7 @@ public class ShipSteering extends IntervalTask {
 
             float change;
 
-            float maxAccelerationInTimestep = ship.getMaxAngularAcceleration() * STEP_LENGTH;
+            float maxAccelerationInTimestep = ship.getStats().getMaxAngularAcceleration() * STEP_LENGTH;
 
             float minimumBreakingDistance = 0f;
 
@@ -112,18 +111,18 @@ public class ShipSteering extends IntervalTask {
                         - 1/2f * maxAccelerationInTimestep * STEP_LENGTH * STEP_LENGTH;
             }
 
-            maxAccelerationInTimestep *= ship.getInertia();
+            maxAccelerationInTimestep *= ship.getStats().getInertia();
 
 
             // log(minimumBreakingDistance + " vs " + angleDiff);
 
             if (Math.abs(angleDiff) > minimumBreakingDistance) {
                 ship.setTurningState(TurningState.FULL_SPEED);
-                float desiredVelocity = ship.getMaxAngularVelocity();
+                float desiredVelocity = ship.getStats().getMaxAngularVelocity();
                 if (angleDiff > 0) {
                     desiredVelocity *= -1f;
                 }
-                change = ship.getInertia() * (desiredVelocity - ship.getAngularVelocity());
+                change = ship.getStats().getInertia() * (desiredVelocity - ship.getAngularVelocity());
                 change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
             }
             else {
@@ -132,7 +131,7 @@ public class ShipSteering extends IntervalTask {
                 }
                 else {
                     if (ship.getTurningState() == TurningState.FULL_SPEED) {
-                        ship.setBrakingLeft(-1f * ship.getInertia() * ship.getAngularVelocity());
+                        ship.setBrakingLeft(-1f * ship.getStats().getInertia() * ship.getAngularVelocity());
                         ship.setTurningState(TurningState.BRAKING);
                     }
 

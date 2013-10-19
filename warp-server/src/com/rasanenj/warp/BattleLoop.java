@@ -81,7 +81,7 @@ public class BattleLoop extends RunnableFPS {
         for (ServerShip ship : ships) {
             vel.set(ship.getBody().getLinearVelocity());
             float speed = vel.len();
-            float limit = ship.getMaxVelocity();
+            float limit = ship.getStats().getMaxLinearVelocity();
 
             if (speed > limit) {
                 // ship is going over the speed limit, slow it down

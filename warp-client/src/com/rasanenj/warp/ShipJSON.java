@@ -1,6 +1,7 @@
 package com.rasanenj.warp;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.rasanenj.warp.entities.ShipStats;
 
 /**
  * @author Janne Rasanen
@@ -20,4 +21,10 @@ public class ShipJSON extends JavaScriptObject {
     public final native float getWeaponOptimal()  /*-{ return this.weapon_1_optimal;  }-*/;
     public final native float getWeaponFalloff()  /*-{ return this.weapon_1_falloff;  }-*/;
     public final native float getWeaponSignatureRadius()  /*-{ return this.weapon_1_signature_radius;  }-*/;
+
+    public final ShipStats getStats() {
+        return new ShipStats(0, 0, 0, 0, 0, 0, getMaxHealth(), getMaxSpeed(),
+                getTurnSpeed(), getMaxAngularAcceleration(), getSignatureResolution(), getWeaponTracking(),
+                getWeaponSignatureRadius(), getWeaponOptimal(), getWeaponFalloff());
+    }
 }

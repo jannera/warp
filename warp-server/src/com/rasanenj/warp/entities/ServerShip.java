@@ -13,6 +13,7 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ServerShip extends Entity {
+    private final ShipStats stats;
     private ServerPlayer player;
     private final Body body;
     private static final BodyDef bodyDef = new BodyDef();
@@ -24,13 +25,7 @@ public class ServerShip extends Entity {
 
     private float width, height;
 
-    private final float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
-    private final float maxHealth, maxVelocity, maxAngularVelocity, maxAngularAcceleration;
-
     private float health;
-
-    private final float signatureResolution;
-    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff;
 
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -42,10 +37,7 @@ public class ServerShip extends Entity {
 
 
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
-                      float acceleration, float maxHealth, float maxVelocity, float maxAngularVelocity,
-                      float maxAngularAcceleration, float signatureResolution,
-                      float weaponTracking, float weaponSignatureRadius,
-                      float weaponOptimal, float weaponFalloff) {
+                      float acceleration, ShipStats stats) {
         this.width = width;
         this.height = height;
         body = world.createBody(bodyDef);
@@ -57,22 +49,14 @@ public class ServerShip extends Entity {
 
         // F = ma
         float mass = body.getMass();
-        this.maxLinearForceForward = mass * acceleration;
-        this.maxLinearForceBackward = mass * acceleration / 2f;
-        this.maxLinearForceLeft = mass * acceleration / 4f;
-        this.maxLinearForceRight = mass * acceleration / 4f;
 
-        this.maxHealth = maxHealth;
-        this.maxVelocity = maxVelocity;
-        this.maxAngularVelocity = maxAngularVelocity;
-        this.maxAngularAcceleration = maxAngularAcceleration;
+        this.stats = stats;
+        this.stats.setForceLimits(mass * acceleration, mass * acceleration / 2f,
+                mass * acceleration / 4f, mass * acceleration / 4f);
+        this.stats.setMass(mass);
+        this.stats.setInertia(body.getInertia());
 
-        this.health = maxHealth;
-        this.weaponTracking = weaponTracking;
-        this.signatureResolution = signatureResolution;
-        this.weaponSignatureRadius = weaponSignatureRadius;
-        this.weaponOptimal = weaponOptimal;
-        this.weaponFalloff = weaponFalloff;
+        this.health = stats.getMaxHealth();
     }
 
     public Body getBody() {
@@ -102,44 +86,12 @@ public class ServerShip extends Entity {
         return body.getAngle() * lerp1 + oldAngle * lerp2;
     }
 
-    public float getInertia() {
-        return body.getInertia();
-    }
-
     public float getWidth() {
         return width;
     }
 
     public float getHeight() {
         return height;
-    }
-
-    public float getMaxLinearForceLeft() {
-        return maxLinearForceLeft;
-    }
-
-    public float getMaxLinearForceBackward() {
-        return maxLinearForceBackward;
-    }
-
-    public float getMaxLinearForceForward() {
-        return maxLinearForceForward;
-    }
-
-    public float getMaxLinearForceRight() {
-        return maxLinearForceRight;
-    }
-
-    public float getMaxHealth() {
-        return maxHealth;
-    }
-
-    public float getMaxVelocity() {
-        return maxVelocity;
-    }
-
-    public float getMaxAngularVelocity() {
-        return maxAngularVelocity;
     }
 
     public void reduceHealth(float damage) {
@@ -150,27 +102,7 @@ public class ServerShip extends Entity {
         return health;
     }
 
-    public float getMaxAngularAcceleration() {
-        return maxAngularAcceleration;
-    }
-
-    public float getSignatureResolution() {
-        return signatureResolution;
-    }
-
-    public float getWeaponTracking() {
-        return weaponTracking;
-    }
-
-    public float getWeaponSignatureRadius() {
-        return weaponSignatureRadius;
-    }
-
-    public float getWeaponOptimal() {
-        return weaponOptimal;
-    }
-
-    public float getWeaponFalloff() {
-        return weaponFalloff;
+    public ShipStats getStats() {
+        return stats;
     }
 }

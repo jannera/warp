@@ -23,11 +23,11 @@ public class DamageModeler {
         float transverseSpeed = Geometry.getTransverseSpeed(shooter.getBody().getWorldCenter(),
                 target.getBody().getWorldCenter(), shooter.getBody().getLinearVelocity(),
                 target.getBody().getLinearVelocity());
-        float tgtSigRes = target.getSignatureResolution();
-        float tracking = shooter.getWeaponTracking();
-        float wpnSigRadius = shooter.getWeaponSignatureRadius();
-        float optimal = shooter.getWeaponOptimal();
-        float falloff = shooter.getWeaponFalloff();
+        float tgtSigRes = target.getStats().getSignatureResolution();
+        float tracking = shooter.getStats().getWeaponTracking();
+        float wpnSigRadius = shooter.getStats().getWeaponSignatureRadius();
+        float optimal = shooter.getStats().getWeaponOptimal();
+        float falloff = shooter.getStats().getWeaponFalloff();
 
         log("transverse: " + transverseSpeed + " vs " + tracking);
         log("sigRes: " + tgtSigRes + " vs " + wpnSigRadius);

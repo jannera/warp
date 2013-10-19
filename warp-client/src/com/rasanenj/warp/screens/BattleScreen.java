@@ -80,7 +80,7 @@ public class BattleScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (ClientShip ship : battleHandler.getShips()) {
             float health = ship.getHealth();
-            float maxHealth = ship.getMaxHealth();
+            float maxHealth = ship.getStats().getMaxHealth();
 
             float startX = ship.getX();
             float startY = ship.getY() - 0.4f;

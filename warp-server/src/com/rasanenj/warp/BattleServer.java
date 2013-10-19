@@ -68,12 +68,8 @@ public class BattleServer extends IntervalTask {
                 // notify the new player about existing ships
                 for (ServerShip ship : battleLoop.getShips()) {
                     // log ("player id was " + ship.getPlayer().getId());
-                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
-                            ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
-                            ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity(),
-                            ship.getMaxAngularAcceleration(), ship.getSignatureResolution(),
-                            ship.getWeaponTracking(), ship.getWeaponSignatureRadius(),
-                            ship.getWeaponOptimal(), ship.getWeaponFalloff()));
+                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(),
+                            ship.getHeight(), ship.getStats()));
                 }
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
@@ -112,19 +108,12 @@ public class BattleServer extends IntervalTask {
                 Vector2 position = startingPositions[serverPlayer.getColorIndex()];
                 float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * SHIP_WIDTH * 5;
                 shipOffsetCounters[serverPlayer.getColorIndex()]++;
-                ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT, serverPlayer, message.getAcceleration(),
-                        message.getMaxHealth(), message.getMaxSpeed(), message.getTurnSpeed(),
-                        message.getMaxAngularAcceleration(), message.getSignatureResolution(),
-                        message.getWeaponTracking(), message.getWeaponSignatureRadius(),
-                        message.getWeaponOptimal(), message.getWeaponFalloff());
+                ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT,
+                        serverPlayer, message.getAcceleration(), message.getStats());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
-                sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
-                        ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
-                        ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity(),
-                        ship.getMaxAngularAcceleration(), ship.getSignatureResolution(),
-                        ship.getWeaponTracking(), ship.getWeaponSignatureRadius(),
-                        ship.getWeaponOptimal(), ship.getWeaponFalloff()));
+                sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(),
+                        ship.getStats()));
             }
             else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {
                 ShootRequestMessage message = (ShootRequestMessage) msg;
