@@ -50,8 +50,6 @@ public class ClientShip extends Image {
     private float brakingLeft;
     private Vector2 impulseIdeal = new Vector2();
 
-    private final float firingCooldown = 1f; // TODO create in constructor through message
-
     public void setBrakingLeft(float brakingLeft) {
         this.brakingLeft = brakingLeft;
     }
@@ -106,7 +104,7 @@ public class ClientShip extends Image {
     }
 
     public boolean canFire() {
-        if (System.currentTimeMillis() - lastFiringTime > firingCooldown * 1000) {
+        if (System.currentTimeMillis() - lastFiringTime > stats.getWeaponCooldown() * 1000) {
             return true;
         }
         return false;

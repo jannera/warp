@@ -4,12 +4,14 @@ import com.rasanenj.warp.messaging.Message;
 
 import java.nio.ByteBuffer;
 
+import static com.rasanenj.warp.Log.log;
+
 /**
  * @author gilead
  */
 public class ShipStats {
     private final float signatureResolution;
-    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff;
+    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown;
     private final float maxLinearVelocity;
     private final float maxHealth;
 
@@ -19,7 +21,8 @@ public class ShipStats {
                      float maxHealth, float maxVelocity, float maxAngularVelocity,
                      float maxAngularAcceleration, float signatureResolution,
                      float weaponTracking, float weaponSignatureRadius,
-                     float weaponOptimal, float weaponFalloff) {
+                     float weaponOptimal, float weaponFalloff,
+                     float weaponDamage, float weaponCooldown) {
         this.mass = mass;
         this.inertia = inertia;
         this.maxLinearForceForward = maxLinearForceForward;
@@ -35,6 +38,8 @@ public class ShipStats {
         this.weaponSignatureRadius = weaponSignatureRadius;
         this.weaponOptimal = weaponOptimal;
         this.weaponFalloff = weaponFalloff;
+        this.weaponDamage = weaponDamage;
+        this.weaponCooldown = weaponCooldown;
     }
 
     public ShipStats(ByteBuffer b) {
@@ -53,17 +58,20 @@ public class ShipStats {
         this.weaponSignatureRadius = b.getFloat();
         this.weaponOptimal = b.getFloat();
         this.weaponFalloff = b.getFloat();
+        this.weaponDamage = b.getFloat();
+        this.weaponCooldown = b.getFloat();
     }
 
     public void encode(ByteBuffer b) {
         Message.putFloats(b, mass, inertia, maxLinearForceForward, maxLinearForceBackward,
                 maxLinearForceLeft, maxLinearForceRight, maxHealth, maxLinearVelocity,
-                maxAngularVelocity, maxAngularAcceleration, weaponTracking,
-                signatureResolution, weaponSignatureRadius, weaponOptimal, weaponFalloff);
+                maxAngularVelocity, maxAngularAcceleration, signatureResolution,
+                weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff,
+                weaponDamage, weaponCooldown);
     }
 
     public static int getLengthInBytes() {
-        return Float.SIZE/8 * 15;
+        return Float.SIZE/8 * 17;
     }
 
     public float getSignatureResolution() {
@@ -156,5 +164,13 @@ public class ShipStats {
 
     public void setInertia(float inertia) {
         this.inertia = inertia;
+    }
+
+    public float getWeaponDamage() {
+        return weaponDamage;
+    }
+
+    public float getWeaponCooldown() {
+        return weaponCooldown;
     }
 }

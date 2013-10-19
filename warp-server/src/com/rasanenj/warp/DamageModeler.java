@@ -45,8 +45,7 @@ public class DamageModeler {
         float damage = 0;
         if (hit < hitChance) {
             float quality = 0.5f + hit;
-            damage = 1f * quality;
-            // TODO: fetch the base damage from the shooting ship
+            damage = shooter.getStats().getWeaponDamage() * quality;
         }
 
         return damage;

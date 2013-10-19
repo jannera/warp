@@ -134,7 +134,6 @@ public class BattleServer extends IntervalTask {
                         battleLoop.removeShip(target.getId());
                     }
                 }
-                log(message.getId() + " shot " + message.getTarget());
             }
         }
 
