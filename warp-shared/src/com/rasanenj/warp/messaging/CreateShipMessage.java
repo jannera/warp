@@ -14,12 +14,16 @@ public class CreateShipMessage extends EntityMessage {
     private final long ownerId;
     private final float maxAngularAcceleration;
     float width, height, mass, inertia;
+    private final float signatureResolution;
+    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff;
 
     public CreateShipMessage(long id, long ownerId, float width, float height, float mass, float inertia,
                              float maxLinearForceForward, float maxLinearForceBackward,
                              float maxLinearForceLeft, float maxLinearForceRight,
                              float maxHealth, float maxVelocity, float maxAngularVelocity,
-                             float maxAngularAcceleration) {
+                             float maxAngularAcceleration, float signatureResolution,
+                             float weaponTracking, float weaponSignatureRadius,
+                             float weaponOptimal, float weaponFalloff) {
         super(id);
         this.ownerId = ownerId;
         this.width = width;
@@ -34,6 +38,11 @@ public class CreateShipMessage extends EntityMessage {
         this.maxVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
         this.maxAngularAcceleration = maxAngularAcceleration;
+        this.weaponTracking = weaponTracking;
+        this.signatureResolution = signatureResolution;
+        this.weaponSignatureRadius = weaponSignatureRadius;
+        this.weaponOptimal = weaponOptimal;
+        this.weaponFalloff = weaponFalloff;
     }
 
     public CreateShipMessage(ByteBuffer msg) {
@@ -51,6 +60,11 @@ public class CreateShipMessage extends EntityMessage {
         this.maxVelocity = msg.getFloat();
         this.maxAngularVelocity = msg.getFloat();
         this.maxAngularAcceleration = msg.getFloat();
+        this.weaponTracking = msg.getFloat();
+        this.signatureResolution = msg.getFloat();
+        this.weaponSignatureRadius = msg.getFloat();
+        this.weaponOptimal = msg.getFloat();
+        this.weaponFalloff = msg.getFloat();
     }
 
     @Override
@@ -60,11 +74,12 @@ public class CreateShipMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(2 * Long.SIZE/8 + 12 * Float.SIZE/8);
+        ByteBuffer b = create(2 * Long.SIZE/8 + 17 * Float.SIZE/8);
         // log("owner id in message " + ownerId);
         b.putLong(id).putLong(ownerId).putFloat(width).putFloat(height).putFloat(mass).putFloat(inertia);
         b.putFloat(maxLinearForceForward).putFloat(maxLinearForceBackward).putFloat(maxLinearForceLeft).putFloat(maxLinearForceRight);
         b.putFloat(maxHealth).putFloat(maxVelocity).putFloat(maxAngularVelocity).putFloat(maxAngularAcceleration);
+        putFloats(b, weaponTracking, signatureResolution, weaponSignatureRadius, weaponOptimal, weaponFalloff);
         return b.array();
     }
 
@@ -118,5 +133,25 @@ public class CreateShipMessage extends EntityMessage {
 
     public float getMaxAngularAcceleration() {
         return maxAngularAcceleration;
+    }
+
+    public float getSignatureResolution() {
+        return signatureResolution;
+    }
+
+    public float getWeaponTracking() {
+        return weaponTracking;
+    }
+
+    public float getWeaponSignatureRadius() {
+        return weaponSignatureRadius;
+    }
+
+    public float getWeaponOptimal() {
+        return weaponOptimal;
+    }
+
+    public float getWeaponFalloff() {
+        return weaponFalloff;
     }
 }

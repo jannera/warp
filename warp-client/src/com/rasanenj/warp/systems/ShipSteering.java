@@ -115,9 +115,7 @@ public class ShipSteering extends IntervalTask {
             maxAccelerationInTimestep *= ship.getInertia();
 
 
-            log(minimumBreakingDistance + " vs " + angleDiff);
-
-            // minimumBreakingDistance /= 2.5f; // TODO: minimum breaking distance is still too high, thus it's lowered a bit here
+            // log(minimumBreakingDistance + " vs " + angleDiff);
 
             if (Math.abs(angleDiff) > minimumBreakingDistance) {
                 ship.setTurningState(TurningState.FULL_SPEED);

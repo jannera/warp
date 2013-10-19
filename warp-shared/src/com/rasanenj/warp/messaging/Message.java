@@ -66,4 +66,9 @@ public abstract class Message {
         return null;
     }
 
+    public static void putFloats(ByteBuffer b, float ... floats) {
+        for(int i = 0; i < floats.length; i++) {
+            b.putFloat(floats[i]);
+        }
+    }
 }

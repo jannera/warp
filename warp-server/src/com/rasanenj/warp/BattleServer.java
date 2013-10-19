@@ -71,7 +71,9 @@ public class BattleServer extends IntervalTask {
                     serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
                             ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
                             ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity(),
-                            ship.getMaxAngularAcceleration()));
+                            ship.getMaxAngularAcceleration(), ship.getSignatureResolution(),
+                            ship.getWeaponTracking(), ship.getWeaponSignatureRadius(),
+                            ship.getWeaponOptimal(), ship.getWeaponFalloff()));
                 }
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
@@ -112,13 +114,17 @@ public class BattleServer extends IntervalTask {
                 shipOffsetCounters[serverPlayer.getColorIndex()]++;
                 ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT, serverPlayer, message.getAcceleration(),
                         message.getMaxHealth(), message.getMaxSpeed(), message.getTurnSpeed(),
-                        message.getMaxAngularAcceleration());
+                        message.getMaxAngularAcceleration(), message.getSignatureResolution(),
+                        message.getWeaponTracking(), message.getWeaponSignatureRadius(),
+                        message.getWeaponOptimal(), message.getWeaponFalloff());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
                 sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(), ship.getMass(), ship.getInertia(),
                         ship.getMaxLinearForceForward(), ship.getMaxLinearForceBackward(), ship.getMaxLinearForceLeft(), ship.getMaxLinearForceRight(),
                         ship.getMaxHealth(), ship.getMaxVelocity(), ship.getMaxAngularVelocity(),
-                        ship.getMaxAngularAcceleration()));
+                        ship.getMaxAngularAcceleration(), ship.getSignatureResolution(),
+                        ship.getWeaponTracking(), ship.getWeaponSignatureRadius(),
+                        ship.getWeaponOptimal(), ship.getWeaponFalloff()));
             }
             else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {
                 ShootRequestMessage message = (ShootRequestMessage) msg;

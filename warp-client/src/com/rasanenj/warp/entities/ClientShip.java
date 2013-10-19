@@ -21,12 +21,16 @@ public class ClientShip extends Image {
     private float health;
 
     private static long lastid = 0;
+    private final float signatureResolution;
+    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff;
 
     public ClientShip(long id, Player owner, float width, float height, float mass, float inertia,
                       float maxLinearForceForward, float maxLinearForceBackward,
                       float maxLinearForceLeft, float maxLinearForceRight,
                       float maxHealth, float maxVelocity, float maxAngularVelocity,
-                      float maxAngularAcceleration) {
+                      float maxAngularAcceleration, float signatureResolution,
+                      float weaponTracking, float weaponSignatureRadius,
+                      float weaponOptimal, float weaponFalloff) {
         super(Assets.shipTexture);
         lastid = id;
         this.id = id;
@@ -57,6 +61,12 @@ public class ClientShip extends Image {
         this.maxLinearVelocity = maxVelocity;
         this.maxAngularVelocity = maxAngularVelocity;
         this.maxAngularAcceleration = maxAngularAcceleration;
+
+        this.weaponTracking = weaponTracking;
+        this.signatureResolution = signatureResolution;
+        this.weaponSignatureRadius = weaponSignatureRadius;
+        this.weaponOptimal = weaponOptimal;
+        this.weaponFalloff = weaponFalloff;
     }
 
     private final float maxLinearVelocity;
@@ -64,7 +74,7 @@ public class ClientShip extends Image {
     private float brakingLeft;
     private Vector2 impulseIdeal = new Vector2();
 
-    private final float firingCooldown = 5f; // TODO create in constructor through message
+    private final float firingCooldown = 1f; // TODO create in constructor through message
 
     public void setBrakingLeft(float brakingLeft) {
         this.brakingLeft = brakingLeft;
@@ -128,6 +138,26 @@ public class ClientShip extends Image {
 
     public void reduceHealth(float damage) {
         health -= damage;
+    }
+
+    public float getSignatureResolution() {
+        return signatureResolution;
+    }
+
+    public float getWeaponTracking() {
+        return weaponTracking;
+    }
+
+    public float getWeaponSignatureRadius() {
+        return weaponSignatureRadius;
+    }
+
+    public float getWeaponOptimal() {
+        return weaponOptimal;
+    }
+
+    public float getWeaponFalloff() {
+        return weaponFalloff;
     }
 
     public enum TurningState {

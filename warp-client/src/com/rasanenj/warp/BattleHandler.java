@@ -77,7 +77,9 @@ public class BattleHandler {
                         message.getMaxLinearForceForward(), message.getMaxLinearForceBackward(),
                         message.getMaxLinearForceLeft(), message.getMaxLinearForceRight(),
                         message.getMaxHealth(), message.getMaxVelocity(), message.getMaxAngularVelocity(),
-                        message.getMaxAngularAcceleration());
+                        message.getMaxAngularAcceleration(), message.getSignatureResolution(),
+                        message.getWeaponTracking(), message.getWeaponSignatureRadius(),
+                        message.getWeaponOptimal(), message.getWeaponFalloff());
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.attach(screen.getStage());
@@ -259,6 +261,7 @@ public class BattleHandler {
             else {
                 if (selectedShip != null) {
                     if (shipClickListener.clickedHostileShip) {
+                        log("asdf");
                         return;
                     }
                     selectedShip.setTargetPos(x, y);

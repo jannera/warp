@@ -48,13 +48,18 @@ Future Ideas
 
 MVProto
 ===
-* Kameran liikuttelu ei saisi tökkiä
 * Ampumissysteemi
     * aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
-    * loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
-    * ammusten näyttäminen clintissä
+    * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
+    * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
+* Bugi: kun on antanut laivalle ampumiskohteen, ei saa enää valittua liikkumiskohdetta
+    * Ehkä voisi katsoa koko event-systeemiä fiksummaksi.. miksi canceloinnit eivät toimi?
+* Kameran liikuttelu ei saisi tökkiä
+* Kameran zoomi
+    * Toimimaan yleensäkin
+    * Toimimaan rullasta
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
 * Parempi fontti ruudulle
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
@@ -76,6 +81,7 @@ MVProto
     * asioiden visualisoiminen
 * BUGI: joskus lähestyessä pistettä, laiva töksähtää yllättäen kummalliseen suuntaan suht nopeasti
 * arrival liikkumiseen
+* ShipStats ja WeaponStats omiin luokkiinsa
 
 MVProto DONE
 ===

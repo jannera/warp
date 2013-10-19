@@ -29,6 +29,9 @@ public class ServerShip extends Entity {
 
     private float health;
 
+    private final float signatureResolution;
+    private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff;
+
     static {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.active = true;
@@ -40,7 +43,9 @@ public class ServerShip extends Entity {
 
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
                       float acceleration, float maxHealth, float maxVelocity, float maxAngularVelocity,
-                      float maxAngularAcceleration) {
+                      float maxAngularAcceleration, float signatureResolution,
+                      float weaponTracking, float weaponSignatureRadius,
+                      float weaponOptimal, float weaponFalloff) {
         this.width = width;
         this.height = height;
         body = world.createBody(bodyDef);
@@ -63,6 +68,11 @@ public class ServerShip extends Entity {
         this.maxAngularAcceleration = maxAngularAcceleration;
 
         this.health = maxHealth;
+        this.weaponTracking = weaponTracking;
+        this.signatureResolution = signatureResolution;
+        this.weaponSignatureRadius = weaponSignatureRadius;
+        this.weaponOptimal = weaponOptimal;
+        this.weaponFalloff = weaponFalloff;
     }
 
     public Body getBody() {
@@ -142,5 +152,25 @@ public class ServerShip extends Entity {
 
     public float getMaxAngularAcceleration() {
         return maxAngularAcceleration;
+    }
+
+    public float getSignatureResolution() {
+        return signatureResolution;
+    }
+
+    public float getWeaponTracking() {
+        return weaponTracking;
+    }
+
+    public float getWeaponSignatureRadius() {
+        return weaponSignatureRadius;
+    }
+
+    public float getWeaponOptimal() {
+        return weaponOptimal;
+    }
+
+    public float getWeaponFalloff() {
+        return weaponFalloff;
     }
 }

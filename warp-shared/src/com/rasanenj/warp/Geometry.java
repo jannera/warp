@@ -50,4 +50,31 @@ public class Geometry {
     }
 
 
+    /**
+     * Calculates transverse speed of ships in certain positions with certain
+     * velocities.
+     * The posA and posB parameters are modified, velocities are not.
+     */
+    public static float getTransverseSpeed(Vector2 posA, Vector2 posB, Vector2 velA, Vector2 velB) {
+        Vector2 plane = new Vector2();
+        plane.set(posA);
+        plane.sub(posB);
+        posA.set(velA);
+        posB.set(velB);
+        project(posA, plane);
+        project(posB, plane);
+        posA.sub(posB);
+        return posA.len();
+    }
+
+    /**
+     * Projects a on b, and returns a.
+     */
+    public static Vector2 project(Vector2 a, Vector2 b) {
+        float adotb = a.dot(b);
+        float bdotb = b.dot(b);
+        a.set(b);
+        a.scl(adotb / bdotb);
+        return a;
+    }
 }
