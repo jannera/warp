@@ -37,6 +37,7 @@ public class BattleScreen implements Screen {
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
+    private static final int CIRCLE_SEGMENTS = 64;
 
     private static final Color DODGER_BLUE = new Color(30f/255f, 191f/255f, 1, 1);
     final BitmapFont font;
@@ -72,8 +73,27 @@ public class BattleScreen implements Screen {
         renderVectors();
         renderOffScreenShips();
         renderHealthBars();
+        renderOptimals();
         renderDamageTexts();
         renderDebugText();
+    }
+
+    private void renderOptimals() {
+        if (!Settings.renderOptimals) {
+            return;
+        }
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        for (ClientShip ship : battleHandler.getShips()) {
+            ship.getCenterPos(tmp);
+            float optimal = ship.getStats().getWeaponOptimal();
+            float falloff = ship.getStats().getWeaponFalloff();
+            shapeRenderer.setColor(Color.ORANGE);
+            shapeRenderer.circle(tmp.x, tmp.y, optimal, CIRCLE_SEGMENTS);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.circle(tmp.x, tmp.y, optimal + falloff, CIRCLE_SEGMENTS);
+        }
+        shapeRenderer.end();
     }
 
     private void renderHealthBars() {
