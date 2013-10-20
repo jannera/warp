@@ -11,5 +11,6 @@ public class Settings {
     public static boolean renderImpulse = false;
     public static boolean renderAcceleration = false;
     public static boolean renderAngularAcceleration = false;
-    public static boolean renderOptimals = true;
+    public static boolean renderAllOptimals = false;
+    public static boolean renderSelectedShipOptimal = true;
 }

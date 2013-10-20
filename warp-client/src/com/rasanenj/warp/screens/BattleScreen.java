@@ -79,20 +79,28 @@ public class BattleScreen implements Screen {
     }
 
     private void renderOptimals() {
-        if (!Settings.renderOptimals) {
-            return;
-        }
+        if (Settings.renderAllOptimals) {
+            for (ClientShip ship : battleHandler.getShips()) {
+                renderOptimals(ship);
+            }
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        for (ClientShip ship : battleHandler.getShips()) {
-            ship.getCenterPos(tmp);
-            float optimal = ship.getStats().getWeaponOptimal();
-            float falloff = ship.getStats().getWeaponFalloff();
-            shapeRenderer.setColor(Color.ORANGE);
-            shapeRenderer.circle(tmp.x, tmp.y, optimal, CIRCLE_SEGMENTS);
-            shapeRenderer.setColor(Color.RED);
-            shapeRenderer.circle(tmp.x, tmp.y, optimal + falloff, CIRCLE_SEGMENTS);
         }
+        else if (Settings.renderSelectedShipOptimal) {
+            if (battleHandler.getSelectedShip() != null) {
+                renderOptimals(battleHandler.getSelectedShip());
+            }
+        }
+    }
+
+    private void renderOptimals(ClientShip ship) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        ship.getCenterPos(tmp);
+        float optimal = ship.getStats().getWeaponOptimal();
+        float falloff = ship.getStats().getWeaponFalloff();
+        shapeRenderer.setColor(Color.ORANGE);
+        shapeRenderer.circle(tmp.x, tmp.y, optimal, CIRCLE_SEGMENTS);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.circle(tmp.x, tmp.y, optimal + falloff, CIRCLE_SEGMENTS);
         shapeRenderer.end();
     }
 

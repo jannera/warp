@@ -175,16 +175,18 @@ public class BattleHandler {
         }
     }
 
-    private class ShipClickListener extends ClickListener {
-        boolean clickedHostileShip = false;
+    private class ShipClickListener extends InputListener {
 
         @Override
-        public void clicked (InputEvent event, float x, float y) {
+        public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            return true;
+        }
+
+        @Override
+        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
             log("clicked Ship" + event.getTarget() + " @ (" + x + ", " + y + ")");
 
             ClientShip clientShip = (ClientShip) event.getTarget();
-
-            clickedHostileShip = false;
 
             if (clientShip.getOwner().getId() == myId) {
                 // clicked friendly ship, so select it
@@ -196,14 +198,13 @@ public class BattleHandler {
                 selectedShip.setColor(getHiliteColor(selectedShip.getOwner()));
             }
             else {
-                clickedHostileShip = true;
                 // clicked non-friendly ship, so kill it
                 if (selectedShip != null) {
                     selectedShip.setFiringTarget(clientShip);
                     log (selectedShip + " shooting " + clientShip);
                 }
             }
-            event.cancel();
+            event.handle();
 
 
         }
@@ -243,6 +244,9 @@ public class BattleHandler {
             startPoint.set(x, y);
         }
         public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            if (event.getTarget() instanceof ClientShip) {
+                return false;
+            }
             dragState = DragState.STARTING;
             startPoint.set(x, y);
             return true;
@@ -255,10 +259,6 @@ public class BattleHandler {
             }
             else {
                 if (selectedShip != null) {
-                    if (shipClickListener.clickedHostileShip) {
-                        log("asdf");
-                        return;
-                    }
                     selectedShip.setTargetPos(x, y);
                     screen.setCameraPos(x, y);
                     event.stop();
@@ -376,5 +376,9 @@ public class BattleHandler {
 
     private Color getBasicColor(Player player) {
         return playerColors[player.getColorIndex()];
+    }
+
+    public ClientShip getSelectedShip() {
+        return selectedShip;
     }
 }

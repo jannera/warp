@@ -54,8 +54,6 @@ MVProto
     * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
     * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
-* Bugi: kun on antanut laivalle ampumiskohteen, ei saa enää valittua liikkumiskohdetta
-    * Ehkä voisi katsoa koko event-systeemiä fiksummaksi.. miksi canceloinnit eivät toimi?
 * Kameran liikuttelu ei saisi tökkiä
 * Kameran zoomi
     * Toimimaan yleensäkin
@@ -73,7 +71,6 @@ MVProto
     * Haasteen hyväksyminen: /accept <player>
     * Pelin aloittaminen
 * Kyky pyörittää useita pelejä samaan aikaan
-* aseiden rangen näyttäminen ympyrällä
 * usean laivan kerralla
     * valitseminen
     * navigoiminen
@@ -101,3 +98,6 @@ MVProto DONE
 * DONE healthin näyttäminen clientissä
 * DONE maksimivoimien antaminen Serveriltä aluksen luonnin yhteydessä
 * DONE maksimi-impulsien pituudet pitäisi kertoa ShipSteering.STEP_LENGTH:in pituudella, jolloin aluksen maksimivoimat ilmaisisivat käytetyn maksimivoiman (keskiarvon) sekunnissa
+* DONE Bugi: kun on antanut laivalle ampumiskohteen, ei saa enää valittua liikkumiskohdetta
+    * Ehkä voisi katsoa koko event-systeemiä fiksummaksi.. miksi canceloinnit eivät toimi?
+* DONE aseiden rangen näyttäminen ympyrällä
