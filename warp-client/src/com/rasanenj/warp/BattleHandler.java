@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.*;
@@ -268,7 +267,8 @@ public class BattleHandler {
 
         @Override
         public boolean scrolled(InputEvent event, float x, float y, int amount) {
-            screen.zoom(amount);
+            log("new success!");
+            // screen.zoom(amount);
             return true;
         }
 
@@ -312,7 +312,6 @@ public class BattleHandler {
         this.targetImage.setBounds(0, 0, 1, 1);
         this.targetImage.setZIndex(ZOrder.firingTarget.ordinal());
         screen.getStage().addActor(targetImage);
-
     }
 
     private ClientShip getShip(long id) {

@@ -19,4 +19,9 @@ public class GwtLauncher extends GwtApplication {
 	public ApplicationListener getApplicationListener () {
 		return new WarpGame();
 	}
+
+    @Override
+    public int getLogLevel() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
