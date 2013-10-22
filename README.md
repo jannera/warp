@@ -49,15 +49,13 @@ Future Ideas
 MVProto
 ===
 * Ampumissysteemi
-    * aseiden statit: sykli, lämä
+    * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
     * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
     * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
 * Kameran liikuttelu ei saisi tökkiä
-* Kameran zoomi
-    * Toimimaan yleensäkin
-    * Toimimaan rullasta
+* Harjoitusvastustaja tasoa berserk
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
 * Parempi fontti ruudulle
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
@@ -101,3 +99,6 @@ MVProto DONE
 * DONE Bugi: kun on antanut laivalle ampumiskohteen, ei saa enää valittua liikkumiskohdetta
     * Ehkä voisi katsoa koko event-systeemiä fiksummaksi.. miksi canceloinnit eivät toimi?
 * DONE aseiden rangen näyttäminen ympyrällä
+* DONE Kameran zoomi
+    * Toimimaan yleensäkin
+    * Toimimaan rullasta
