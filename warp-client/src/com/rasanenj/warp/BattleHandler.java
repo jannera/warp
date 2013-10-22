@@ -267,23 +267,8 @@ public class BattleHandler {
 
         @Override
         public boolean scrolled(InputEvent event, float x, float y, int amount) {
-            log("new success!");
-            // screen.zoom(amount);
+            screen.zoom(0.1f * amount, x, y);
             return true;
-        }
-
-        @Override
-        public boolean keyDown (InputEvent event, int keycode) {
-            if (keycode == Input.Keys.Z) {
-                screen.zoom(1);
-                return true;
-            }
-            if (keycode == Input.Keys.X) {
-                screen.zoom(-1);
-                return true;
-            }
-
-            return false;
         }
     }
 

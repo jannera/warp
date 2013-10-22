@@ -2,9 +2,9 @@ package com.rasanenj.warp.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -33,7 +33,6 @@ public class BattleScreen implements Screen {
 
     private static final int CAMERA_SIZE = 20;
     private static final float zoomStep = 0.05f;
-    private float zoom = 1f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
@@ -45,10 +44,12 @@ public class BattleScreen implements Screen {
 
     private final Array<DamageText> damageMessages = new Array(false, 16);
     private final Array<DamageText> removables = new Array<DamageText>(false, 16);
+    private final OrthographicCamera cam;
 
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
+        cam = (OrthographicCamera) stage.getCamera();
 
         Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         font = skin.getFont("default-font");
@@ -155,9 +156,9 @@ public class BattleScreen implements Screen {
     public void renderOffScreenShips() {
         // renders a triangle for every ship that is not shown on the screen
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        final Vector3 cameraPosition = stage.getCamera().position;
-        final float halfViewPortWidth = stage.getCamera().viewportWidth / 2f;
-        final float halfViewPortHeight = stage.getCamera().viewportHeight / 2f;
+        final Vector3 cameraPosition = cam.position;
+        final float halfViewPortWidth = cam.viewportWidth / 2f * cam.zoom;
+        final float halfViewPortHeight = cam.viewportHeight / 2f * cam.zoom;
 
         float cameraLeft =   cameraPosition.x - halfViewPortWidth;
         float cameraRight =  cameraPosition.x + halfViewPortWidth;
@@ -220,10 +221,9 @@ public class BattleScreen implements Screen {
     private boolean isOnScreen(ClientShip ship) {
         ship.getBoundingBox(corners);
 
-        final Camera camera = stage.getCamera();
         for (int i=0; i < corners.length; i++) {
             tmp3.set(corners[i].x, corners[i].y, 0);
-            if (camera.frustum.pointInFrustum(tmp3)) {
+            if (cam.frustum.pointInFrustum(tmp3)) {
                 return true;
             }
         }
@@ -231,7 +231,7 @@ public class BattleScreen implements Screen {
     }
 
     public void renderVectors() {
-        shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
+        shapeRenderer.setProjectionMatrix(cam.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (ClientShip ship : battleHandler.getShips()) {
             ship.getCenterPos(tmp);
@@ -320,19 +320,29 @@ public class BattleScreen implements Screen {
     }
 
     public void setCameraPos(float x, float y) {
-        float dx = x - stage.getCamera().position.x;
-        float dy = y - stage.getCamera().position.y;
-        stage.getCamera().translate(dx, dy, 0);
+        float dx = x - cam.position.x;
+        float dy = y - cam.position.y;
+        cam.translate(dx, dy, 0);
+        cam.update();
     }
 
     public void translateCamera(float dx, float dy) {
-        stage.getCamera().translate(dx, dy, 0);
+        cam.translate(dx, dy, 0);
+        cam.update();
     }
 
-    public void zoom(int amount) {
-        zoom += zoomStep * amount;
-        log("zoom:" + zoom);
-        stage.setViewport(CAMERA_SIZE * zoom, CAMERA_SIZE * zoom, true);
+    public void zoom(float amount, float x, float y) {
+        if (cam.zoom + amount <= 0) {
+            return;
+        }
+
+        cam.zoom += amount;
+        // TODO: the following deltas are not optimal, but I suppose they're close enough for proto
+        final float deltaX = (cam.position.x - x /* - CAMERA_SIZE/2f */) * amount;
+        final float deltaY = (cam.position.y - y /* - CAMERA_SIZE/2f*/ ) * amount;
+
+        cam.translate(deltaX, deltaY, 0f);
+        cam.update();
     }
 
     public void addDamageText(ClientShip target, float damage) {
