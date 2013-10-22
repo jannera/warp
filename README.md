@@ -4,7 +4,10 @@ Warp is a multiplayer browser game that’s based on GWT, Websockets and libgdx.
 
 Status
 ===
-You can chat, you can move the ships, and the demoserver works too. Maybe you can do some shooting soon too ;)
+You can chat, you can move the ships and the demoserver works too.
+Each player has his own fleet, that is read from JSON.
+JSON can be modified via web interface.
+You can shoot, and the damage model works.
 
 ATM all code written is throw-away proto code. If more permanent solution will be looked at, language(s) and frameworks might totally change.
 
@@ -57,26 +60,30 @@ MVProto
 * Kameran liikuttelu ei saisi tökkiä
 * Harjoitusvastustaja tasoa berserk
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
+* usean laivan kerralla
+    * valitseminen
+    * navigoiminen
+    * hyökkäyskäskyn antaminen
+    * asioiden visualisoiminen
 * Parempi fontti ruudulle
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Oikea määrä pikseleitä chatti-ikkunalle
+* Alusten ja niiden stattien ostaminen webbikälin kautta
+    * Hintalistan parsiminen
+    * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
+    * Ostonappulat
+    * Nykyisten stattien näyttäminen webbikälissä
 * Chatissa olevien tyyppien nimien listaaminen
 * Pelin aloittaminen chatista:
     * Haasteen antaminen: /fight <player> <player> <player> ...
     * Haasteen hyväksyminen: /accept <player>
     * Pelin aloittaminen
 * Kyky pyörittää useita pelejä samaan aikaan
-* usean laivan kerralla
-    * valitseminen
-    * navigoiminen
-    * hyökkäyskäskyn antaminen
-    * asioiden visualisoiminen
 * BUGI: joskus lähestyessä pistettä, laiva töksähtää yllättäen kummalliseen suuntaan suht nopeasti
 * arrival liikkumiseen
-* ShipStats ja WeaponStats omiin luokkiinsa
 
 MVProto DONE
 ===
@@ -102,3 +109,4 @@ MVProto DONE
 * DONE Kameran zoomi
     * Toimimaan yleensäkin
     * Toimimaan rullasta
+* DONE ShipStats omaan luokkaansa
