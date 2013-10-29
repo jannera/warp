@@ -43,6 +43,7 @@ public class BattleHandler {
     private ClientShip hoveringOverTarget;
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
+    private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
 
     public BattleHandler(BattleScreen screen, ServerConnection conn) {
         conn.register(new ConnectionListener());
@@ -63,6 +64,10 @@ public class BattleHandler {
         this.targetImage.setBounds(0, 0, 1, 1);
         this.targetImage.setZIndex(ZOrder.firingTarget.ordinal());
         screen.getStage().addActor(targetImage);
+    }
+
+    public void createNPC() {
+        this.npcPlayers.add(new NPCPlayer(Utility.getHost()));
     }
 
     private class BattleMessageConsumer extends MessageConsumer {
@@ -160,8 +165,6 @@ public class BattleHandler {
                         ship.setFiringTarget(null);
                     }
                 }
-
-
             }
         }
 
@@ -295,6 +298,14 @@ public class BattleHandler {
             screen.zoom(0.1f * amount, x, y);
             return true;
         }
+
+        public boolean keyTyped (InputEvent event, char character) {
+            if (character == 'n') {
+                createNPC();
+                return true;
+            }
+            return false;
+        }
     }
 
     private final ServerConnection conn;
@@ -319,6 +330,7 @@ public class BattleHandler {
         for (ClientShip ship : ships) {
             if (ship.getId() == id) {
                 tgt = ship;
+                break;
             }
         }
         if (tgt != null) {
@@ -338,6 +350,13 @@ public class BattleHandler {
         shipShooting.update();
         taskHandler.update(delta);
         updateTargetImagePos();
+        updateNPCs();
+    }
+
+    private void updateNPCs() {
+        for (NPCPlayer npc : npcPlayers) {
+            npc.update();
+        }
     }
 
     final Vector2 tmp = new Vector2();

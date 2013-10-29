@@ -44,7 +44,7 @@ public class FleetStatsFetcher {
         }
     }
 
-    public Array<ShipStats> parse(String json) {
+    public static Array<ShipStats> parse(String json) {
         int length = getFleetLength(json);
 
         final Array<ShipStats> msgs = new Array<ShipStats>(false, length);

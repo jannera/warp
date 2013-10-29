@@ -58,7 +58,6 @@ MVProto
     * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
 * Kameran liikuttelu ei saisi tökkiä
-* Harjoitusvastustaja tasoa berserk
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
 * usean laivan kerralla
     * valitseminen
@@ -84,6 +83,7 @@ MVProto
 * Kyky pyörittää useita pelejä samaan aikaan
 * BUGI: joskus lähestyessä pistettä, laiva töksähtää yllättäen kummalliseen suuntaan suht nopeasti
 * arrival liikkumiseen
+* Korvaa ArrayListit libgdx:n Array:illa
 
 MVProto DONE
 ===
@@ -110,3 +110,4 @@ MVProto DONE
     * Toimimaan yleensäkin
     * Toimimaan rullasta
 * DONE ShipStats omaan luokkaansa
+* DONE Harjoitusvastustaja tasoa berserk

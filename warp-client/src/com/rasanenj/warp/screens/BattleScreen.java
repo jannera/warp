@@ -349,6 +349,11 @@ public class BattleScreen implements Screen {
     public void addDamageText(ClientShip target, float damage) {
         damageMessages.add(new DamageText(target, damage));
     }
+    /*
+    public void createNPC(String host) {
+        battleHandler.createNPC(host);
+    }
+    */
 
     private class DamageText {
         public static final long FADEOUT_TIME = 1000; // in ms
