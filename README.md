@@ -29,8 +29,8 @@ Steps
 
 Stuff Learned
 ===
-Super Dev Mode is nice! (and not too hard to set up)
-Making GWT artefacts with Intellij Idea is occultism (and maybe not the best idea)
+* Super Dev Mode is nice! (and not too hard to set up)
+* Making GWT artefacts with Intellij Idea is occultism (and maybe not the best idea)
 
 Idea
 ===

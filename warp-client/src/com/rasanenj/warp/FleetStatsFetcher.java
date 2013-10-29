@@ -2,10 +2,7 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.http.client.*;
-import com.rasanenj.warp.messaging.ServerConnection;
-import com.rasanenj.warp.messaging.ShipStatsMessage;
-
-import java.util.logging.Level;
+import com.rasanenj.warp.entities.ShipStats;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -13,16 +10,15 @@ import static com.rasanenj.warp.Log.log;
  * @author Janne Rasanen
  */
 public class FleetStatsFetcher {
-    public FleetStatsFetcher(long id) {
+    public interface StatsReceiver {
+        public abstract void receive(Array<ShipStats> stats);
+    }
+
+    public FleetStatsFetcher() {
 
     }
 
-    public void loadJSON(final ServerConnection serverConnection) {
-        if (Settings.OFFLINE_MODE) {
-            parse(Constants.OFFLINE_FLEET, serverConnection);
-            return;
-        }
-
+    public void loadJSON(final StatsReceiver receiver) {
         String url = "http://" + Constants.PERSIST_SERVER_HOST + "/userships/1/?format=json";
         RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(url));
 
@@ -36,11 +32,10 @@ public class FleetStatsFetcher {
                     if (200 == response.getStatusCode()) {
                         String json = response.getText();
                         // log("Successfully loaded JSON: " + json);
-                        parse(json, serverConnection);
+                        receiver.receive(parse(json));
 
                     } else {
                         log("Error response while fetching Fleet JSON: " + response.getStatusText());
-                        // parse(Constants.OFFLINE_FLEET, serverConnection);
                     }
                 }
             });
@@ -49,17 +44,17 @@ public class FleetStatsFetcher {
         }
     }
 
-    public void parse(String json, final ServerConnection serverConnection) {
+    public Array<ShipStats> parse(String json) {
         int length = getFleetLength(json);
 
-        final Array<ShipStatsMessage> msgs = new Array<ShipStatsMessage>(false, length);
+        final Array<ShipStats> msgs = new Array<ShipStats>(false, length);
 
         for (int i=0; i < length; i++) {
             ShipJSON ship = parseJson(json, i);
-            msgs.add(new ShipStatsMessage(ship.getStats(), ship.getAcceleration()));
+            msgs.add(ship.getStats());
         }
 
-        serverConnection.sendShipStats(msgs);
+        return msgs;
     }
 
     /**

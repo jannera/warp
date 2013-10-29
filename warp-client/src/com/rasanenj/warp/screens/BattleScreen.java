@@ -23,8 +23,9 @@ import com.rasanenj.warp.messaging.ServerConnection;
 import static com.rasanenj.warp.Log.log;
 
 /**
- * @author gilead
+ * Handles rendering and Screen events.
  *
+ * @author gilead
  */
 public class BattleScreen implements Screen {
 

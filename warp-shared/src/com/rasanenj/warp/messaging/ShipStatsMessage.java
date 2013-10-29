@@ -9,16 +9,13 @@ import java.nio.ByteBuffer;
  */
 public class ShipStatsMessage extends Message {
     private final ShipStats stats;
-    private final float acceleration;
 
-    public ShipStatsMessage(ShipStats stats, float acceleration) {
+    public ShipStatsMessage(ShipStats stats) {
         this.stats = stats;
-        this.acceleration = acceleration;
     }
 
     public ShipStatsMessage(ByteBuffer b) {
         this.stats = new ShipStats(b);
-        this.acceleration = b.getFloat();
     }
 
     @Override
@@ -28,17 +25,12 @@ public class ShipStatsMessage extends Message {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(ShipStats.getLengthInBytes() + Float.SIZE/8);
+        ByteBuffer b = create(ShipStats.getLengthInBytes());
         stats.encode(b);
-        b.putFloat(acceleration);
         return b.array();
     }
 
     public ShipStats getStats() {
         return stats;
-    }
-
-    public float getAcceleration() {
-        return acceleration;
     }
 }

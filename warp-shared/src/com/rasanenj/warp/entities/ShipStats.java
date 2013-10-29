@@ -14,6 +14,7 @@ public class ShipStats {
     private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown;
     private final float maxLinearVelocity;
     private final float maxHealth;
+    private final float maxAcceleration;
 
     public ShipStats(float mass, float inertia,
                      float maxLinearForceForward, float maxLinearForceBackward,
@@ -22,7 +23,7 @@ public class ShipStats {
                      float maxAngularAcceleration, float signatureResolution,
                      float weaponTracking, float weaponSignatureRadius,
                      float weaponOptimal, float weaponFalloff,
-                     float weaponDamage, float weaponCooldown) {
+                     float weaponDamage, float weaponCooldown, float maxAcceleration) {
         this.mass = mass;
         this.inertia = inertia;
         this.maxLinearForceForward = maxLinearForceForward;
@@ -40,6 +41,7 @@ public class ShipStats {
         this.weaponFalloff = weaponFalloff;
         this.weaponDamage = weaponDamage;
         this.weaponCooldown = weaponCooldown;
+        this.maxAcceleration = maxAcceleration;
     }
 
     public ShipStats(ByteBuffer b) {
@@ -60,6 +62,7 @@ public class ShipStats {
         this.weaponFalloff = b.getFloat();
         this.weaponDamage = b.getFloat();
         this.weaponCooldown = b.getFloat();
+        this.maxAcceleration = b.getFloat();
     }
 
     public void encode(ByteBuffer b) {
@@ -67,11 +70,11 @@ public class ShipStats {
                 maxLinearForceLeft, maxLinearForceRight, maxHealth, maxLinearVelocity,
                 maxAngularVelocity, maxAngularAcceleration, signatureResolution,
                 weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff,
-                weaponDamage, weaponCooldown);
+                weaponDamage, weaponCooldown, maxAcceleration);
     }
 
     public static int getLengthInBytes() {
-        return Float.SIZE/8 * 17;
+        return Float.SIZE/8 * 18;
     }
 
     public float getSignatureResolution() {
@@ -172,5 +175,9 @@ public class ShipStats {
 
     public float getWeaponCooldown() {
         return weaponCooldown;
+    }
+
+    public float getMaxAcceleration() {
+        return maxAcceleration;
     }
 }

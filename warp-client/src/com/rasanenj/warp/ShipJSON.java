@@ -24,9 +24,10 @@ public class ShipJSON extends JavaScriptObject {
     private final native float getWeaponCooldown() /*-{ return this.weapon_1_cooldown;  }-*/;
 
     public final ShipStats getStats() {
+        // TODO: add acceleration
         return new ShipStats(0, 0, 0, 0, 0, 0, getMaxHealth(), getMaxSpeed(),
                 getTurnSpeed(), getMaxAngularAcceleration(), getSignatureResolution(), getWeaponTracking(),
                 getWeaponSignatureRadius(), getWeaponOptimal(), getWeaponFalloff(), getWeaponDamage(),
-                getWeaponCooldown());
+                getWeaponCooldown(), getAcceleration());
     }
 }

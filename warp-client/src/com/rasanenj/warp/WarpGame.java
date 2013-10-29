@@ -25,8 +25,9 @@ public class WarpGame extends Game implements ResizeHandler {
 	public void create() {
         Assets.load();
         Window.addResizeHandler(this);
-        String host = "ws://" + getHost() + ":" + Constants.PORT;
+        final String host = "ws://" + getHost() + ":" + Constants.PORT;
         serverConnection = new ServerConnection(host, delegator);
+        // TODO: move this connecting to servers to Screens (or their handlers)
 
         chatScreen = new ChatScreen(serverConnection);
         battleScreen = new BattleScreen(serverConnection);
@@ -35,6 +36,8 @@ public class WarpGame extends Game implements ResizeHandler {
         setScreen(battleScreen);
 
         serverConnection.open();
+
+        // battleScreen.createNPC(host);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class ClientShipTest {
         Assets.shipTexture = mock(Texture.class);
         Assets.moveTargetTexture = mock(Texture.class);
         Player player = new Player("name", 0);
-        ShipStats stats = new ShipStats(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+        ShipStats stats = new ShipStats(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
         ClientShip ship = new ClientShip(1, player, 1, 1, stats);
         ship.setVelocity(0, 0, 1, 1000);
         ship.setVelocity(0, 0, 2, 2000);

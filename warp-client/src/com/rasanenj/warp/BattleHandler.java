@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -24,6 +25,8 @@ import java.util.logging.Level;
 import static com.rasanenj.warp.Log.log;
 
 /**
+ * Handles UI and messaging to and from server.
+ *
  * @author gilead
  */
 public class BattleHandler {
@@ -39,6 +42,28 @@ public class BattleHandler {
     private final ShipShooting shipShooting;
     private ClientShip hoveringOverTarget;
     private long myId = -1;
+    private final FleetStatsFetcher statsFetcher;
+
+    public BattleHandler(BattleScreen screen, ServerConnection conn) {
+        conn.register(new ConnectionListener());
+        this.statsFetcher = new FleetStatsFetcher();
+        this.screen = screen;
+        this.conn = conn;
+        this.shipClickListener = new ShipClickListener();
+        screen.getStage().addListener(new StageListener());
+        shipSteering = new ShipSteering(ships, conn);
+        shipShooting = new ShipShooting(ships, conn);
+        this.consumer = new BattleMessageConsumer(conn.getDelegator());
+        this.taskHandler = new TaskHandler();
+        this.moveCameraTask = new MoveCameraTask(screen);
+        this.hoverOverShipListener = new ShipHover();
+        taskHandler.addToTaskList(moveCameraTask);
+        this.targetImage = new Image(Assets.aimingTargetTexture);
+        this.targetImage.setVisible(false);
+        this.targetImage.setBounds(0, 0, 1, 1);
+        this.targetImage.setZIndex(ZOrder.firingTarget.ordinal());
+        screen.getStage().addActor(targetImage);
+    }
 
     private class BattleMessageConsumer extends MessageConsumer {
         public BattleMessageConsumer(MessageDelegator delegator) {
@@ -280,25 +305,6 @@ public class BattleHandler {
 
     private ClientShip selectedShip = null;
 
-    public BattleHandler(BattleScreen screen, ServerConnection conn) {
-        this.screen = screen;
-        this.conn = conn;
-        this.shipClickListener = new ShipClickListener();
-        screen.getStage().addListener(new StageListener());
-        shipSteering = new ShipSteering(ships, conn);
-        shipShooting = new ShipShooting(ships, conn);
-        this.consumer = new BattleMessageConsumer(conn.getDelegator());
-        this.taskHandler = new TaskHandler();
-        this.moveCameraTask = new MoveCameraTask(screen);
-        this.hoverOverShipListener = new ShipHover();
-        taskHandler.addToTaskList(moveCameraTask);
-        this.targetImage = new Image(Assets.aimingTargetTexture);
-        this.targetImage.setVisible(false);
-        this.targetImage.setBounds(0, 0, 1, 1);
-        this.targetImage.setZIndex(ZOrder.firingTarget.ordinal());
-        screen.getStage().addActor(targetImage);
-    }
-
     private ClientShip getShip(long id) {
         for (ClientShip ship : ships) {
             if (ship.getId() == id) {
@@ -364,5 +370,36 @@ public class BattleHandler {
 
     public ClientShip getSelectedShip() {
         return selectedShip;
+    }
+
+    private class ConnectionListener implements ServerConnection.OpenCloseListener {
+        private class StatsToFleet implements FleetStatsFetcher.StatsReceiver {
+
+            @Override
+            public void receive(Array<ShipStats> stats) {
+                for(ShipStats s : stats) {
+                    conn.send(new ShipStatsMessage(s));
+                }
+            }
+        }
+
+        @Override
+        public void onOpen() {
+            conn.send(new JoinServerMessage("gilead", -1, -1));
+
+            StatsToFleet transformer = new StatsToFleet();
+
+            if (Settings.OFFLINE_MODE) {
+                transformer.receive(statsFetcher.parse(Constants.OFFLINE_FLEET));
+            }
+            else {
+                statsFetcher.loadJSON(transformer);
+            }
+        }
+
+        @Override
+        public void onClose() {
+            // TODO: maybe tell the screen the connection was lost?
+        }
     }
 }

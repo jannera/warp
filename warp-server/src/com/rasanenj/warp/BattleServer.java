@@ -109,7 +109,7 @@ public class BattleServer extends IntervalTask {
                 float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * SHIP_WIDTH * 5;
                 shipOffsetCounters[serverPlayer.getColorIndex()]++;
                 ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT,
-                        serverPlayer, message.getAcceleration(), message.getStats());
+                        serverPlayer, message.getStats());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
                 sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(),

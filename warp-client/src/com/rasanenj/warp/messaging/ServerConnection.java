@@ -1,7 +1,6 @@
 package com.rasanenj.warp.messaging;
 
 import com.badlogic.gdx.utils.Array;
-import com.rasanenj.warp.FleetStatsFetcher;
 import com.sksamuel.gwt.websockets.Base64Utils;
 import com.sksamuel.gwt.websockets.Websocket;
 import com.sksamuel.gwt.websockets.WebsocketListener;
@@ -14,15 +13,25 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ServerConnection implements WebsocketListener {
+    public interface OpenCloseListener {
+        public abstract void onOpen();
+
+        public abstract void onClose();
+    }
     final Websocket socket;
     private final MessageDelegator delegator;
-    private final FleetStatsFetcher statsFetcher;
+
+    private final Array<OpenCloseListener> listeners =
+            new Array<OpenCloseListener>(false, 1);
 
     public ServerConnection(String host, MessageDelegator delegator) {
         this.delegator = delegator;
         socket = new Websocket(host);
         socket.addListener(this);
-        this.statsFetcher = new FleetStatsFetcher(2);
+    }
+
+    public void register(OpenCloseListener l) {
+        listeners.add(l);
     }
 
     public void send(Message message) {
@@ -31,7 +40,9 @@ public class ServerConnection implements WebsocketListener {
 
     @Override
     public void onClose() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        for(OpenCloseListener l : listeners) {
+            l.onClose();
+        }
     }
 
     @Override
@@ -43,8 +54,9 @@ public class ServerConnection implements WebsocketListener {
 
     @Override
     public void onOpen() {
-        send(new JoinServerMessage("gilead", -1, -1));
-        statsFetcher.loadJSON(this);
+        for(OpenCloseListener l : listeners) {
+            l.onOpen();
+        }
     }
 
     public void open() {
@@ -53,11 +65,5 @@ public class ServerConnection implements WebsocketListener {
 
     public MessageDelegator getDelegator() {
         return delegator;
-    }
-
-    public void sendShipStats(Array<ShipStatsMessage> msgs) {
-        for (ShipStatsMessage m : msgs) {
-            send(m);
-        }
     }
 }

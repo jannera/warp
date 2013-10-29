@@ -37,7 +37,7 @@ public class ServerShip extends Entity {
 
 
     public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
-                      float acceleration, ShipStats stats) {
+                      ShipStats stats) {
         this.width = width;
         this.height = height;
         body = world.createBody(bodyDef);
@@ -51,6 +51,7 @@ public class ServerShip extends Entity {
         float mass = body.getMass();
 
         this.stats = stats;
+        float acceleration = stats.getMaxAcceleration();
         this.stats.setForceLimits(mass * acceleration, mass * acceleration / 2f,
                 mass * acceleration / 4f, mass * acceleration / 4f);
         this.stats.setMass(mass);
