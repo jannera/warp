@@ -3,6 +3,8 @@ package com.rasanenj.warp.entities;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.rasanenj.warp.Assets;
@@ -15,7 +17,7 @@ import static com.rasanenj.warp.Log.log;
 /**
  * @author gilead
  */
-public class ClientShip extends Image {
+public class ClientShip extends Group {
     private final Player owner;
     private ClientShip firingTarget;
     private long lastFiringTime = 0;
@@ -25,8 +27,19 @@ public class ClientShip extends Image {
 
     private final ShipStats stats;
 
+    private final Image image, clickRegionImage;
+
+    private static final float CLICKREGION_MULTIPLIER = 4f; // how many times bigger are should work as clicking area around the ship
+
     public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
-        super(Assets.shipTexture);
+        this.image = new Image(Assets.shipTexture);
+        this.clickRegionImage = new Image(Assets.shipTexture);
+        this.clickRegionImage.setColor(1, 1, 1, 0);
+        this.clickRegionImage.setVisible(true);
+        clickRegionImage.setWidth(width * CLICKREGION_MULTIPLIER);
+        clickRegionImage.setHeight(height * CLICKREGION_MULTIPLIER);
+        addActor(image);
+        addActor(clickRegionImage);
         this.stats = stats;
         lastid = id;
         this.id = id;
@@ -34,6 +47,8 @@ public class ClientShip extends Image {
         this.setWidth(width);
         this.setHeight(height);
         setVisible(false);
+        image.setWidth(width);
+        image.setHeight(height);
         this.targetImg = new Image(Assets.moveTargetTexture);
         float tgtImgBound = Math.max(width, height);
         this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
@@ -42,7 +57,13 @@ public class ClientShip extends Image {
 
         getCenterPos(tmp);
         setOrigin(tmp.x, tmp.y);
+        image.setOrigin(tmp.x, tmp.y);
+        clickRegionImage.setOrigin(tmp.x, tmp.y);
         accRefresh = 0;
+
+        // make the hovering and non-hovering ships overlap on the center
+        clickRegionImage.setPosition(image.getWidth() / 2f - clickRegionImage.getWidth() / 2f,
+                image.getHeight() / 2f - clickRegionImage.getHeight() / 2f);
 
         this.stats.scaleForces(ShipSteering.STEP_LENGTH);
         this.health = stats.getMaxHealth();
@@ -303,5 +324,17 @@ public class ClientShip extends Image {
 
     public ShipStats getStats() {
         return stats;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public Image getClickRegionImage() {
+        return clickRegionImage;
+    }
+
+    public static ClientShip getShip(Actor image) {
+        return (ClientShip) image.getParent();
     }
 }

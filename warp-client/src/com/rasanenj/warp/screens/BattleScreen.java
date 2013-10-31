@@ -223,7 +223,7 @@ public class BattleScreen implements Screen {
                 corners[1].set(tmp.x + TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
             }
 
-            shapeRenderer.setColor(ship.getColor());
+            shapeRenderer.setColor(ship.getImage().getColor());
             shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
 
 

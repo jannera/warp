@@ -51,7 +51,6 @@ Future Ideas
 
 MVProto
 ===
-* Yksittäisen laivan helpompi valitseminen, sekä oman laivan valinta että ampumiskohteen valinta
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -68,7 +67,7 @@ MVProto
 * Oikea määrä pikseleitä chatti-ikkunalle
 * multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
     * vasta sekä ShipClickListenerin että StageListenerin päästessä touchUp:iin, pitäisi selvittää mitä tehdään
-
+* BUGI: kun riittävän pitkään ja eri tavoilla valitsi laivoja, tuntui että menetettiin kyky antaa laivoille ampumiskohde
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
@@ -119,3 +118,4 @@ MVProto DONE
     * DONE navigoiminen
     * DONE hyökkäyskäskyn antaminen
     * DONE asioiden visualisoiminen
+* DONE Yksittäisen laivan helpompi valitseminen, sekä oman laivan valinta että ampumiskohteen valinta

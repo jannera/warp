@@ -109,8 +109,8 @@ public class BattleHandler {
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.attach(screen.getStage());
-                ship.addListener(shipClickListener);
-                ship.addListener(hoverOverShipListener);
+                ship.getClickRegionImage().addListener(shipClickListener);
+                ship.getClickRegionImage().addListener(hoverOverShipListener);
                 ship.setZIndex(ZOrder.ship.ordinal());
 
 
@@ -119,7 +119,7 @@ public class BattleHandler {
                 }
                 else {
                     Color c = getBasicColor(owningPlayer);
-                    ship.setColor(c);
+                    ship.getImage().setColor(c);
                 }
             }
 
@@ -183,13 +183,12 @@ public class BattleHandler {
     private class ShipHover extends InputListener {
         @Override
         public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
-            ClientShip ship = (ClientShip) event.getTarget();
+            ClientShip ship = ClientShip.getShip(event.getTarget());
 
+            log("cursor entered " + ship);
             if (ship.getOwner().getId() == myId) {
                 return;
             }
-
-            log("cursor entered " + event.getTarget());
 
             hoveringOverTarget = ship;
             targetImage.setVisible(true);
@@ -198,7 +197,8 @@ public class BattleHandler {
 
         @Override
         public void exit (InputEvent event, float x, float y, int pointer, Actor toActor) {
-            log("cursor exited " + event.getTarget());
+            ClientShip ship = ClientShip.getShip(event.getTarget());
+            log("cursor exited " + ship);
             hoveringOverTarget = null;
             targetImage.setVisible(false);
         }
@@ -213,22 +213,15 @@ public class BattleHandler {
 
         @Override
         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-            log("clicked Ship" + event.getTarget() + " @ (" + x + ", " + y + ")");
+            ClientShip clientShip = ClientShip.getShip(event.getTarget());
 
-            ClientShip clientShip = (ClientShip) event.getTarget();
+            log("clicked " + clientShip + " @ (" + x + ", " + y + ")");
 
             if (clientShip.getOwner().getId() == myId) {
                 // clicked friendly ship, so select it
-                if (selectedShips.size > 0) {
-                    for (ClientShip s : selectedShips) {
-                        s.setColor(getBasicColor(s.getOwner()));
-                    }
-                    selectedShips.clear();
-                }
-                ClientShip ship = (ClientShip) event.getTarget();
-                ship.clearTargetPos();
-                ship.setColor(getHiliteColor(ship.getOwner()));
-                selectedShips.add(ship);
+                selectNone();
+                clientShip.clearTargetPos();
+                addToSelectedShips(clientShip);
             }
             else {
                 // clicked non-friendly ship, so set it target for all selected ships
@@ -237,8 +230,6 @@ public class BattleHandler {
                 }
             }
             event.handle();
-
-
         }
     }
 
@@ -315,7 +306,7 @@ public class BattleHandler {
                 dragState = DragState.NOT_STARTED;
                 screen.setSelectionRectangleActive(false);
 
-                selectedShips.clear();
+                selectNone();
                 float startY, startX, width, height;
                 if (startPoint.x < x) {
                     startX = startPoint.x;
@@ -345,7 +336,7 @@ public class BattleHandler {
                     if (!selectRect.overlaps(shipRect)) {
                         continue;
                     }
-                    selectedShips.add(s);
+                    addToSelectedShips(s);
                 }
             }
             else {
@@ -403,9 +394,23 @@ public class BattleHandler {
         selectedShips.clear();
         for (ClientShip s : ships) {
             if (s.getOwner().getId() == myId) {
-                selectedShips.add(s);
+                addToSelectedShips(s);
             }
         }
+    }
+
+    private void selectNone() {
+        if (selectedShips.size > 0) {
+            for (ClientShip s : selectedShips) {
+                s.getImage().setColor(getBasicColor(s.getOwner()));
+            }
+            selectedShips.clear();
+        }
+    }
+
+    private void addToSelectedShips(ClientShip ship) {
+        ship.getImage().setColor(getHiliteColor(ship.getOwner()));
+        selectedShips.add(ship);
     }
 
     private final ServerConnection conn;
