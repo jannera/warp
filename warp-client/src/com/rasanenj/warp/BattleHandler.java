@@ -1,5 +1,7 @@
 package com.rasanenj.warp;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -361,12 +363,48 @@ public class BattleHandler {
             return true;
         }
 
+        private boolean ctrlDown = false;
+
+        public boolean keyDown(InputEvent event, int keycode) {
+            if (event.getKeyCode() == Input.Keys.CONTROL_LEFT ||
+                event.getKeyCode() == Input.Keys.CONTROL_RIGHT) {
+                ctrlDown = true;
+                log("down");
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.A && ctrlDown) {
+                selectAllMyShips();
+                return true;
+            }
+            return false;
+        }
+
+        public boolean keyUp(InputEvent event, int keycode) {
+            if (event.getKeyCode() == Input.Keys.CONTROL_LEFT ||
+                event.getKeyCode() == Input.Keys.CONTROL_RIGHT) {
+                ctrlDown = false;
+                log("up");
+                return true;
+            }
+            return false;
+        }
+
         public boolean keyTyped (InputEvent event, char character) {
+
             if (character == 'n') {
                 createNPC();
                 return true;
             }
             return false;
+        }
+    }
+
+    private void selectAllMyShips() {
+        selectedShips.clear();
+        for (ClientShip s : ships) {
+            if (s.getOwner().getId() == myId) {
+                selectedShips.add(s);
+            }
         }
     }
 

@@ -51,6 +51,7 @@ Future Ideas
 
 MVProto
 ===
+* Yksittäisen laivan helpompi valitseminen, sekä oman laivan valinta että ampumiskohteen valinta
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -59,18 +60,18 @@ MVProto
     * DONE lämän näyttäminen clientissä
 * Kameran liikuttelu ei saisi tökkiä
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
-* multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
-    * vasta sekä ShipClickListenerin että StageListenerin päästessä touchUp:iin, pitäisi selvittää mitä tehdään
+* Parempi fontti ruudulle
 * näppiskomennot, mistä voi kullekin laivalle näyttää numerona sen lähellä
     * nopeuden
     * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
-* Parempi fontti ruudulle
-* Yksittäisen laivan helpompi valitseminen, sekä oman laivan valinta että ampumiskohteen valinta
+* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
+* Oikea määrä pikseleitä chatti-ikkunalle
+* multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
+    * vasta sekä ShipClickListenerin että StageListenerin päästessä touchUp:iin, pitäisi selvittää mitä tehdään
+
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
-* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
-* Oikea määrä pikseleitä chatti-ikkunalle
 * vain valitun kohteen targetpositioiden näyttäminen? tosin näistä ehkä hankkiudutaan eroon eniveis, joten antaa odottaa?
 * Alusten ja niiden stattien ostaminen webbikälin kautta
     * Hintalistan parsiminen
