@@ -1,6 +1,7 @@
 package com.rasanenj.warp.entities;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -274,7 +275,10 @@ public class ClientShip extends Image {
         corners[3].y -= halfHeight;
     }
 
-
+    public void getBoundingBox(Rectangle r) {
+        r.setPosition(getX(), getY());
+        r.setSize(getWidth(), getHeight());
+    }
 
 
     public Player getOwner() {

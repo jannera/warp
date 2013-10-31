@@ -1,7 +1,7 @@
 package com.rasanenj.warp;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -201,7 +201,7 @@ public class BattleHandler {
             targetImage.setVisible(false);
         }
     }
-
+    
     private class ShipClickListener extends InputListener {
 
         @Override
@@ -217,18 +217,21 @@ public class BattleHandler {
 
             if (clientShip.getOwner().getId() == myId) {
                 // clicked friendly ship, so select it
-                if (selectedShip != null) {
-                    selectedShip.setColor(getBasicColor(selectedShip.getOwner()));
+                if (selectedShips.size > 0) {
+                    for (ClientShip s : selectedShips) {
+                        s.setColor(getBasicColor(s.getOwner()));
+                    }
+                    selectedShips.clear();
                 }
-                selectedShip = (ClientShip) event.getTarget();
-                selectedShip.clearTargetPos();
-                selectedShip.setColor(getHiliteColor(selectedShip.getOwner()));
+                ClientShip ship = (ClientShip) event.getTarget();
+                ship.clearTargetPos();
+                ship.setColor(getHiliteColor(ship.getOwner()));
+                selectedShips.add(ship);
             }
             else {
-                // clicked non-friendly ship, so kill it
-                if (selectedShip != null) {
-                    selectedShip.setFiringTarget(clientShip);
-                    log (selectedShip + " shooting " + clientShip);
+                // clicked non-friendly ship, so set it target for all selected ships
+                for (ClientShip s : selectedShips) {
+                    s.setFiringTarget(clientShip);
                 }
             }
             event.handle();
@@ -242,8 +245,11 @@ public class BattleHandler {
     }
 
     private enum DragState {
-        NOT_DRAGGING, STARTING, DRAGGING
+        NOT_STARTED, STARTING_PANNING, PANNING,
+        STARTING_MULTISELECTING, MULTISELECTING
     }
+
+    private static final int LEFT_MOUSE = 0, RIGHT_MOUSE = 1;
 
     private class StageListener extends InputListener {
         DragState dragState;
@@ -255,39 +261,95 @@ public class BattleHandler {
         }
 
         public void touchDragged (InputEvent event, float x, float y, int pointer) {
-            if (dragState == DragState.NOT_DRAGGING) {
+            if (dragState == DragState.NOT_STARTED) {
                 return;
             }
 
-            dragState = DragState.DRAGGING;
-
-            float dx = startPoint.x - x;
-            float dy = startPoint.y - y;
-            if (dx != 0 && dy != 0) {
-                moveCameraTask.setTarget(dx, dy);
+            if (dragState == DragState.STARTING_PANNING) {
+                dragState = DragState.PANNING;
             }
-            log(x + ", " + y + " -> " + dx + ", " + dy);
-            // screen.translateCamera(dx, dy);
-            startPoint.set(x, y);
+            else if (dragState == DragState.STARTING_MULTISELECTING) {
+                dragState = DragState.MULTISELECTING;
+            }
+
+            if (dragState == DragState.PANNING) {
+                float dx = startPoint.x - x;
+                float dy = startPoint.y - y;
+                if (dx != 0 && dy != 0) {
+                    moveCameraTask.setTarget(dx, dy);
+                }
+                log(x + ", " + y + " -> " + dx + ", " + dy);
+                // screen.translateCamera(dx, dy);
+                startPoint.set(x, y);
+            }
+            else if (dragState == DragState.MULTISELECTING) {
+                screen.setSelectionRectangleEnd(x - startPoint.x, y - startPoint.y);
+            }
         }
         public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
             if (event.getTarget() instanceof ClientShip) {
                 return false;
             }
-            dragState = DragState.STARTING;
-            startPoint.set(x, y);
+            if (event.getButton() == RIGHT_MOUSE) {
+                dragState = DragState.STARTING_PANNING;
+                startPoint.set(x, y);
+            }
+            else if (event.getButton() == LEFT_MOUSE) {
+                dragState = DragState.STARTING_MULTISELECTING;
+                startPoint.set(x, y);
+                screen.setSelectionRectangleStart(x, y);
+                screen.setSelectionRectangleEnd(0, 0);
+                screen.setSelectionRectangleActive(true);
+            }
             return true;
         }
 
         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-            if (dragState == DragState.DRAGGING) {
+            if (dragState == DragState.PANNING) {
                 event.cancel();
-                dragState = DragState.NOT_DRAGGING;
+                dragState = DragState.NOT_STARTED;
+            }
+            else if (dragState == DragState.MULTISELECTING) {
+                dragState = DragState.NOT_STARTED;
+                screen.setSelectionRectangleActive(false);
+
+                selectedShips.clear();
+                float startY, startX, width, height;
+                if (startPoint.x < x) {
+                    startX = startPoint.x;
+                    width = x - startX;
+                }
+                else {
+                    startX = x;
+                    width = startPoint.x - startX;
+                }
+
+                if (startPoint.y < y) {
+                    startY = startPoint.y;
+                    height = y - startY;
+                }
+                else {
+                    startY = y;
+                    height = startPoint.y - startY;
+                }
+                Rectangle selectRect = new Rectangle(startX, startY, width, height);
+                Rectangle shipRect = new Rectangle();
+                for (ClientShip s : ships) {
+                    if (s.getOwner().getId() != myId) {
+                        continue;
+                    }
+                    s.getBoundingBox(shipRect);
+                    log(shipRect + " vs " + selectRect);
+                    if (!selectRect.overlaps(shipRect)) {
+                        continue;
+                    }
+                    selectedShips.add(s);
+                }
             }
             else {
-                if (selectedShip != null) {
-                    selectedShip.setTargetPos(x, y);
-                    screen.setCameraPos(x, y);
+                for (ClientShip s : selectedShips) {
+                    s.setTargetPos(x, y);
+                    // screen.setCameraPos(x, y);
                     event.stop();
                 }
             }
@@ -314,7 +376,7 @@ public class BattleHandler {
 
     private final ArrayList<ClientShip> ships = new ArrayList<ClientShip>();
 
-    private ClientShip selectedShip = null;
+    private Array<ClientShip> selectedShips = new Array<ClientShip>(false, 16);
 
     private ClientShip getShip(long id) {
         for (ClientShip ship : ships) {
@@ -387,8 +449,8 @@ public class BattleHandler {
         return playerColors[player.getColorIndex()];
     }
 
-    public ClientShip getSelectedShip() {
-        return selectedShip;
+    public Array<ClientShip> getSelectedShips() {
+        return selectedShips;
     }
 
     private class ConnectionListener implements ServerConnection.OpenCloseListener {

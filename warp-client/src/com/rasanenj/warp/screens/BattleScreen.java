@@ -46,6 +46,8 @@ public class BattleScreen implements Screen {
     private final Array<DamageText> damageMessages = new Array(false, 16);
     private final Array<DamageText> removables = new Array<DamageText>(false, 16);
     private final OrthographicCamera cam;
+    private boolean selectionRectangleActive = false;
+    private final Vector2 selectionRectangleStart = new Vector2(), getSelectionRectangleEnd = new Vector2();
 
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
@@ -78,6 +80,19 @@ public class BattleScreen implements Screen {
         renderOptimals();
         renderDamageTexts();
         renderDebugText();
+        renderSelectionRectangle();
+    }
+
+    private void renderSelectionRectangle() {
+        if (!selectionRectangleActive) {
+            return;
+        }
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.rect(selectionRectangleStart.x, selectionRectangleStart.y,
+                getSelectionRectangleEnd.x, getSelectionRectangleEnd.y);
+        shapeRenderer.end();
     }
 
     private void renderOptimals() {
@@ -88,8 +103,8 @@ public class BattleScreen implements Screen {
 
         }
         else if (Settings.renderSelectedShipOptimal) {
-            if (battleHandler.getSelectedShip() != null) {
-                renderOptimals(battleHandler.getSelectedShip());
+            for (ClientShip s : battleHandler.getSelectedShips()) {
+                renderOptimals(s);
             }
         }
     }
@@ -366,5 +381,17 @@ public class BattleScreen implements Screen {
             this.target = target;
             this.damage = damage;
         }
+    }
+
+    public void setSelectionRectangleStart(float x, float y) {
+        selectionRectangleStart.set(x, y);
+    }
+
+    public void setSelectionRectangleEnd(float x, float y) {
+        getSelectionRectangleEnd.set(x, y);
+    }
+
+    public void setSelectionRectangleActive(boolean active) {
+        this.selectionRectangleActive = active;
     }
 }
