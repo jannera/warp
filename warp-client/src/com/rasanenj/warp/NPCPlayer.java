@@ -1,5 +1,6 @@
 package com.rasanenj.warp;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
@@ -25,7 +26,10 @@ public class NPCPlayer {
 
     private final class MyShipInfo {
         public ClientShip targetShip = null;
+        public long timeToSelectNextTarget = 0;
     }
+
+    private final long MIN_SHOOTING_TIME = 2000, MAX_SHOOTING_TIME = 12000; // in ms
 
     private final ArrayList<ClientShip> myShips = new ArrayList<ClientShip>();
     private final ArrayList<ClientShip> enemyShips = new ArrayList<ClientShip>();
@@ -51,6 +55,8 @@ public class NPCPlayer {
         steering.update();
     }
 
+    private final Vector2 tmp = new Vector2();
+
     private void updateSteeringTarget() {
         for(ClientShip ship : myShips) {
             MyShipInfo info = infos.get(ship.getId());
@@ -58,23 +64,41 @@ public class NPCPlayer {
             if (target == null) {
                 continue;
             }
-            ship.setTargetPos(target.getX(), target.getY());
+            getOptimal(ship.getX(), ship.getY(), target.getX(), target.getY(),
+                    ship.getStats().getWeaponOptimal(), tmp);
+            ship.setTargetPos(tmp.x, tmp.y);
         }
+    }
+
+    /**
+     * Calculates the point for shooter to be, little inside the optimal
+     */
+    private void getOptimal(float shooterX, float shooterY, float targetX, float targetY,
+                            float optimal, Vector2 result) {
+        result.set(shooterX, shooterY);
+        result.sub(targetX, targetY);
+        result.nor();
+        result.scl(optimal * 0.9f);
+        result.add(targetX, targetY);
     }
 
     private void chooseTargets() {
         // for every ship that doesn't have a target, picks one randomly
+        long timenow = System.currentTimeMillis();
+        if (enemyShips.isEmpty()) {
+            return;
+        }
         for(ClientShip ship : myShips) {
             MyShipInfo info = infos.get(ship.getId());
-            if (info.targetShip != null) {
-                continue;
-            }
-            if (enemyShips.isEmpty()) {
+            if (info.timeToSelectNextTarget > timenow && info.targetShip != null) {
                 continue;
             }
             int i = rng.nextInt(enemyShips.size());
             ClientShip target = enemyShips.get(i);
+            // TODO: perhaps pick the target based on the current hitpoints of the enemy ships?
+            // TODO: perhaps pick the same target for all of the ships
             info.targetShip = target;
+            info.timeToSelectNextTarget = (long) (timenow + MIN_SHOOTING_TIME + rng.nextFloat() * (MAX_SHOOTING_TIME - MIN_SHOOTING_TIME));
             ship.setFiringTarget(target);
         }
     }

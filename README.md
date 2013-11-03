@@ -51,6 +51,8 @@ Future Ideas
 
 MVProto
 ===
+* NPC-fleetin kasaaminen pojoperustaisesti muutaman aluksen mahdollisuuksista
+* Vastustajan optimaalien näkeminen
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -119,3 +121,6 @@ MVProto DONE
     * DONE hyökkäyskäskyn antaminen
     * DONE asioiden visualisoiminen
 * DONE Yksittäisen laivan helpompi valitseminen, sekä oman laivan valinta että ampumiskohteen valinta
+* DONE NPC
+    * DONE Optimaalille liikkuminen
+    * DONE Kohteiden vaihtaminen randomisti
