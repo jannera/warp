@@ -48,4 +48,40 @@ public class Constants {
        "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
        "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0} " +
        "]";
+
+    public static final String NPC_INVENTORY =
+        // small fast brawler
+        "[{'id': 1, 'fleet': 1, 'acceleration': 4.0, 'max_speed': 5.0, " +
+        "'turn_speed': 120.0, 'max_health': 40.0, 'afterburner_max_time': 5.0, " +
+        "'afterburner_force': 6.0, 'maxAngularAcceleration': 12.0, " +
+        "'signature_resolution' : 40, " +
+        "'weapon_1_damage': 5.0, 'weapon_1_cooldown': 3.0, 'weapon_1_tracking': 1.5, " +
+        "'weapon_1_signature_radius': 30, 'weapon_1_optimal': 5.0, 'weapon_1_falloff': 2.0, " +
+        "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
+        "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0," +
+        "'cost' : 10}, " +
+
+        // small sniper
+        "{'id': 1, 'fleet': 1, 'acceleration': 2.0, 'max_speed': 3.0, " +
+        "'turn_speed': 120.0, 'max_health': 40.0, 'afterburner_max_time': 5.0, " +
+        "'afterburner_force': 6.0, 'maxAngularAcceleration': 12.0, " +
+        "'signature_resolution' : 40, " +
+        "'weapon_1_damage': 3.0, 'weapon_1_cooldown': 10.0, 'weapon_1_tracking': 0.5, " +
+        "'weapon_1_signature_radius': 30, 'weapon_1_optimal': 15.0, 'weapon_1_falloff': 5.0, " +
+        "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
+        "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0," +
+        "'cost' : 20}, " +
+
+        // medium brawler
+        "{'id': 1, 'fleet': 1, 'acceleration': 1.0, 'max_speed': 2.0, " +
+        "'turn_speed': 60.0, 'max_health': 120.0, 'afterburner_max_time': 5.0, " +
+        "'afterburner_force': 6.0, 'maxAngularAcceleration': 12.0, " +
+        "'signature_resolution' : 120, " +
+        "'weapon_1_damage': 15.0, 'weapon_1_cooldown': 3.0, 'weapon_1_tracking': 1.0, " +
+        "'weapon_1_signature_radius': 80, 'weapon_1_optimal': 8.0, 'weapon_1_falloff': 2.0, " +
+        "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
+        "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0," +
+        "'cost' : 40} " +
+        "]";
+
 }

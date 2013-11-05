@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -33,7 +35,6 @@ public class BattleScreen implements Screen {
     private BattleHandler battleHandler;
 
     private static final int CAMERA_SIZE = 20;
-    private static final float zoomStep = 0.05f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
@@ -49,6 +50,9 @@ public class BattleScreen implements Screen {
     private boolean selectionRectangleActive = false;
     private final Vector2 selectionRectangleStart = new Vector2(), getSelectionRectangleEnd = new Vector2();
 
+    // only for drawing directly on the screen, like rendering text in screen coordinates
+    private final SpriteBatch batch = new SpriteBatch();
+
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
@@ -56,12 +60,15 @@ public class BattleScreen implements Screen {
 
         Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         font = skin.getFont("default-font");
-        font.setScale(0.25f);
 
         battleHandler = new BattleHandler(this, conn);
         for (int i=0; i < 4; i++) {
             corners[i] = new Vector2();
         }
+        Matrix4 normalProjection = new Matrix4();
+        normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight());
+        batch.setProjectionMatrix(normalProjection);
     }
 
     public Stage getStage() {
@@ -156,15 +163,17 @@ public class BattleScreen implements Screen {
             return;
         }
 
-        stage.getSpriteBatch().begin();
+        batch.begin();
         for (DamageText damageText : damageMessages) {
             float fade = 1f - (timeNow - damageText.startTime) / (float) DamageText.FADEOUT_TIME;
-            font.setColor(1f, 1f, 1f, fade);
+            font.setColor(fade, 0, 0, fade);
             String output = decimalFormatter.format(damageText.damage);
             // String output = String.format("%f.2", damageText.damage);
-            font.draw(stage.getSpriteBatch(), output, damageText.target.getX(), damageText.target.getY());
+            tmp3.set(damageText.target.getX(), damageText.target.getY() - damageText.target.getHeight() * 1.5f, 0);
+            cam.project(tmp3);
+            font.draw(batch, output, tmp3.x, tmp3.y);
         }
-        stage.getSpriteBatch().end();
+        batch.end();
     }
 
     private static final float TRIANGLE_SIDE = 0.5f;

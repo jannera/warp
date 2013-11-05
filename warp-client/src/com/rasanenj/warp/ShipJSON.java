@@ -22,12 +22,12 @@ public class ShipJSON extends JavaScriptObject {
     private final native float getWeaponSignatureRadius()  /*-{ return this.weapon_1_signature_radius;  }-*/;
     private final native float getWeaponDamage() /*-{ return this.weapon_1_damage;  }-*/;
     private final native float getWeaponCooldown() /*-{ return this.weapon_1_cooldown;  }-*/;
+    private final native float getCost() /*-{ return this.cost;  }-*/;
 
     public final ShipStats getStats() {
-        // TODO: add acceleration
         return new ShipStats(0, 0, 0, 0, 0, 0, getMaxHealth(), getMaxSpeed(),
                 getTurnSpeed(), getMaxAngularAcceleration(), getSignatureResolution(), getWeaponTracking(),
                 getWeaponSignatureRadius(), getWeaponOptimal(), getWeaponFalloff(), getWeaponDamage(),
-                getWeaponCooldown(), getAcceleration());
+                getWeaponCooldown(), getAcceleration(), getCost());
     }
 }

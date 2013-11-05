@@ -48,11 +48,13 @@ public class NPCPlayer {
     }
 
     public void update() {
+        if (true) {
         consumer.consumeStoredMessages();
         chooseTargets();
         updateSteeringTarget();
         shooting.update();
         steering.update();
+        }
     }
 
     private final Vector2 tmp = new Vector2();
@@ -103,13 +105,38 @@ public class NPCPlayer {
         }
     }
 
+    private static int maxFleetCost = 80;
+
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
 
         @Override
         public void onOpen() {
             conn.send(new JoinServerMessage("npc", -1, -1));
-            Array<ShipStats> stats = FleetStatsFetcher.parse(Constants.NPC_FLEET);
-            for (ShipStats s : stats) {
+            Array<ShipStats> stats = FleetStatsFetcher.parse(Constants.NPC_INVENTORY);
+            float pointsLeft = maxFleetCost;
+
+            // calculate the lowest cost of a ship in the inventory
+            float minCost = Float.MAX_VALUE;
+            for (int i = 0; i < stats.size; i++) {
+                float cost = stats.get(i).getCost();
+                if (cost < minCost) {
+                    minCost = cost;
+                }
+            }
+
+            // randomly select ships into fleet until all points are spent
+            Array<ShipStats> result = new Array<ShipStats>();
+            while(pointsLeft >= minCost) {
+                int i = rng.nextInt(stats.size);
+                ShipStats s = stats.get(i);
+                if (s.getCost() <= pointsLeft) {
+                    result.add(s);
+                    pointsLeft -= s.getCost();
+                }
+            }
+
+            // tell server our selection
+            for (ShipStats s : result) {
                 conn.send(new ShipStatsMessage(s));
             }
         }

@@ -51,8 +51,8 @@ Future Ideas
 
 MVProto
 ===
-* NPC-fleetin kasaaminen pojoperustaisesti muutaman aluksen mahdollisuuksista
 * Vastustajan optimaalien näkeminen
+* BUGI: kuolleiden omien laivojen optimaalit eivät pitäisi näkyä enää.. taivat jäädä valituiksi vaikka tuhoutuvat
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -61,7 +61,6 @@ MVProto
     * DONE lämän näyttäminen clientissä
 * Kameran liikuttelu ei saisi tökkiä
 * Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
-* Parempi fontti ruudulle
 * näppiskomennot, mistä voi kullekin laivalle näyttää numerona sen lähellä
     * nopeuden
     * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
@@ -124,3 +123,5 @@ MVProto DONE
 * DONE NPC
     * DONE Optimaalille liikkuminen
     * DONE Kohteiden vaihtaminen randomisti
+* DONE NPC-fleetin kasaaminen pojoperustaisesti muutaman aluksen mahdollisuuksista
+* DONE Parempi fontti ruudulle
