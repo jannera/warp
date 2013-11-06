@@ -1,6 +1,5 @@
 package com.rasanenj.warp;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
@@ -22,6 +21,7 @@ import com.rasanenj.warp.tasks.TaskHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
@@ -46,6 +46,7 @@ public class BattleHandler {
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
+    private final ShipSelection selection = new ShipSelection();
 
     public BattleHandler(BattleScreen screen, ServerConnection conn) {
         conn.register(new ConnectionListener());
@@ -118,7 +119,7 @@ public class BattleHandler {
                     log(Level.SEVERE, "Couldn't find player with id: " + message.getOwnerId());
                 }
                 else {
-                    Color c = getBasicColor(owningPlayer);
+                    Color c = selection.getBasicColor(owningPlayer);
                     ship.getImage().setColor(c);
                 }
             }
@@ -219,22 +220,20 @@ public class BattleHandler {
 
             if (clientShip.getOwner().getId() == myId) {
                 // clicked friendly ship, so select it
-                selectNone();
+                selection.clear();
                 clientShip.clearTargetPos();
-                addToSelectedShips(clientShip);
+                selection.add(clientShip);
             }
             else {
-                // clicked non-friendly ship, so set it target for all selected ships
-                for (ClientShip s : selectedShips) {
-                    s.setFiringTarget(clientShip);
+                // clicked non-friendly ship, so set it target for all friendly selected ships
+                for (ClientShip s : selection) {
+                    if (s.getOwner().getId() == myId) {
+                        s.setFiringTarget(clientShip);
+                    }
                 }
             }
             event.handle();
         }
-    }
-
-    private Color getHiliteColor(Player player) {
-        return hiliteColors[player.getColorIndex()];
     }
 
     private enum DragState {
@@ -306,7 +305,7 @@ public class BattleHandler {
                 dragState = DragState.NOT_STARTED;
                 screen.setSelectionRectangleActive(false);
 
-                selectNone();
+                selection.clear();
                 float startY, startX, width, height;
                 if (startPoint.x < x) {
                     startX = startPoint.x;
@@ -328,19 +327,16 @@ public class BattleHandler {
                 Rectangle selectRect = new Rectangle(startX, startY, width, height);
                 Rectangle shipRect = new Rectangle();
                 for (ClientShip s : ships) {
-                    if (s.getOwner().getId() != myId) {
-                        continue;
-                    }
                     s.getBoundingBox(shipRect);
                     log(shipRect + " vs " + selectRect);
                     if (!selectRect.overlaps(shipRect)) {
                         continue;
                     }
-                    addToSelectedShips(s);
+                    selection.add(s);
                 }
             }
             else {
-                for (ClientShip s : selectedShips) {
+                for (ClientShip s : selection) {
                     s.setTargetPos(x, y);
                     // screen.setCameraPos(x, y);
                     event.stop();
@@ -364,7 +360,7 @@ public class BattleHandler {
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.A && ctrlDown) {
-                selectAllMyShips();
+                selection.selectAllMyShips();
                 return true;
             }
             return false;
@@ -390,36 +386,11 @@ public class BattleHandler {
         }
     }
 
-    private void selectAllMyShips() {
-        selectedShips.clear();
-        for (ClientShip s : ships) {
-            if (s.getOwner().getId() == myId) {
-                addToSelectedShips(s);
-            }
-        }
-    }
-
-    private void selectNone() {
-        if (selectedShips.size > 0) {
-            for (ClientShip s : selectedShips) {
-                s.getImage().setColor(getBasicColor(s.getOwner()));
-            }
-            selectedShips.clear();
-        }
-    }
-
-    private void addToSelectedShips(ClientShip ship) {
-        ship.getImage().setColor(getHiliteColor(ship.getOwner()));
-        selectedShips.add(ship);
-    }
-
     private final ServerConnection conn;
     private final BattleScreen screen;
     private final ShipSteering shipSteering;
 
     private final ArrayList<ClientShip> ships = new ArrayList<ClientShip>();
-
-    private Array<ClientShip> selectedShips = new Array<ClientShip>(false, 16);
 
     private ClientShip getShip(long id) {
         for (ClientShip ship : ships) {
@@ -440,6 +411,7 @@ public class BattleHandler {
         }
         if (tgt != null) {
             ships.remove(tgt);
+            selection.remove(tgt);
             return tgt;
         }
         return null;
@@ -488,12 +460,8 @@ public class BattleHandler {
         return null;
     }
 
-    private Color getBasicColor(Player player) {
-        return playerColors[player.getColorIndex()];
-    }
-
-    public Array<ClientShip> getSelectedShips() {
-        return selectedShips;
+    public Iterable<ClientShip> getSelectedShips() {
+        return selection;
     }
 
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
@@ -524,6 +492,50 @@ public class BattleHandler {
         @Override
         public void onClose() {
             // TODO: maybe tell the screen the connection was lost?
+        }
+    }
+
+    private class ShipSelection implements Iterable<ClientShip> {
+        private Array<ClientShip> selectedShips = new Array<ClientShip>(false, 16);
+
+        public Color getHiliteColor(Player player) {
+            return hiliteColors[player.getColorIndex()];
+        }
+
+        public Color getBasicColor(Player player) {
+            return playerColors[player.getColorIndex()];
+        }
+
+        public void selectAllMyShips() {
+            selectedShips.clear();
+            for (ClientShip s : ships) {
+                if (s.getOwner().getId() == myId) {
+                    add(s);
+                }
+            }
+        }
+
+        public void clear() {
+            if (selectedShips.size > 0) {
+                for (ClientShip s : selectedShips) {
+                    s.getImage().setColor(getBasicColor(s.getOwner()));
+                }
+                selectedShips.clear();
+            }
+        }
+
+        public void add(ClientShip ship) {
+            ship.getImage().setColor(getHiliteColor(ship.getOwner()));
+            selectedShips.add(ship);
+        }
+
+        public void remove(ClientShip ship) {
+            selectedShips.removeValue(ship, true);
+        }
+
+        @Override
+        public Iterator<ClientShip> iterator() {
+            return selectedShips.iterator();
         }
     }
 }
