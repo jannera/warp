@@ -177,7 +177,6 @@ public class ClientShip extends Group {
     }
 
     public void setTargetPos(float x, float y) {
-        log(x + ", " + y);
         targetPos.set(x, y);
         targetImg.setPosition(x - targetImg.getHeight()/2f, y - targetImg.getWidth()/2f);
         targetImg.setVisible(true);

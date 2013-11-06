@@ -48,13 +48,11 @@ public class NPCPlayer {
     }
 
     public void update() {
-        if (true) {
         consumer.consumeStoredMessages();
         chooseTargets();
         updateSteeringTarget();
         shooting.update();
         steering.update();
-        }
     }
 
     private final Vector2 tmp = new Vector2();

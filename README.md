@@ -55,7 +55,6 @@ MVProto
 * BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
 * Navigointipisteiden siirtäminen ui-layerille
 * Jokaiselle ClientShipille tekstikenttä, mihin asetettu teksti piirretään aluksen alla
-* Suorituskyky: muutamalla kymmenellä laivalla FPS tipahtaa. Tutki miksi
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -93,7 +92,6 @@ MVProto
 
 MVProto DONE
 ===
-* DONE Vastustajan optimaalien näkeminen
 * DONE voimien rajoittaminen aluksen suunnan perusteella
 * DONE Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
 * DONE Laivojen omistaminen
@@ -131,3 +129,5 @@ MVProto DONE
 * DONE Parempi fontti ruudulle
 * DONE BUGI: kuolleiden omien laivojen optimaalit eivät pitäisi näkyä enää.. taivat jäädä valituiksi vaikka tuhoutuvat
 * DONE FPS näkymään alakulmaan
+* DONE Vastustajan optimaalien näkeminen
+* DONE Suorituskyky: muutamalla kymmenellä laivalla FPS tipahtaa. Tutki miksi

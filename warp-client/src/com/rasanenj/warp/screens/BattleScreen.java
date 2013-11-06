@@ -302,7 +302,8 @@ public class BattleScreen implements Screen {
     private void renderDebugText() {
         batch.begin();
         font.setColor(1, 1, 1, 1);
-        font.draw(batch, Gdx.graphics.getFramesPerSecond() + " fps", 2, 20);
+        String debugText = Gdx.graphics.getFramesPerSecond() + " fps, " + battleHandler.getShips().size() + " ships";
+        font.draw(batch, debugText, 2, 20);
         batch.end();
         if (!Settings.renderAcceleration) {
             return;
