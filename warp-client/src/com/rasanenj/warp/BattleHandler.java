@@ -16,6 +16,7 @@ import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 import com.rasanenj.warp.tasks.MoveCameraTask;
+import com.rasanenj.warp.tasks.ShipTextUpdater;
 import com.rasanenj.warp.tasks.TaskHandler;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class BattleHandler {
     private final ShipHover hoverOverShipListener;
     private final Image targetImage;
     private final ShipShooting shipShooting;
+    private final ShipTextUpdater shipTextUpdater;
     private ClientShip hoveringOverTarget;
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
@@ -62,6 +64,8 @@ public class BattleHandler {
         this.moveCameraTask = new MoveCameraTask(screen);
         this.hoverOverShipListener = new ShipHover();
         taskHandler.addToTaskList(moveCameraTask);
+        this.shipTextUpdater = new ShipTextUpdater(ships, selection, true, true);
+        taskHandler.addToTaskList(shipTextUpdater);
         this.targetImage = new Image(Assets.aimingTargetTexture);
         this.targetImage.setVisible(false);
         this.targetImage.setBounds(0, 0, 1, 1);
@@ -492,7 +496,7 @@ public class BattleHandler {
         }
     }
 
-    private class ShipSelection implements Iterable<ClientShip> {
+    public class ShipSelection implements Iterable<ClientShip> {
         private Array<ClientShip> selectedShips = new Array<ClientShip>(false, 16);
 
         public Color getHiliteColor(Player player) {

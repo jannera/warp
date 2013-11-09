@@ -110,9 +110,24 @@ public class BattleScreen implements Screen {
         renderHealthBars();
         renderOptimals();
         renderDamageTexts();
+        renderShipTexts();
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private static final Color SHIP_TEXT_COLOR = Color.WHITE;
+
+    private void renderShipTexts() {
+        batch.begin();
+        for (ClientShip s : battleHandler.getShips()) {
+            font.setColor(SHIP_TEXT_COLOR);
+            String output = s.getText();
+            tmp3.set(s.getX(), s.getY() - s.getHeight() * 1.5f, 0);
+            cam.project(tmp3);
+            font.drawMultiLine(batch, output, tmp3.x, tmp3.y);
+        }
+        batch.end();
     }
 
     private void renderPhysicsVertices() {

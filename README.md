@@ -54,7 +54,9 @@ MVProto
 * CTRL+A sykliseksi: omat, vastustajan, kaikki, ei mitään
 * BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
 * Navigointipisteiden siirtäminen ui-layerille
-* Jokaiselle ClientShipille tekstikenttä, mihin asetettu teksti piirretään aluksen alla
+* Navigointi niin, että antaa valituille aluksille suunnan ja nopeuden
+    * Fiksattu
+    * Jatkuva
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -62,10 +64,8 @@ MVProto
     * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
 * Kameran liikuttelu ei saisi tökkiä
-* näppiskomennot, mistä voi kullekin laivalle näyttää numerona sen lähellä
-    * nopeuden
-    * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
+* Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Oikea määrä pikseleitä chatti-ikkunalle
 * multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
@@ -134,3 +134,7 @@ MVProto DONE
 * DONE Laivojen törmäykset pitäisi olla vähemmän kimmoisia
 * DONE Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
 * DONE Optimaalien näyttäminen syklisesti: omat, vastustajan, kaikki, ei mitään
+* DONE Jokaiselle ClientShipille tekstikenttä, mihin asetettu teksti piirretään aluksen alla
+* DONE kullekin laivalle näyttää numerona sen lähellä
+    * nopeuden
+    * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti

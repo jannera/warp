@@ -126,7 +126,11 @@ public class BattleServer extends IntervalTask {
                     log("Couldnt find target with id " + message.getTarget());
                 }
                 if (shooter != null && target != null) {
-                    float dmg = damage.getDamage(shooter, target);
+                    Body shooterBody = shooter.getBody();
+                    Body targetBody = target.getBody();
+                    float dmg = damage.getDamage(shooterBody.getWorldCenter(), targetBody.getWorldCenter(),
+                            shooterBody.getLinearVelocity(), targetBody.getLinearVelocity(),
+                            shooter.getStats(), target.getStats());
                     sendToAll(new ShootDamageMessage(shooter.getId(), target.getId(), dmg));
                     target.reduceHealth(dmg);
                     if (target.getHealth() < 0) {
