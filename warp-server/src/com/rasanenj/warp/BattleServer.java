@@ -187,12 +187,7 @@ public class BattleServer extends IntervalTask {
         for (ServerShip ship : ships) {
             ship.getInterpolatedPosition(pos, lerp1, lerp2);
             float angle = ship.getInterpolatedAngle(lerp1, lerp2);
-            messages.add(new ShipPhysicsMessage(ship.getId(),
-                    pos,
-                    angle,
-                    ship.getBody().getLinearVelocity(),
-                    ship.getBody().getAngularVelocity()
-            ));
+            messages.add(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody()));
         }
         sendToAll(messages);
     }

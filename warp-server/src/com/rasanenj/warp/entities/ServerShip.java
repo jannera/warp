@@ -1,10 +1,8 @@
 package com.rasanenj.warp.entities;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.rasanenj.warp.ServerPlayer;
 
 import static com.rasanenj.warp.Log.log;
@@ -18,6 +16,7 @@ public class ServerShip extends Entity {
     private final Body body;
     private static final BodyDef bodyDef = new BodyDef();
     private static final PolygonShape polygonShape = new PolygonShape();
+    private static final FixtureDef fixtureDef = new FixtureDef();
     private static final float DENSITY = 10f;
 
     private final Vector2 oldPos = new Vector2();
@@ -32,6 +31,12 @@ public class ServerShip extends Entity {
         bodyDef.active = true;
         bodyDef.linearDamping = 0f;
         bodyDef.angularDamping = 0f;
+
+        fixtureDef.density = DENSITY;
+        fixtureDef.friction = 0.9f;
+        fixtureDef.isSensor = false;
+        fixtureDef.restitution = 0.01f;
+        fixtureDef.shape = polygonShape;
     }
 
 
@@ -42,8 +47,9 @@ public class ServerShip extends Entity {
         this.height = height;
         body = world.createBody(bodyDef);
         body.setTransform(x, y, angleRad);
-        polygonShape.setAsBox(width, height);
-        body.createFixture(polygonShape, DENSITY);
+        Vector2 localCenter = new Vector2(width/2f, height/2f);
+        polygonShape.setAsBox(width, height, localCenter, 0f);
+        body.createFixture(fixtureDef);
         this.player = player;
         storeOldPosition();
 
@@ -73,7 +79,7 @@ public class ServerShip extends Entity {
     }
 
     public void storeOldPosition() {
-        oldAngle = body.getAngle();
+        oldAngle = body.getAngle() * MathUtils.radiansToDegrees;
         oldPos.set(body.getPosition());
     }
 
@@ -84,7 +90,7 @@ public class ServerShip extends Entity {
     }
 
     public float getInterpolatedAngle(float lerp1, float lerp2) {
-        return body.getAngle() * lerp1 + oldAngle * lerp2;
+        return body.getAngle() * MathUtils.radiansToDegrees * lerp1 + oldAngle * lerp2;
     }
 
     public float getWidth() {

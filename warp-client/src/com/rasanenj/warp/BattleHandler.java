@@ -93,6 +93,7 @@ public class BattleHandler {
                     ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
                     ship.setRotation(shipPhysicsMessage.getAngle());
                     ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY(), shipPhysicsMessage.getAngularVelocity(), updateTime);
+                    ship.setVertices(shipPhysicsMessage.getVertices());
                     ship.setUpdateTime(updateTime);
                     if (!firstPosSet && ship.getOwner().getId() == myId) {
                         ship.getCenterPos(tmp);

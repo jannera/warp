@@ -62,7 +62,6 @@ MVProto
     * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
 * Kameran liikuttelu ei saisi tökkiä
-* Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
 * näppiskomennot, mistä voi kullekin laivalle näyttää numerona sen lähellä
     * nopeuden
     * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
@@ -131,3 +130,5 @@ MVProto DONE
 * DONE FPS näkymään alakulmaan
 * DONE Vastustajan optimaalien näkeminen
 * DONE Suorituskyky: muutamalla kymmenellä laivalla FPS tipahtaa. Tutki miksi
+* DONE Laivojen törmäykset pitäisi olla vähemmän kimmoisia
+* DONE Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja

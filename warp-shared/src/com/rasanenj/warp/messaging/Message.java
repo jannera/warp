@@ -1,5 +1,7 @@
 package com.rasanenj.warp.messaging;
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -70,5 +72,27 @@ public abstract class Message {
         for(int i = 0; i < floats.length; i++) {
             b.putFloat(floats[i]);
         }
+    }
+
+    public static int getBytesForVectors(Vector2[] vectors) {
+        // one for integer that tells the length, one for each x-y-pair
+        return Integer.SIZE/8 + Float.SIZE/8 * vectors.length * 2;
+    }
+
+    public static void putVectors(ByteBuffer b, Vector2[] vectors) {
+        b.putInt(vectors.length);
+        for(int i=0; i < vectors.length; i++) {
+            b.putFloat(vectors[i].x);
+            b.putFloat(vectors[i].y);
+        }
+    }
+
+    public static Vector2[] getVectors(ByteBuffer b) {
+        int length = b.getInt();
+        Vector2[] result = new Vector2[length];
+        for (int i=0; i < length; i++) {
+            result[i] = new Vector2(b.getFloat(), b.getFloat());
+        }
+        return result;
     }
 }

@@ -30,6 +30,7 @@ public class ClientShip extends Group {
     private final Image image, clickRegionImage;
 
     private static final float CLICKREGION_MULTIPLIER = 4f; // how many times bigger are should work as clicking area around the ship
+    private Vector2[] vertices;
 
     public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -55,10 +56,6 @@ public class ClientShip extends Group {
         this.targetImg.setZIndex(ZOrder.steeringTarget.ordinal());
         clearTargetPos();
 
-        getCenterPos(tmp);
-        setOrigin(tmp.x, tmp.y);
-        image.setOrigin(tmp.x, tmp.y);
-        clickRegionImage.setOrigin(tmp.x, tmp.y);
         accRefresh = 0;
 
         // make the hovering and non-hovering ships overlap on the center
@@ -136,6 +133,14 @@ public class ClientShip extends Group {
         health -= damage;
     }
 
+    public void setVertices(Vector2[] vertices) {
+        this.vertices = vertices;
+    }
+
+    public Vector2[] getVertices() {
+        return vertices;
+    }
+
     public enum TurningState {
         FULL_SPEED, BRAKING, DONE_BRAKING;
     }
@@ -187,8 +192,9 @@ public class ClientShip extends Group {
     }
 
     public void getCenterPos(Vector2 pos) {
-        pos.set(getX(), getY());
-        pos.add(getWidth() / 2f, getHeight() / 2f);
+        pos.set(getWidth() / 2f, getHeight() / 2f);
+        pos.rotate(getRotation());
+        pos.add(getX(), getY());
     }
 
     public void setVelocity(float velX, float velY, float angularVelocity, long timeNow) {

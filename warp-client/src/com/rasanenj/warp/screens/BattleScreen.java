@@ -88,6 +88,28 @@ public class BattleScreen implements Screen {
         renderDamageTexts();
         renderDebugText();
         renderSelectionRectangle();
+        renderPhysicsVertices();
+    }
+
+    private void renderPhysicsVertices() {
+        if (!Settings.renderPhysicsFixtures) {
+            return;
+        }
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(1,1,1,1);
+        for (ClientShip s : battleHandler.getShips()) {
+            Vector2[] verts = s.getVertices();
+            for (int i=0; i < verts.length; i++) {
+                // first we make a vector from i'th corner to i+1'th corner
+                int next = i+1;
+                if (next == verts.length) {
+                    next = 0; // last vector is from first point to the last point
+                }
+                shapeRenderer.line(verts[i].x,    verts[i].y,
+                                   verts[next].x, verts[next].y);
+            }
+        }
+        shapeRenderer.end();
     }
 
     private void renderSelectionRectangle() {
