@@ -65,6 +65,7 @@ MVProto
 * näppiskomennot, mistä voi kullekin laivalle näyttää numerona sen lähellä
     * nopeuden
     * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
+* Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Oikea määrä pikseleitä chatti-ikkunalle
 * multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
@@ -132,3 +133,4 @@ MVProto DONE
 * DONE Suorituskyky: muutamalla kymmenellä laivalla FPS tipahtaa. Tutki miksi
 * DONE Laivojen törmäykset pitäisi olla vähemmän kimmoisia
 * DONE Fysiikkamoottorin fixturet pitäisi saada abt vastaamaan graffoja
+* DONE Optimaalien näyttäminen syklisesti: omat, vastustajan, kaikki, ei mitään

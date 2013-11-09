@@ -357,7 +357,6 @@ public class BattleHandler {
             if (event.getKeyCode() == Input.Keys.CONTROL_LEFT ||
                 event.getKeyCode() == Input.Keys.CONTROL_RIGHT) {
                 ctrlDown = true;
-                log("down");
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.A && ctrlDown) {
@@ -371,17 +370,14 @@ public class BattleHandler {
             if (event.getKeyCode() == Input.Keys.CONTROL_LEFT ||
                 event.getKeyCode() == Input.Keys.CONTROL_RIGHT) {
                 ctrlDown = false;
-                log("up");
                 return true;
             }
-            return false;
-        }
-
-        public boolean keyTyped (InputEvent event, char character) {
-
-            if (character == 'n') {
+            else if (event.getKeyCode() == Input.Keys.N) {
                 createNPC();
                 return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.O) {
+                screen.cycleOptimalRendering();
             }
             return false;
         }
@@ -538,5 +534,9 @@ public class BattleHandler {
         public Iterator<ClientShip> iterator() {
             return selectedShips.iterator();
         }
+    }
+
+    public long getMyId() {
+        return myId;
     }
 }

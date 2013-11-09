@@ -53,6 +53,30 @@ public class BattleScreen implements Screen {
     // only for drawing directly on the screen, like rendering text in screen coordinates
     private final SpriteBatch batch = new SpriteBatch();
 
+    private OptimalRenderingState optimalRenderingState = OptimalRenderingState.ALL_SHIPS;
+
+    public enum OptimalRenderingState {
+        SELECTED_SHIPS, OWN_SHIPS, ENEMY_SHIPS, ALL_SHIPS, NOTHING
+    }
+
+    public void cycleOptimalRendering() {
+        if (optimalRenderingState == OptimalRenderingState.SELECTED_SHIPS) {
+            optimalRenderingState = OptimalRenderingState.OWN_SHIPS;
+        }
+        else if (optimalRenderingState == OptimalRenderingState.OWN_SHIPS) {
+            optimalRenderingState = OptimalRenderingState.ENEMY_SHIPS;
+        }
+        else if (optimalRenderingState == OptimalRenderingState.ENEMY_SHIPS) {
+            optimalRenderingState = OptimalRenderingState.ALL_SHIPS;
+        }
+        else if (optimalRenderingState == OptimalRenderingState.ALL_SHIPS) {
+            optimalRenderingState = OptimalRenderingState.NOTHING;
+        }
+        else if (optimalRenderingState == OptimalRenderingState.NOTHING) {
+            optimalRenderingState = OptimalRenderingState.SELECTED_SHIPS;
+        }
+    }
+
     public BattleScreen(ServerConnection conn) {
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
@@ -125,15 +149,23 @@ public class BattleScreen implements Screen {
     }
 
     private void renderOptimals() {
-        if (Settings.renderAllOptimals) {
-            for (ClientShip ship : battleHandler.getShips()) {
-                renderOptimals(ship);
-            }
-
+        if (optimalRenderingState == OptimalRenderingState.NOTHING) {
+            return;
         }
-        else if (Settings.renderSelectedShipOptimal) {
+        if (optimalRenderingState == OptimalRenderingState.SELECTED_SHIPS) {
             for (ClientShip s : battleHandler.getSelectedShips()) {
                 renderOptimals(s);
+            }
+            return;
+        }
+
+        long myid = battleHandler.getMyId();
+
+        for (ClientShip ship : battleHandler.getShips()) {
+            if (optimalRenderingState == OptimalRenderingState.ALL_SHIPS ||
+                optimalRenderingState == OptimalRenderingState.OWN_SHIPS && ship.getOwner().getId() == myid ||
+                optimalRenderingState == OptimalRenderingState.ENEMY_SHIPS && ship.getOwner().getId() != myid) {
+                renderOptimals(ship);
             }
         }
     }
