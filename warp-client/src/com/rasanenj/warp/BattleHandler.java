@@ -15,6 +15,7 @@ import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
+import com.rasanenj.warp.tasks.ManualSteeringTask;
 import com.rasanenj.warp.tasks.MoveCameraTask;
 import com.rasanenj.warp.tasks.ShipTextUpdater;
 import com.rasanenj.warp.tasks.TaskHandler;
@@ -44,6 +45,7 @@ public class BattleHandler {
     private final Image targetImage;
     private final ShipShooting shipShooting;
     private final ShipTextUpdater shipTextUpdater;
+    private final ManualSteeringTask manualSteeringTask;
     private ClientShip hoveringOverTarget;
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
@@ -71,6 +73,8 @@ public class BattleHandler {
         this.targetImage.setBounds(0, 0, 1, 1);
         this.targetImage.setZIndex(ZOrder.firingTarget.ordinal());
         screen.getStage().addActor(targetImage);
+        this.manualSteeringTask = new ManualSteeringTask(selection, screen);
+        taskHandler.addToTaskList(manualSteeringTask);
     }
 
     public void createNPC() {
@@ -137,6 +141,7 @@ public class BattleHandler {
                     log("joined in battle:" + p);
                     if (myId == -1) {
                         myId = message.getId();
+                        manualSteeringTask.setMyId(myId);
                     }
                     players.add(p);
                 }
@@ -382,6 +387,14 @@ public class BattleHandler {
             }
             else if (event.getKeyCode() == Input.Keys.O) {
                 screen.cycleOptimalRendering();
+            }
+            else if (event.getKeyCode() == Input.Keys.S) {
+                if (manualSteeringTask.isActive()) {
+                    manualSteeringTask.disable();
+                }
+                else {
+                    manualSteeringTask.activate();
+                }
             }
             return false;
         }

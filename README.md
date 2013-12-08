@@ -51,18 +51,28 @@ Future Ideas
 
 MVProto
 ===
-* CTRL+A sykliseksi: omat, vastustajan, kaikki, ei mitään
+* Navigointikäskyjä:
+    * Orbit
+    * Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
+* Maksiminopeuden asettaminen
+    * Numeroista asettaminen
+    * Rajoituksen pakottaminen Steeringissä
+    * Rajoituksen näyttäminen aluksen lähellä
+* Kameralle aluksen seuraaminen
 * BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
+* Reunakolmioiden siirtäminen ui-layerille
 * Navigointipisteiden siirtäminen ui-layerille
-* Navigointi niin, että antaa valituille aluksille suunnan ja nopeuden
-    * Fiksattu
-    * Jatkuva
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
     * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
     * ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
+* Alusten ja niiden stattien ostaminen webbikälin kautta
+    * Hintalistan parsiminen
+    * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
+    * Ostonappulat
+    * Nykyisten stattien näyttäminen webbikälissä
 * Kameran liikuttelu ei saisi tökkiä
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
@@ -75,11 +85,6 @@ MVProto
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
 * vain valitun kohteen targetpositioiden näyttäminen? tosin näistä ehkä hankkiudutaan eroon eniveis, joten antaa odottaa?
-* Alusten ja niiden stattien ostaminen webbikälin kautta
-    * Hintalistan parsiminen
-    * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
-    * Ostonappulat
-    * Nykyisten stattien näyttäminen webbikälissä
 * Chatissa olevien tyyppien nimien listaaminen
 * Pelin aloittaminen chatista:
     * Haasteen antaminen: /fight <player> <player> <player> ...
@@ -138,3 +143,5 @@ MVProto DONE
 * DONE kullekin laivalle näyttää numerona sen lähellä
     * nopeuden
     * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
+* DONE CTRL+A sykliseksi: omat, vastustajan, kaikki, ei mitään
+* DONE Suuntanavigointi

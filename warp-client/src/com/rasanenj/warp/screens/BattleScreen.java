@@ -31,6 +31,7 @@ import static com.rasanenj.warp.Log.log;
  */
 public class BattleScreen implements Screen {
 
+    private final Matrix4 normalProjection;
     private Stage stage;
     private BattleHandler battleHandler;
 
@@ -54,6 +55,13 @@ public class BattleScreen implements Screen {
     private final SpriteBatch batch = new SpriteBatch();
 
     private OptimalRenderingState optimalRenderingState = OptimalRenderingState.ALL_SHIPS;
+    private Vector2 manualSteeringEnd;
+    private Vector2 manualSteeringStart;
+    private boolean manualSteeringActive = false;
+
+    public OrthographicCamera getCam() {
+        return cam;
+    }
 
     public enum OptimalRenderingState {
         SELECTED_SHIPS, OWN_SHIPS, ENEMY_SHIPS, ALL_SHIPS, NOTHING
@@ -89,7 +97,7 @@ public class BattleScreen implements Screen {
         for (int i=0; i < 4; i++) {
             corners[i] = new Vector2();
         }
-        Matrix4 normalProjection = new Matrix4();
+        normalProjection = new Matrix4();
         normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
                 Gdx.graphics.getHeight());
         batch.setProjectionMatrix(normalProjection);
@@ -111,9 +119,24 @@ public class BattleScreen implements Screen {
         renderOptimals();
         renderDamageTexts();
         renderShipTexts();
+        renderManualSteering();
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private void renderManualSteering() {
+        if (!manualSteeringActive) {
+            return;
+        }
+
+        shapeRenderer.setProjectionMatrix(normalProjection);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        log(manualSteeringStart + " - " + manualSteeringEnd);
+        shapeRenderer.line(manualSteeringStart, manualSteeringEnd);
+        shapeRenderer.end();
+        shapeRenderer.setProjectionMatrix(cam.combined);
+        // TODO: make this a real arrow (i.e. draw those wedges on the end of the line)
     }
 
     private static final Color SHIP_TEXT_COLOR = Color.WHITE;
@@ -476,5 +499,14 @@ public class BattleScreen implements Screen {
 
     public void setSelectionRectangleActive(boolean active) {
         this.selectionRectangleActive = active;
+    }
+
+    public void setManualSteeringLine(Vector2 start, Vector2 end) {
+        this.manualSteeringStart = start;
+        this.manualSteeringEnd = end;
+    }
+
+    public void setManualSteering(boolean active) {
+        this.manualSteeringActive = active;
     }
 }

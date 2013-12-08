@@ -32,6 +32,7 @@ public class ClientShip extends Group {
     private static final float CLICKREGION_MULTIPLIER = 4f; // how many times bigger are should work as clicking area around the ship
     private Vector2[] vertices;
     private String text = "";
+    private float targetDirection = Float.NaN;
 
     public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -148,6 +149,14 @@ public class ClientShip extends Group {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public void setTargetDirection(float targetDirection) {
+        this.targetDirection = targetDirection;
+    }
+
+    public float getTargetDirection() {
+        return targetDirection;
     }
 
 
@@ -351,5 +360,9 @@ public class ClientShip extends Group {
 
     public static ClientShip getShip(Actor image) {
         return (ClientShip) image.getParent();
+    }
+
+    public boolean hasDirectionTarget() {
+        return !Float.isNaN(targetDirection);
     }
 }
