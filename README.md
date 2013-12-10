@@ -145,3 +145,4 @@ MVProto DONE
     * osumismahdollisuuden / odotetun lämän valittu(j)a laivaa kohti
 * DONE CTRL+A sykliseksi: omat, vastustajan, kaikki, ei mitään
 * DONE Suuntanavigointi
+* DONE Hiiren kursorin vaihtaminen kuviksi CSS-tyyleillä

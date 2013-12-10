@@ -56,6 +56,7 @@ public class ManualSteeringTask implements Task {
 
             for (ClientShip ship : selection) {
                 if (ship.getOwner().getId() == myId) {
+                    ship.clearTargetPos();
                     ship.setTargetDirection(angle);
                 }
             }

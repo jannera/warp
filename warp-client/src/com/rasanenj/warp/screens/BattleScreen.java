@@ -132,10 +132,11 @@ public class BattleScreen implements Screen {
 
         shapeRenderer.setProjectionMatrix(normalProjection);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        log(manualSteeringStart + " - " + manualSteeringEnd);
+        // log(manualSteeringStart + " - " + manualSteeringEnd);
         shapeRenderer.line(manualSteeringStart, manualSteeringEnd);
         shapeRenderer.end();
         shapeRenderer.setProjectionMatrix(cam.combined);
+        // TODO: render these for all owned ships
         // TODO: make this a real arrow (i.e. draw those wedges on the end of the line)
     }
 

@@ -51,6 +51,7 @@ public class BattleHandler {
     private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
     private final ShipSelection selection = new ShipSelection();
+    private MouseState mouseState = MouseState.DEFAULT;
 
     public BattleHandler(BattleScreen screen, ServerConnection conn) {
         conn.register(new ConnectionListener());
@@ -75,6 +76,10 @@ public class BattleHandler {
         screen.getStage().addActor(targetImage);
         this.manualSteeringTask = new ManualSteeringTask(selection, screen);
         taskHandler.addToTaskList(manualSteeringTask);
+    }
+
+    private enum MouseState {
+        DEFAULT, DIRECTION, GO_TO, ORBIT
     }
 
     public void createNPC() {
@@ -231,7 +236,6 @@ public class BattleHandler {
             if (clientShip.getOwner().getId() == myId) {
                 // clicked friendly ship, so select it
                 selection.clear();
-                clientShip.clearTargetPos();
                 selection.add(clientShip);
             }
             else {
@@ -345,12 +349,13 @@ public class BattleHandler {
                     selection.add(s);
                 }
             }
-            else {
+            else if (mouseState == MouseState.GO_TO) {
                 for (ClientShip s : selection) {
+                    s.clearTargetDirection();
                     s.setTargetPos(x, y);
-                    // screen.setCameraPos(x, y);
                     event.stop();
                 }
+                changeMouseState(MouseState.DEFAULT);
             }
         }
 
@@ -372,7 +377,29 @@ public class BattleHandler {
                 selection.selectAllMyShips();
                 return true;
             }
-            return false;
+            else if (event.getKeyCode() == Input.Keys.N) {
+                createNPC();
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.P) {
+                screen.cycleOptimalRendering();
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.D) {
+                flipMouseState(MouseState.DIRECTION);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.G) {
+                flipMouseState(MouseState.GO_TO);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.O) {
+                flipMouseState(MouseState.ORBIT);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         public boolean keyUp(InputEvent event, int keycode) {
@@ -381,22 +408,9 @@ public class BattleHandler {
                 ctrlDown = false;
                 return true;
             }
-            else if (event.getKeyCode() == Input.Keys.N) {
-                createNPC();
-                return true;
+            else {
+                return false;
             }
-            else if (event.getKeyCode() == Input.Keys.O) {
-                screen.cycleOptimalRendering();
-            }
-            else if (event.getKeyCode() == Input.Keys.S) {
-                if (manualSteeringTask.isActive()) {
-                    manualSteeringTask.disable();
-                }
-                else {
-                    manualSteeringTask.activate();
-                }
-            }
-            return false;
         }
     }
 
@@ -555,5 +569,42 @@ public class BattleHandler {
 
     public long getMyId() {
         return myId;
+    }
+
+    private void flipMouseState(MouseState newState) {
+        if (mouseState == newState) {
+            changeMouseState(MouseState.DEFAULT);
+        }
+        else {
+            changeMouseState(newState);
+        }
+    }
+
+    private void changeMouseState(MouseState newState) {
+        // deactivate the old state
+        if (mouseState == MouseState.DIRECTION) {
+            manualSteeringTask.disable();
+        }
+
+        changeMouseCursor(newState);
+
+        // activate the new state
+        if (newState == MouseState.DIRECTION) {
+            manualSteeringTask.activate();
+        }
+
+        mouseState = newState;
+    }
+
+    private void changeMouseCursor(MouseState newState) {
+        if (newState == MouseState.GO_TO) {
+            Utility.getCanvas().setClassName("goToCursor");
+        }
+        else if (newState == MouseState.DIRECTION) {
+            Utility.getCanvas().setClassName("defaultCursor");
+        }
+        else if (newState == MouseState.DEFAULT) {
+            Utility.getCanvas().setClassName("defaultCursor");
+        }
     }
 }

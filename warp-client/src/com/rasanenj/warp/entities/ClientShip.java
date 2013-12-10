@@ -159,6 +159,10 @@ public class ClientShip extends Group {
         return targetDirection;
     }
 
+    public void clearTargetDirection() {
+        targetDirection = Float.NaN;
+    }
+
 
     public enum TurningState {
         FULL_SPEED, BRAKING, DONE_BRAKING;
