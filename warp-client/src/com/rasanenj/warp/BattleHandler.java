@@ -79,7 +79,7 @@ public class BattleHandler {
     }
 
     private enum MouseState {
-        DEFAULT, DIRECTION, GO_TO, ORBIT
+        DEFAULT, DIRECTION, GO_TO, ORBIT_CW, ORBIT_CCW
     }
 
     public void createNPC() {
@@ -381,7 +381,7 @@ public class BattleHandler {
                 createNPC();
                 return true;
             }
-            else if (event.getKeyCode() == Input.Keys.P) {
+            else if (event.getKeyCode() == Input.Keys.L) {
                 screen.cycleOptimalRendering();
                 return true;
             }
@@ -394,7 +394,11 @@ public class BattleHandler {
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.O) {
-                flipMouseState(MouseState.ORBIT);
+                flipMouseState(MouseState.ORBIT_CW);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.P) {
+                flipMouseState(MouseState.ORBIT_CCW);
                 return true;
             }
             else {
@@ -601,7 +605,13 @@ public class BattleHandler {
             Utility.getCanvas().setClassName("goToCursor");
         }
         else if (newState == MouseState.DIRECTION) {
-            Utility.getCanvas().setClassName("defaultCursor");
+            Utility.getCanvas().setClassName("directionCursor");
+        }
+        else if (newState == MouseState.ORBIT_CW) {
+            Utility.getCanvas().setClassName("orbitCwCursor");
+        }
+        else if (newState == MouseState.ORBIT_CCW) {
+            Utility.getCanvas().setClassName("orbitCcwCursor");
         }
         else if (newState == MouseState.DEFAULT) {
             Utility.getCanvas().setClassName("defaultCursor");
