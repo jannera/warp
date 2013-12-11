@@ -460,6 +460,12 @@ public class BattleHandler {
         taskHandler.update(delta);
         updateTargetImagePos();
         updateNPCs();
+        updateCamPosition();
+    }
+
+    private void updateCamPosition() {
+        Vector2 diff = selection.getPosDiff();
+        screen.translateCamera(diff.x, diff.y);
     }
 
     private void updateNPCs() {
@@ -529,6 +535,8 @@ public class BattleHandler {
 
     public class ShipSelection implements Iterable<ClientShip> {
         private Array<ClientShip> selectedShips = new Array<ClientShip>(false, 16);
+        private final Vector2 lastWeightedPos = new Vector2(Float.NaN, Float.NaN),
+        posDiff = new Vector2(0, 0), tmp = new Vector2(0, 0);
 
         public Color getHiliteColor(Player player) {
             return hiliteColors[player.getColorIndex()];
@@ -559,15 +567,46 @@ public class BattleHandler {
         public void add(ClientShip ship) {
             ship.getImage().setColor(getHiliteColor(ship.getOwner()));
             selectedShips.add(ship);
+            calcWeightedPos(lastWeightedPos);
         }
 
         public void remove(ClientShip ship) {
             selectedShips.removeValue(ship, true);
+            calcWeightedPos(lastWeightedPos);
         }
 
         @Override
         public Iterator<ClientShip> iterator() {
             return selectedShips.iterator();
+        }
+
+        private void calcWeightedPos(Vector2 tgt) {
+            if (selectedShips.size == 0) {
+                tgt.set(Float.NaN, Float.NaN);
+                return;
+            }
+
+            tgt.set(0, 0);
+            for (ClientShip ship : this) {
+                tgt.add(ship.getX(), ship.getY());
+            }
+            tgt.scl(1f / selectedShips.size);
+        }
+
+        /**
+         * Calculates the change in weighted position compared to last frame
+         * and stores the current position.
+         */
+        public Vector2 getPosDiff() {
+            if (selectedShips.size == 0) {
+                return posDiff.set(0, 0);
+            }
+
+            calcWeightedPos(posDiff);
+            tmp.set(posDiff);
+            posDiff.sub(lastWeightedPos);
+            lastWeightedPos.set(tmp);
+            return posDiff;
         }
     }
 

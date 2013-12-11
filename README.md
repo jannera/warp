@@ -52,13 +52,15 @@ Future Ideas
 MVProto
 ===
 * Navigointikäskyjä:
-    * Orbit
-    * Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
+    * Orbit, CW/CCW
+    * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
+* Suuntanavigointi loppumaan painalluksesta (kaikki muutkin päättyvät)
 * Maksiminopeuden asettaminen
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
-* Kameralle aluksen seuraaminen
+* Valintaboksin pitää alkaa toimimaan ruutukoordinaatistossa (muuten kameran liike aiheuttaa ongelmia)
+* Minne muualle kameran liike aiheuttaa ongelmia?
 * BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
 * Reunakolmioiden siirtäminen ui-layerille
 * Navigointipisteiden siirtäminen ui-layerille
@@ -146,3 +148,4 @@ MVProto DONE
 * DONE CTRL+A sykliseksi: omat, vastustajan, kaikki, ei mitään
 * DONE Suuntanavigointi
 * DONE Hiiren kursorin vaihtaminen kuviksi CSS-tyyleillä
+* DONE Kameralle aluksen seuraaminen
