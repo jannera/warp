@@ -51,10 +51,10 @@ Future Ideas
 
 MVProto
 ===
+* Kaiken alle taustagridi.. visualisoi alusten liikkeen paremmin
 * Navigointikäskyjä:
     * Orbit, CW/CCW
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
-* Suuntanavigointi loppumaan painalluksesta (kaikki muutkin päättyvät)
 * Maksiminopeuden asettaminen
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
@@ -149,3 +149,4 @@ MVProto DONE
 * DONE Suuntanavigointi
 * DONE Hiiren kursorin vaihtaminen kuviksi CSS-tyyleillä
 * DONE Kameralle aluksen seuraaminen
+* DONE Suuntanavigointi loppumaan painalluksesta (kaikki muutkin päättyvät)

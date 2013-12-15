@@ -357,6 +357,9 @@ public class BattleHandler {
                 }
                 changeMouseState(MouseState.DEFAULT);
             }
+            else if (mouseState == MouseState.DIRECTION) {
+                changeMouseState(MouseState.DEFAULT);
+            }
         }
 
         @Override
