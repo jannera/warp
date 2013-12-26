@@ -404,6 +404,14 @@ public class BattleHandler {
                 flipMouseState(MouseState.ORBIT_CCW);
                 return true;
             }
+            else if (event.getKeyCode() == Input.Keys.Z) {
+                screen.zoom(0.1f, screen.getCam().position.x, screen.getCam().position.y);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.X) {
+                screen.zoom(-0.1f, screen.getCam().position.x, screen.getCam().position.y);
+                return true;
+            }
             else {
                 return false;
             }

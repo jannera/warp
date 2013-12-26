@@ -16,8 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.Settings;
+import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
 
@@ -32,10 +34,12 @@ import static com.rasanenj.warp.Log.log;
 public class BattleScreen implements Screen {
 
     private final Matrix4 normalProjection;
+    private final TiledImage backgroundImage;
     private Stage stage;
     private BattleHandler battleHandler;
 
     private static final int CAMERA_SIZE = 20;
+    private final static float GRID_SIZE = 8;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
@@ -101,6 +105,10 @@ public class BattleScreen implements Screen {
         normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
                 Gdx.graphics.getHeight());
         batch.setProjectionMatrix(normalProjection);
+        this.backgroundImage = new TiledImage(Assets.backgroundTexture);
+        stage.addActor(backgroundImage);
+        backgroundImage.setTileSize(GRID_SIZE, GRID_SIZE);
+        backgroundImage.setZIndex(0);
     }
 
     public Stage getStage() {
@@ -111,6 +119,7 @@ public class BattleScreen implements Screen {
     public void render(float delta) {
         battleHandler.update(delta);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        updateBackground();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         renderVectors();
@@ -123,6 +132,23 @@ public class BattleScreen implements Screen {
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    // moves the background tiled image to start near where the camera is now
+    private void updateBackground() {
+        final Vector3 cameraPosition = cam.position;
+        final float halfViewPortWidth = cam.viewportWidth / 2f * cam.zoom;
+        final float halfViewPortHeight = cam.viewportHeight / 2f * cam.zoom;
+
+        // coordinates of left bottom of the screen in world coordinates
+        float cameraX =   cameraPosition.x - halfViewPortWidth;
+        float cameraY = cameraPosition.y - halfViewPortHeight;
+
+        // find the next smallest grid starting point
+        float startX = MathUtils.floor(cameraX / GRID_SIZE) * GRID_SIZE;
+        float startY = MathUtils.floor(cameraY / GRID_SIZE) * GRID_SIZE;
+
+        backgroundImage.setBounds(startX, startY, halfViewPortWidth * 2f + GRID_SIZE, halfViewPortHeight * 2f + GRID_SIZE);
     }
 
     private void renderManualSteering() {

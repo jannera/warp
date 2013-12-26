@@ -51,7 +51,7 @@ Future Ideas
 
 MVProto
 ===
-* Kaiken alle taustagridi.. visualisoi alusten liikkeen paremmin
+* DONE Kaiken alle taustagridi.. visualisoi alusten liikkeen paremmin
 * Navigointikäskyjä:
     * Orbit, CW/CCW
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
