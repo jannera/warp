@@ -41,6 +41,7 @@ public class BattleScreen implements Screen {
     private static final int CAMERA_SIZE = 20;
     private final static float GRID_SIZE = 8;
     private final static float NAVIGATION_TARGET_SIZE = 60f;
+    private final static float FIRING_TARGET_SIZE = 90f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
@@ -54,7 +55,7 @@ public class BattleScreen implements Screen {
     private final Array<DamageText> removables = new Array<DamageText>(false, 16);
     private final OrthographicCamera cam;
     private boolean selectionRectangleActive = false;
-    private final Vector2 selectionRectangleStart = new Vector2(), getSelectionRectangleEnd = new Vector2();
+    private final Vector3 selectionRectangleStart = new Vector3(), getSelectionRectangleEnd = new Vector3();
 
     // only for drawing directly on the screen, like rendering text in screen coordinates
     private final SpriteBatch batch = new SpriteBatch();
@@ -63,6 +64,8 @@ public class BattleScreen implements Screen {
     private Vector2 manualSteeringEnd;
     private Vector2 manualSteeringStart;
     private boolean manualSteeringActive = false;
+
+    private ClientShip hoveringTarget = null;
 
     public OrthographicCamera getCam() {
         return cam;
@@ -127,6 +130,7 @@ public class BattleScreen implements Screen {
         renderOffScreenShips();
         renderHealthBars();
         renderNavigationTargets();
+        renderHoveringTarget();
         renderOptimals();
         renderDamageTexts();
         renderShipTexts();
@@ -134,6 +138,20 @@ public class BattleScreen implements Screen {
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private void renderHoveringTarget() {
+        if (hoveringTarget == null) {
+            return;
+        }
+        batch.begin();
+        final float width = FIRING_TARGET_SIZE;
+        final float height = width;
+        tmp3.set(hoveringTarget.getX(), hoveringTarget.getY(), 0);
+        cam.project(tmp3);
+        tmp3.sub(width / 2f, height/2f, 0);
+        batch.draw(Assets.aimingTargetTexture, tmp3.x, tmp3.y, width, height);
+        batch.end();
     }
 
     private void renderNavigationTargets() {
@@ -223,11 +241,13 @@ public class BattleScreen implements Screen {
             return;
         }
 
+        shapeRenderer.setProjectionMatrix(normalProjection);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(selectionRectangleStart.x, selectionRectangleStart.y,
-                getSelectionRectangleEnd.x, getSelectionRectangleEnd.y);
+                getSelectionRectangleEnd.x - selectionRectangleStart.x, getSelectionRectangleEnd.y - selectionRectangleStart.y);
         shapeRenderer.end();
+        shapeRenderer.setProjectionMatrix(cam.combined);
     }
 
     private void renderOptimals() {
@@ -370,9 +390,6 @@ public class BattleScreen implements Screen {
 
             shapeRenderer.setColor(ship.getImage().getColor());
             shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
-
-
-
         }
         shapeRenderer.end();
     }
@@ -534,11 +551,13 @@ public class BattleScreen implements Screen {
     }
 
     public void setSelectionRectangleStart(float x, float y) {
-        selectionRectangleStart.set(x, y);
+        selectionRectangleStart.set(x, y, 0);
+        cam.project(selectionRectangleStart);
     }
 
     public void setSelectionRectangleEnd(float x, float y) {
-        getSelectionRectangleEnd.set(x, y);
+        getSelectionRectangleEnd.set(x, y, 0);
+        cam.project(getSelectionRectangleEnd);
     }
 
     public void setSelectionRectangleActive(boolean active) {
@@ -552,5 +571,9 @@ public class BattleScreen implements Screen {
 
     public void setManualSteering(boolean active) {
         this.manualSteeringActive = active;
+    }
+
+    public void setHoveringTarget(ClientShip hoveringTarget) {
+        this.hoveringTarget = hoveringTarget;
     }
 }

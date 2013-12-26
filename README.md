@@ -51,7 +51,6 @@ Future Ideas
 
 MVProto
 ===
-* DONE Kaiken alle taustagridi.. visualisoi alusten liikkeen paremmin
 * Navigointikäskyjä:
     * Orbit, CW/CCW
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
@@ -59,11 +58,10 @@ MVProto
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
-* Valintaboksin pitää alkaa toimimaan ruutukoordinaatistossa (muuten kameran liike aiheuttaa ongelmia)
 * Minne muualle kameran liike aiheuttaa ongelmia?
 * BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
 * Reunakolmioiden siirtäminen ui-layerille
-* Navigointipisteiden siirtäminen ui-layerille
+* Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
 * Ampumissysteemi
     * DONE aseiden statit: sykli, lämä
     * DONE ampumiskomento clientilta
@@ -150,3 +148,6 @@ MVProto DONE
 * DONE Hiiren kursorin vaihtaminen kuviksi CSS-tyyleillä
 * DONE Kameralle aluksen seuraaminen
 * DONE Suuntanavigointi loppumaan painalluksesta (kaikki muutkin päättyvät)
+* DONE Valintaboksin pitää alkaa toimimaan ruutukoordinaatistossa (muuten kameran liike aiheuttaa ongelmia)
+* DONE Navigointipisteiden siirtäminen ui-layerille
+* DONE Kaiken alle taustagridi.. visualisoi alusten liikkeen paremmin

@@ -42,11 +42,9 @@ public class BattleHandler {
     private static final Color[] hiliteColors = {new Color(1f, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0,0,1,1), new Color(0, 1, 1, 1)};
     private final Array<Player> players = new Array<Player>(true, 1);
     private final ShipHover hoverOverShipListener;
-    private final Image targetImage;
     private final ShipShooting shipShooting;
     private final ShipTextUpdater shipTextUpdater;
     private final ManualSteeringTask manualSteeringTask;
-    private ClientShip hoveringOverTarget;
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
@@ -69,11 +67,6 @@ public class BattleHandler {
         taskHandler.addToTaskList(moveCameraTask);
         this.shipTextUpdater = new ShipTextUpdater(ships, selection, true, true);
         taskHandler.addToTaskList(shipTextUpdater);
-        this.targetImage = new Image(Assets.aimingTargetTexture);
-        this.targetImage.setVisible(false);
-        this.targetImage.setBounds(0, 0, 1, 1);
-        this.targetImage.setZIndex(ZOrder.firingTarget.ordinal());
-        screen.getStage().addActor(targetImage);
         this.manualSteeringTask = new ManualSteeringTask(selection, screen);
         taskHandler.addToTaskList(manualSteeringTask);
     }
@@ -205,17 +198,14 @@ public class BattleHandler {
                 return;
             }
 
-            hoveringOverTarget = ship;
-            targetImage.setVisible(true);
-            updateTargetImagePos();
+            screen.setHoveringTarget(ship);
         }
 
         @Override
         public void exit (InputEvent event, float x, float y, int pointer, Actor toActor) {
             ClientShip ship = ClientShip.getShip(event.getTarget());
             log("cursor exited " + ship);
-            hoveringOverTarget = null;
-            targetImage.setVisible(false);
+            screen.setHoveringTarget(null);
         }
     }
     
@@ -288,7 +278,7 @@ public class BattleHandler {
                 startPoint.set(x, y);
             }
             else if (dragState == DragState.MULTISELECTING) {
-                screen.setSelectionRectangleEnd(x - startPoint.x, y - startPoint.y);
+                screen.setSelectionRectangleEnd(x, y);
             }
         }
         public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -303,7 +293,7 @@ public class BattleHandler {
                 dragState = DragState.STARTING_MULTISELECTING;
                 startPoint.set(x, y);
                 screen.setSelectionRectangleStart(x, y);
-                screen.setSelectionRectangleEnd(0, 0);
+                screen.setSelectionRectangleEnd(x, y);
                 screen.setSelectionRectangleActive(true);
             }
             return true;
@@ -468,7 +458,6 @@ public class BattleHandler {
         shipSteering.update();
         shipShooting.update();
         taskHandler.update(delta);
-        updateTargetImagePos();
         updateNPCs();
         updateCamPosition();
     }
@@ -485,15 +474,6 @@ public class BattleHandler {
     }
 
     final Vector2 tmp = new Vector2();
-    private void updateTargetImagePos() {
-        if (hoveringOverTarget == null) {
-            return;
-        }
-        // align the center of the targeting image with the center of the ship
-        hoveringOverTarget.getCenterPos(tmp);
-        tmp.sub(targetImage.getWidth() / 2f, targetImage.getHeight() / 2f);
-        targetImage.setPosition(tmp.x, tmp.y);
-    }
 
     public ArrayList<ClientShip> getShips() {
         return ships;
