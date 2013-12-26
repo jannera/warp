@@ -40,6 +40,7 @@ public class BattleScreen implements Screen {
 
     private static final int CAMERA_SIZE = 20;
     private final static float GRID_SIZE = 8;
+    private final static float NAVIGATION_TARGET_SIZE = 60f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
@@ -125,6 +126,7 @@ public class BattleScreen implements Screen {
         renderVectors();
         renderOffScreenShips();
         renderHealthBars();
+        renderNavigationTargets();
         renderOptimals();
         renderDamageTexts();
         renderShipTexts();
@@ -132,6 +134,21 @@ public class BattleScreen implements Screen {
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private void renderNavigationTargets() {
+        batch.begin();
+        float halfWidth = NAVIGATION_TARGET_SIZE / 2f;
+        float halfHeight = NAVIGATION_TARGET_SIZE / 2f;
+        for (ClientShip ship : battleHandler.getShips()) {
+            if (!ship.hasTargetPos()) {
+                continue;
+            }
+            tmp3.set(ship.getTargetPos().x, ship.getTargetPos().y, 0);
+            cam.project(tmp3);
+            batch.draw(Assets.moveTargetTexture, tmp3.x - halfWidth, tmp3.y - halfHeight, NAVIGATION_TARGET_SIZE, NAVIGATION_TARGET_SIZE);
+        }
+        batch.end();
     }
 
     // moves the background tiled image to start near where the camera is now

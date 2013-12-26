@@ -52,11 +52,6 @@ public class ClientShip extends Group {
         setVisible(false);
         image.setWidth(width);
         image.setHeight(height);
-        this.targetImg = new Image(Assets.moveTargetTexture);
-        float tgtImgBound = Math.max(width, height);
-        this.targetImg.setBounds(0, 0, tgtImgBound, tgtImgBound);
-        this.targetImg.setZIndex(ZOrder.steeringTarget.ordinal());
-        clearTargetPos();
 
         accRefresh = 0;
 
@@ -170,7 +165,6 @@ public class ClientShip extends Group {
 
     TurningState turningState;
 
-    private final Image targetImg;
     Vector2 targetPos = new Vector2();
     Vector2 velocity = new Vector2();
     Vector2 impulse = new Vector2();
@@ -200,14 +194,12 @@ public class ClientShip extends Group {
         return id;
     }
 
-    public void attach(Stage stage) {
-        stage.addActor(targetImg);
-    }
-
     public void setTargetPos(float x, float y) {
         targetPos.set(x, y);
-        targetImg.setPosition(x - targetImg.getHeight()/2f, y - targetImg.getWidth()/2f);
-        targetImg.setVisible(true);
+    }
+
+    public void clearTargetPos() {
+        targetPos.set(Float.NaN, Float.NaN);
     }
 
     public Vector2 getTargetPos() {
@@ -251,11 +243,6 @@ public class ClientShip extends Group {
 
     public float getAngularVelocity() {
         return angularVelocity;
-    }
-
-    public void clearTargetPos() {
-        targetPos.set(Float.NaN, Float.NaN);
-        this.targetImg.setVisible(false);
     }
 
     public boolean hasTargetPos() {

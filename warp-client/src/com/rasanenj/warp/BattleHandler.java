@@ -123,7 +123,6 @@ public class BattleHandler {
                         message.getHeight(), message.getStats());
                 ships.add(ship);
                 screen.getStage().addActor(ship);
-                ship.attach(screen.getStage());
                 ship.getClickRegionImage().addListener(shipClickListener);
                 ship.getClickRegionImage().addListener(hoverOverShipListener);
                 ship.setZIndex(ZOrder.ship.ordinal());
