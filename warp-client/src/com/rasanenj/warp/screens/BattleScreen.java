@@ -115,6 +115,7 @@ public class BattleScreen implements Screen {
         stage.addActor(backgroundImage);
         backgroundImage.setTileSize(GRID_SIZE, GRID_SIZE);
         backgroundImage.setZIndex(0);
+        cam.zoom = 2.5f;
     }
 
     public Stage getStage() {

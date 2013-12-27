@@ -61,6 +61,9 @@ public class ClientShip extends Group {
 
         this.stats.scaleForces(ShipSteering.STEP_LENGTH);
         this.health = stats.getMaxHealth();
+
+        this.clearTargetDirection();
+        this.clearTargetPos();
     }
 
     private float brakingLeft;

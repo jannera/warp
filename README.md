@@ -51,7 +51,6 @@ Future Ideas
 
 MVProto
 ===
-* Direction-lentäminen ei saa toimia vastustajan aluksiin
 * Erota ammusten piirtäminen damagetekstin näyttämisestä kooditasolla
 * Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
 * Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
