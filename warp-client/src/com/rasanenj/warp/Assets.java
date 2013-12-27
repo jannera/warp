@@ -12,6 +12,7 @@ public class Assets {
     public static Texture moveTargetTexture;
     public static Texture aimingTargetTexture;
     public static Texture backgroundTexture;
+    public static Texture projectileTexture;
 
     public static void load() {
         shipTexture = new Texture(Gdx.files.internal("data/grey_block.png"));
@@ -19,5 +20,6 @@ public class Assets {
         aimingTargetTexture = new Texture(Gdx.files.internal("data/firing_target.png"));
         backgroundTexture = new Texture(Gdx.files.internal("data/background.png"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        projectileTexture = new Texture(Gdx.files.internal("data/projectile.png"));
     }
 }

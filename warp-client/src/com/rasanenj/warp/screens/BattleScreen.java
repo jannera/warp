@@ -47,12 +47,14 @@ public class BattleScreen implements Screen {
     private final Vector2 corners[] = new Vector2[4];
     private static final int CIRCLE_SEGMENTS = 64;
 
+    private static final float PROJECTILE_SIZE = 3f;
+
     private static final Color DODGER_BLUE = new Color(30f/255f, 191f/255f, 1, 1);
     final BitmapFont font;
     private NumberFormat decimalFormatter = NumberFormat.getFormat("#.##");
 
-    private final Array<DamageText> damageMessages = new Array(false, 16);
-    private final Array<DamageText> removables = new Array<DamageText>(false, 16);
+    private final Array<DamageRendering> damageMessages = new Array(false, 16);
+    private final Array<DamageRendering> removables = new Array<DamageRendering>(false, 16);
     private final OrthographicCamera cam;
     private boolean selectionRectangleActive = false;
     private final Vector3 selectionRectangleStart = new Vector3(), getSelectionRectangleEnd = new Vector3();
@@ -124,10 +126,12 @@ public class BattleScreen implements Screen {
         battleHandler.update(delta);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         updateBackground();
+        updateProjectiles();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         renderVectors();
         renderOffScreenShips();
+        renderProjectiles();
         renderHealthBars();
         renderNavigationTargets();
         renderHoveringTarget();
@@ -140,6 +144,35 @@ public class BattleScreen implements Screen {
         renderPhysicsVertices();
     }
 
+    private void renderProjectiles() {
+        if (damageMessages.size == 0) {
+            return;
+        }
+        long timeNow = System.currentTimeMillis();
+        batch.begin();
+        for (DamageRendering damageRendering : damageMessages) {
+            float fade = (timeNow - damageRendering.startTime) / (float) DamageRendering.FADEOUT_TIME;
+            tmp3.set(damageRendering.startX, damageRendering.startY, 0);
+            tmp3end.set(damageRendering.target.getX(), damageRendering.target.getY() - damageRendering.target.getHeight() * 1.5f, 0);
+            tmp3.lerp(tmp3end, fade);
+            cam.project(tmp3);
+            batch.draw(Assets.projectileTexture, tmp3.x, tmp3.y, PROJECTILE_SIZE, PROJECTILE_SIZE);
+        }
+        batch.end();
+    }
+
+    private void updateProjectiles() {
+        removables.clear();
+        long timeNow = System.currentTimeMillis();
+        for (DamageRendering damageRendering : damageMessages) {
+            if (timeNow - damageRendering.startTime > DamageRendering.FADEOUT_TIME) {
+                removables.add(damageRendering);
+            }
+        }
+
+        damageMessages.removeAll(removables, true);
+    }
+
     private void renderHoveringTarget() {
         if (hoveringTarget == null) {
             return;
@@ -149,7 +182,7 @@ public class BattleScreen implements Screen {
         final float height = width;
         tmp3.set(hoveringTarget.getX(), hoveringTarget.getY(), 0);
         cam.project(tmp3);
-        tmp3.sub(width / 2f, height/2f, 0);
+        tmp3.sub(width / 2f, height / 2f, 0);
         batch.draw(Assets.aimingTargetTexture, tmp3.x, tmp3.y, width, height);
         batch.end();
     }
@@ -305,27 +338,17 @@ public class BattleScreen implements Screen {
     private static final float healthBarHeight = 0.05f, healthBarScale = 0.18f;
 
     private void renderDamageTexts() {
-        removables.clear();
-        long timeNow = System.currentTimeMillis();
-        for (DamageText damageText : damageMessages) {
-            if (timeNow - damageText.startTime > DamageText.FADEOUT_TIME) {
-                removables.add(damageText);
-            }
-        }
-
-        damageMessages.removeAll(removables, true);
-
         if (damageMessages.size == 0) {
             return;
         }
-
+        long timeNow = System.currentTimeMillis();
         batch.begin();
-        for (DamageText damageText : damageMessages) {
-            float fade = 1f - (timeNow - damageText.startTime) / (float) DamageText.FADEOUT_TIME;
+        for (DamageRendering damageRendering : damageMessages) {
+            float fade = 1f - (timeNow - damageRendering.startTime) / (float) DamageRendering.FADEOUT_TIME;
             font.setColor(fade, 0, 0, fade);
-            String output = decimalFormatter.format(damageText.damage);
-            // String output = String.format("%f.2", damageText.damage);
-            tmp3.set(damageText.target.getX(), damageText.target.getY() - damageText.target.getHeight() * 1.5f, 0);
+            String output = decimalFormatter.format(damageRendering.damage);
+            // String output = String.format("%f.2", damageRendering.damage);
+            tmp3.set(damageRendering.target.getX(), damageRendering.target.getY() - damageRendering.target.getHeight() * 1.5f, 0);
             cam.project(tmp3);
             font.draw(batch, output, tmp3.x, tmp3.y);
         }
@@ -394,7 +417,7 @@ public class BattleScreen implements Screen {
         shapeRenderer.end();
     }
 
-    private final Vector3 tmp3 = new Vector3();
+    private final Vector3 tmp3 = new Vector3(), tmp3end = new Vector3();
 
     private boolean isOnScreen(ClientShip ship) {
         ship.getBoundingBox(corners);
@@ -528,8 +551,8 @@ public class BattleScreen implements Screen {
         cam.update();
     }
 
-    public void addDamageText(ClientShip target, float damage) {
-        damageMessages.add(new DamageText(target, damage));
+    public void addDamageText(ClientShip target, float damage, float x, float y) {
+        damageMessages.add(new DamageRendering(target, damage, x, y));
     }
     /*
     public void createNPC(String host) {
@@ -537,16 +560,19 @@ public class BattleScreen implements Screen {
     }
     */
 
-    private class DamageText {
+    private class DamageRendering {
         public static final long FADEOUT_TIME = 1000; // in ms
         final ClientShip target;
         final float damage;
         final long startTime;
+        final float startX, startY;
 
-        public DamageText(ClientShip target, float damage) {
+        public DamageRendering(ClientShip target, float damage, float startX, float startY) {
             startTime = System.currentTimeMillis();
             this.target = target;
             this.damage = damage;
+            this.startX = startX;
+            this.startY = startY;
         }
     }
 

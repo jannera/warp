@@ -51,6 +51,13 @@ Future Ideas
 
 MVProto
 ===
+* Direction-lentäminen ei saa toimia vastustajan aluksiin
+* Erota ammusten piirtäminen damagetekstin näyttämisestä kooditasolla
+* Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
+* Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
+* Aluksen poistaminen vasta sen jälkeen kun ammus on osunut
+* Ei ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
+* Näytä jokin graffa aluksen tuhoutuessa
 * Navigointikäskyjä:
     * Orbit, CW/CCW
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
@@ -58,25 +65,19 @@ MVProto
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
-* Minne muualle kameran liike aiheuttaa ongelmia?
-* BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
-* Reunakolmioiden siirtäminen ui-layerille
-* Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
-* Ampumissysteemi
-    * DONE aseiden statit: sykli, lämä
-    * DONE ampumiskomento clientilta
-    * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
-    * ammusten näyttäminen clientissä
-    * DONE lämän näyttäminen clientissä
 * Alusten ja niiden stattien ostaminen webbikälin kautta
     * Hintalistan parsiminen
     * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
     * Ostonappulat
     * Nykyisten stattien näyttäminen webbikälissä
+* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
+* Minne muualle kameran liike aiheuttaa ongelmia?
+* BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
+* Reunakolmioiden siirtäminen ui-layerille
+* Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
 * Kameran liikuttelu ei saisi tökkiä
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
-* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Oikea määrä pikseleitä chatti-ikkunalle
 * multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
     * vasta sekä ShipClickListenerin että StageListenerin päästessä touchUp:iin, pitäisi selvittää mitä tehdään
@@ -151,3 +152,9 @@ MVProto DONE
 * DONE Valintaboksin pitää alkaa toimimaan ruutukoordinaatistossa (muuten kameran liike aiheuttaa ongelmia)
 * DONE Navigointipisteiden siirtäminen ui-layerille
 * DONE Kaiken alle taustagridi.. visualisoi alusten liikkeen paremmin
+* DONE Ampumissysteemi
+    * DONE aseiden statit: sykli, lämä
+    * DONE ampumiskomento clientilta
+    * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
+    * DONE ammusten näyttäminen clientissä
+    * DONE lämän näyttäminen clientissä

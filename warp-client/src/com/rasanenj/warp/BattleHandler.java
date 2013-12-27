@@ -147,12 +147,13 @@ public class BattleHandler {
             else if (msg.getType() == Message.MessageType.SHOOT_DAMAGE) {
                 ShootDamageMessage message = (ShootDamageMessage) msg;
                 ClientShip target = getShip(message.getTarget());
+                ClientShip shooter = getShip(message.getId());
                 if (target == null) {
                     log("Couldn't find target with id " + message.getTarget());
                 }
                 else {
                     target.reduceHealth(message.getDamage());
-                    screen.addDamageText(target, message.getDamage());
+                    screen.addDamageText(target, message.getDamage(), shooter.getX(), shooter.getY());
                 }
             }
 
