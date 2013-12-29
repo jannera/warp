@@ -163,7 +163,84 @@ public class ShipSteering extends IntervalTask {
             else if (ship.hasTargetPos()) {
                 targetPointSteer(ship);
             }
+            else if (ship.hasOrbitTarget()) {
+                orbitSteer(ship);
+            }
         }
+    }
+
+    private void orbitSteer(ClientShip ship) {
+        ClientShip orbitTarget = ship.getOrbitShip();
+        ship.getCenterPos(pos);
+        orbitTarget.getCenterPos(tgt);
+        float dst2 = pos.dst2(tgt);
+
+        float desiredDst2 = ship.getOrbitDst2();
+
+        log(desiredDst2);
+
+        final float orbitMargin = 0.5f * desiredDst2;
+        /**
+         * if margin is too high, ship starts oscillating.. if too low,
+         * orbit doesn't get maintained.
+         *
+         * TODO: Margin should probably be calculated from
+         * - mass of the ship
+         * - max propulsion force
+         * - max velocity
+         *
+         * Also the orbiting ships stats should probably somehow affect it
+         */
+
+        // right at the desired distance, the target vector is the tangent vector
+        pos.sub(tgt); // get the vector from the target to this ship
+        pos.nor(); // normalize it
+        float rotation = -90;
+        if (!ship.isOrbitCW()) {
+            rotation *= -1;
+        }
+        pos.rotate(rotation); // rotate it 90 degrees to be tangential
+
+        // float angle = pos.angle(); // TODO: do the angle thing here and see how the ship flies at full speed sideways
+
+        // if not at the desired distance, correct the orbit
+        // at margin distance, fly straight towards/away
+        // at half-margin distance, fly 45 degrees towards/away
+        // etc..
+        float diff = (dst2 - desiredDst2) / orbitMargin;
+        diff = MathUtils.clamp(diff, -1f, 1f);
+
+        // log("orbiting " + diff + " away from desired distance");
+
+        // positive diff means ship needs to get further away, negative means it needs to get closer
+        rotation = -90f * diff;
+        if (!ship.isOrbitCW()) {
+            rotation *= -1;
+        }
+        pos.rotate(rotation);
+
+        float angle = pos.angle();
+
+        pos.scl(ship.getStats().getMaxLinearVelocity());
+        // now pos contains the desired velocity difference between this ship and the ship that is being orbited
+
+        tgt.set(ship.getVelocity());
+        tgt.sub(orbitTarget.getVelocity());
+
+        pos.sub(tgt); // subtract the current velocity difference
+
+        pos.scl(ship.getStats().getMass());
+
+        ship.setImpulseIdeal(pos);
+        limitByForceLimits(ship, pos);
+
+        ship.setImpulse(pos);
+
+        float change = getAngularImpulse(ship, angle); // turn the ship
+
+        AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);
+
+        connection.send(msg);
     }
 
     private void directionSteer(ClientShip ship) {

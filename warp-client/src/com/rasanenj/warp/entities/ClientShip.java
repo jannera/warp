@@ -33,6 +33,9 @@ public class ClientShip extends Group {
     private Vector2[] vertices;
     private String text = "";
     private float targetDirection = Float.NaN;
+    private boolean orbitCW;
+    private ClientShip orbitShip;
+    private float orbitDst2;
 
     public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -62,8 +65,7 @@ public class ClientShip extends Group {
         this.stats.scaleForces(ShipSteering.STEP_LENGTH);
         this.health = stats.getMaxHealth();
 
-        this.clearTargetDirection();
-        this.clearTargetPos();
+        this.clearAllSteering();
     }
 
     private float brakingLeft;
@@ -161,6 +163,26 @@ public class ClientShip extends Group {
         targetDirection = Float.NaN;
     }
 
+    public void clearAllSteering() {
+        clearTargetDirection();
+        clearOrbit();
+        clearTargetPos();
+    }
+
+    public void setOrbit(ClientShip target, float dst2, boolean clockwise) {
+        clearAllSteering();
+        orbitShip = target;
+        orbitDst2 = dst2;
+        orbitCW = clockwise;
+    }
+
+    public void clearOrbit() {
+        orbitShip = null;
+    }
+
+    public boolean hasOrbitTarget() {
+        return orbitShip != null;
+    }
 
     public enum TurningState {
         FULL_SPEED, BRAKING, DONE_BRAKING;
@@ -358,5 +380,17 @@ public class ClientShip extends Group {
 
     public boolean hasDirectionTarget() {
         return !Float.isNaN(targetDirection);
+    }
+
+    public boolean isOrbitCW() {
+        return orbitCW;
+    }
+
+    public ClientShip getOrbitShip() {
+        return orbitShip;
+    }
+
+    public float getOrbitDst2() {
+        return orbitDst2;
     }
 }

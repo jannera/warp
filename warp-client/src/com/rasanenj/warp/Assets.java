@@ -8,11 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * @author gilead
  */
 public class Assets {
-    public static Texture shipTexture;
-    public static Texture moveTargetTexture;
-    public static Texture aimingTargetTexture;
-    public static Texture backgroundTexture;
-    public static Texture projectileTexture;
+    public static Texture shipTexture, moveTargetTexture, aimingTargetTexture,
+            backgroundTexture, projectileTexture;
 
     public static void load() {
         shipTexture = new Texture(Gdx.files.internal("data/grey_block.png"));

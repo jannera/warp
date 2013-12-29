@@ -15,10 +15,7 @@ import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
-import com.rasanenj.warp.tasks.ManualSteeringTask;
-import com.rasanenj.warp.tasks.MoveCameraTask;
-import com.rasanenj.warp.tasks.ShipTextUpdater;
-import com.rasanenj.warp.tasks.TaskHandler;
+import com.rasanenj.warp.tasks.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -341,13 +338,32 @@ public class BattleHandler {
             }
             else if (mouseState == MouseState.GO_TO) {
                 for (ClientShip s : selection) {
-                    s.clearTargetDirection();
+                    s.clearAllSteering();
                     s.setTargetPos(x, y);
                     event.stop();
                 }
                 changeMouseState(MouseState.DEFAULT);
             }
             else if (mouseState == MouseState.DIRECTION) {
+                changeMouseState(MouseState.DEFAULT);
+            }
+            else if (mouseState == MouseState.ORBIT_CW ||
+                    mouseState == MouseState.ORBIT_CCW) {
+                ClientShip closest = getClosestShip(x, y);
+                closest.getCenterPos(tmp2);
+                if (closest == null) {
+                    return;
+                }
+                for (ClientShip s : selection) {
+                    if (s == closest) {
+                        // don't tell a ship to orbit itself
+                        continue;
+                    }
+                    s.getCenterPos(tmp);
+                    float dst2 = tmp.dst2(tmp2);
+                    boolean clockWise = mouseState == MouseState.ORBIT_CW;
+                    s.setOrbit(closest, dst2, clockWise);
+                }
                 changeMouseState(MouseState.DEFAULT);
             }
         }
@@ -402,6 +418,17 @@ public class BattleHandler {
                 screen.zoom(-0.1f, screen.getCam().position.x, screen.getCam().position.y);
                 return true;
             }
+            else if (event.getKeyCode() == Input.Keys.T) {
+                for (ClientShip s : selection) {
+                    if (screen.isPlotting(s)) {
+                        continue;
+                    }
+                    PathPlotterTask task = new PathPlotterTask(s);
+                    screen.addPlotter(task);
+                    taskHandler.addToTaskList(task);
+                }
+                return true;
+            }
             else {
                 return false;
             }
@@ -417,6 +444,20 @@ public class BattleHandler {
                 return false;
             }
         }
+    }
+
+    private ClientShip getClosestShip(float x, float y) {
+        ClientShip closest = null;
+        float closestDst2 = Float.MAX_VALUE;
+        for (ClientShip s : ships) {
+            s.getCenterPos(tmp);
+            float dst2 = tmp.dst2(x, y);
+            if (dst2 < closestDst2) {
+                closest = s;
+                closestDst2 = dst2;
+            }
+        }
+        return closest;
     }
 
     private final ServerConnection conn;
@@ -474,7 +515,7 @@ public class BattleHandler {
         }
     }
 
-    final Vector2 tmp = new Vector2();
+    final Vector2 tmp = new Vector2(), tmp2 = new Vector2();
 
     public ArrayList<ClientShip> getShips() {
         return ships;

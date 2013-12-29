@@ -22,6 +22,7 @@ import com.rasanenj.warp.Settings;
 import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
+import com.rasanenj.warp.tasks.PathPlotterTask;
 
 
 import static com.rasanenj.warp.Log.log;
@@ -69,8 +70,23 @@ public class BattleScreen implements Screen {
 
     private ClientShip hoveringTarget = null;
 
+    private final Array<PathPlotterTask> plotters = new Array<PathPlotterTask>(false, 0);
+
     public OrthographicCamera getCam() {
         return cam;
+    }
+
+    public void addPlotter(PathPlotterTask p) {
+        plotters.add(p);
+    }
+
+    public boolean isPlotting(ClientShip s) {
+        for (PathPlotterTask p : plotters) {
+            if (p.getShip() == s) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public enum OptimalRenderingState {
@@ -130,6 +146,7 @@ public class BattleScreen implements Screen {
         updateProjectiles();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        renderPaths();
         renderVectors();
         renderOffScreenShips();
         renderProjectiles();
@@ -143,6 +160,25 @@ public class BattleScreen implements Screen {
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private void renderPaths() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLUE);
+        for (PathPlotterTask p : plotters) {
+            Vector2 earlier = null;
+            for (Vector2 current : p) {
+                if (Float.isNaN(current.x)) {
+                    continue;
+                }
+                if (earlier != null) {
+                    // not first in the list
+                    shapeRenderer.line(earlier, current);
+                }
+                earlier = current;
+            }
+        }
+        shapeRenderer.end();
     }
 
     private void renderProjectiles() {

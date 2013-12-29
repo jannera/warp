@@ -51,15 +51,26 @@ Future Ideas
 
 MVProto
 ===
+* Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
+  atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
+* Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
 * Erota ammusten piirtäminen damagetekstin näyttämisestä kooditasolla
 * Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
 * Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
+* Damagetekstin rendaus satunnaiseen kohtaan aluksen lähelle, ei aina samaan pinoon
 * Aluksen poistaminen vasta sen jälkeen kun ammus on osunut
 * Ei ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
 * Näytä jokin graffa aluksen tuhoutuessa
-* Navigointikäskyjä:
-    * Orbit, CW/CCW
-    * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
+* Rendaa valituille aluksille
+    * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
+    * Ampumiskohde mikäli sellainen on annettu
+    * Direction-nuoli mikäli direction-lento on päällä
+    * DONE Go-to-ikoni mikäli Go To on päällä
+    * Aktiivisten käskyjen ikonit pitäisi olla jotenkin
+        * Keskenään samanlaisia
+        * Selkeästi erotettavissa hiiren kursori-ikoneista joita käytetään kun annetaan käskyjä
+* Ampumiskohteen asettaminen helpommaksi:
+    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
 * Maksiminopeuden asettaminen
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
@@ -70,8 +81,12 @@ MVProto
     * Ostonappulat
     * Nykyisten stattien näyttäminen webbikälissä
 * Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
-* Minne muualle kameran liike aiheuttaa ongelmia?
-* BUGI: joskus klikattaessa kohdetta asetetaan myös navigointipiste
+* Go To -komentoon useita eri pisteitä (shift pohjassa)
+    * Eri pisteiden visualisointi
+    * Ajaminen pisteistä toisiin
+    * Eri pisteidelle numerointi (?) tai nuolet pisteiden välillä
+* Orbit-etäisyyden muuttamiselle jonkinlainen UI
+    * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
 * Reunakolmioiden siirtäminen ui-layerille
 * Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
 * Kameran liikuttelu ei saisi tökkiä
@@ -80,7 +95,6 @@ MVProto
 * Oikea määrä pikseleitä chatti-ikkunalle
 * multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
     * vasta sekä ShipClickListenerin että StageListenerin päästessä touchUp:iin, pitäisi selvittää mitä tehdään
-* BUGI: kun riittävän pitkään ja eri tavoilla valitsi laivoja, tuntui että menetettiin kyky antaa laivoille ampumiskohde
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
@@ -91,7 +105,6 @@ MVProto
     * Haasteen hyväksyminen: /accept <player>
     * Pelin aloittaminen
 * Kyky pyörittää useita pelejä samaan aikaan
-* BUGI: joskus lähestyessä pistettä, laiva töksähtää yllättäen kummalliseen suuntaan suht nopeasti
 * arrival liikkumiseen
 * Korvaa ArrayListit libgdx:n Array:illa
 
@@ -157,3 +170,6 @@ MVProto DONE
     * DONE loput hienoudet: tracking, optimal, falloff.. koko even systeemi ja nopanheitto
     * DONE ammusten näyttäminen clientissä
     * DONE lämän näyttäminen clientissä
+* DONE Navigointikäskyjä:
+    * DONE Orbit, CW/CCW
+    * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
