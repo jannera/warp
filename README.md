@@ -54,12 +54,6 @@ MVProto
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
-* Erota ammusten piirtäminen damagetekstin näyttämisestä kooditasolla
-* Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
-* Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
-* Damagetekstin rendaus satunnaiseen kohtaan aluksen lähelle, ei aina samaan pinoon
-* Aluksen poistaminen vasta sen jälkeen kun ammus on osunut
-* Ei ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
 * Näytä jokin graffa aluksen tuhoutuessa
 * Rendaa valituille aluksille
     * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
@@ -75,7 +69,7 @@ MVProto
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
-* Alusten ja niiden stattien ostaminen webbikälin kautta
+* Alusten ja niiden stattien ostaminen kälin kautta
     * Hintalistan parsiminen
     * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
     * Ostonappulat
@@ -89,6 +83,8 @@ MVProto
 * Reunakolmioiden siirtäminen ui-layerille
 * Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
 * Kameran liikuttelu ei saisi tökkiä
+* Aluksen poistaminen vasta sen jälkeen kun ammus on osunut
+* Ei ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
 * Muuta resoluutiota kun selaimen koko muuttuu (muuttamatta kuvasuhdetta)
@@ -174,3 +170,7 @@ MVProto DONE
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
 * DONE Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * DONE Oikea määrä pikseleitä chatti-ikkunalle
+* DONE Erota ammusten piirtäminen damagetekstin näyttämisestä kooditasolla
+* DONE Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
+* DONE Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
+* DONE Damagetekstin rendaus satunnaiseen kohtaan aluksen lähelle, ei aina samaan pinoon

@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
@@ -150,7 +149,7 @@ public class BattleHandler {
                 }
                 else {
                     target.reduceHealth(message.getDamage());
-                    screen.addDamageText(target, message.getDamage(), shooter.getX(), shooter.getY());
+                    screen.addDamageProjectile(target, message.getDamage(), shooter.getX(), shooter.getY());
                 }
             }
 
