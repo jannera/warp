@@ -55,6 +55,7 @@ MVProto
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
 * Näytä jokin graffa aluksen tuhoutuessa
+* Tällä hetkellä kohti ammusta lentäminen hidastaa ammusta.. ammusten pitää yksinkertaisesti alkaa kulkemaan omaa tasaista vauhtiaan
 * Rendaa valituille aluksille
     * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
     * Ampumiskohde mikäli sellainen on annettu
@@ -174,3 +175,4 @@ MVProto DONE
 * DONE Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
 * DONE Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
 * DONE Damagetekstin rendaus satunnaiseen kohtaan aluksen lähelle, ei aina samaan pinoon
+* DONE Chat-ikkuna toimimaan JOIN_CHAT -viesteillä

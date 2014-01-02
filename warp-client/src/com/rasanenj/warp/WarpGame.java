@@ -32,8 +32,8 @@ public class WarpGame extends Game implements ResizeHandler {
         chatScreen = new ChatScreen(serverConnection);
         battleScreen = new BattleScreen(serverConnection);
 
-        // setScreen(chatScreen);
-        setScreen(battleScreen);
+        setScreen(chatScreen);
+        // setScreen(battleScreen);
 
         serverConnection.open();
     }

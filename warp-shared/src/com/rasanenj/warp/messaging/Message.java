@@ -16,7 +16,7 @@ public abstract class Message {
     public enum MessageType {
         JOIN_SERVER, CHAT_MSG, DISCONNECT, START_BATTLE, CREATE_SHIP,
         UPDATE_SHIP_PHYSICS, SET_ACCELERATION, SHIP_STATS, SHOOT_REQUEST, SHOOT_DAMAGE,
-        SHIP_DESTRUCTION
+        SHIP_DESTRUCTION, JOIN_BATTLE, JOIN_CHAT
     }
 
     public abstract MessageType getType();

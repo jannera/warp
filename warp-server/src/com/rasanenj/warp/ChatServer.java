@@ -33,7 +33,9 @@ public class ChatServer extends RunnableFPS {
         public void consume(Player player, Message message) {
             log("ChatServer: Received " + message.getType());
             if (message.getType() == Message.MessageType.JOIN_SERVER) {
-                server.sendToAll(message);
+                JoinChatMessage joinChatMessage = new JoinChatMessage(
+                        ((JoinServerMessage) message).getPlayerName());
+                server.sendToAll(joinChatMessage);
             }
             else if (message.getType() == Message.MessageType.CHAT_MSG) {
                 ((ChatMessage) message).addNick(player.getName());

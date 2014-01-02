@@ -42,11 +42,11 @@ public class ChatHandler {
 
             log(msg.getType());
 
-            if (msg.getType() == Message.MessageType.JOIN_SERVER) {
-                chatMsg = ((TextMessage) msg).getMsg() + " joined channel";
+            if (msg.getType() == Message.MessageType.JOIN_CHAT) {
+                chatMsg = ((JoinChatMessage) msg).getMsg() + " joined channel";
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
-                chatMsg = ((TextMessage) msg).getMsg() + " left channel";
+                chatMsg = ((DisconnectMessage) msg).getMsg() + " left channel";
             }
             else if (msg.getType() == Message.MessageType.CHAT_MSG) {
                 chatMsg = ((TextMessage) msg).getMsg();
@@ -67,7 +67,7 @@ public class ChatHandler {
 
         @Override
         public Collection<Message.MessageType> getMessageTypes() {
-            return Arrays.asList(Message.MessageType.JOIN_SERVER,
+            return Arrays.asList(Message.MessageType.JOIN_CHAT,
                     Message.MessageType.CHAT_MSG, Message.MessageType.DISCONNECT);
         }
     }
