@@ -40,8 +40,7 @@ public class WarpGame extends Game implements ResizeHandler {
 
     @Override
     public void onResize(ResizeEvent event) {
-        Gdx.graphics.setDisplayMode(scaleSize(event.getWidth()),
-                scaleSize(event.getHeight()), false);
+        // Gdx.graphics.setDisplayMode(scaleSize(event.getWidth()), scaleSize(event.getHeight()), false);
     }
 
     public static int scaleSize(int size) {

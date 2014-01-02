@@ -25,7 +25,7 @@ public class ChatScreen implements Screen {
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
-        stage = new Stage(screenWidth, screenHeight, false);
+        stage = new Stage(screenWidth, screenHeight, true);
 
         TextField textfield = new TextField("", skin);
         textfield.setMessageText("Write your messages here");
@@ -73,7 +73,7 @@ public class ChatScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.setViewport(width, height, false);
+        // stage.setViewport(width, height, false);
     }
 
     @Override

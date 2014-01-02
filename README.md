@@ -80,7 +80,6 @@ MVProto
     * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
     * Ostonappulat
     * Nykyisten stattien näyttäminen webbikälissä
-* Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
     * Eri pisteiden visualisointi
     * Ajaminen pisteistä toisiin
@@ -92,7 +91,7 @@ MVProto
 * Kameran liikuttelu ei saisi tökkiä
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
-* Oikea määrä pikseleitä chatti-ikkunalle
+* Muuta resoluutiota kun selaimen koko muuttuu (muuttamatta kuvasuhdetta)
 * multiselectin pitäisi alkaa vaikka alottaisi laivan päältä
     * vasta sekä ShipClickListenerin että StageListenerin päästessä touchUp:iin, pitäisi selvittää mitä tehdään
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
@@ -173,3 +172,5 @@ MVProto DONE
 * DONE Navigointikäskyjä:
     * DONE Orbit, CW/CCW
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
+* DONE Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
+* DONE Oikea määrä pikseleitä chatti-ikkunalle
