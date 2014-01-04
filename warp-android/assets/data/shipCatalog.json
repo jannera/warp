@@ -1,0 +1,97 @@
+{
+    "shipTypes" : [
+        {
+            "id" : 1,
+            "typeName" : "Frigate",
+            "categories" : [
+                {
+                    "name" : "Engine",
+                    "properties" : [
+                        {
+                            "id" : "velocity",
+                            "name" : "Max velocity",
+                            "values" : [
+                                {
+                                    "value" : 1,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 2,
+                                    "cost" : 20
+                                },
+                                {
+                                    "value" : 3,
+                                    "cost" : 40
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "acceleration",
+                            "name" : "Max acceleration",
+                            "values" : [
+                                {
+                                    "value" : 1,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 2,
+                                    "cost" : 20
+                                }
+                            ]
+                        }]
+                },
+                {
+                    "name" : "Guns",
+                    "properties" : [
+                        {
+                            "id" : "damage",
+                            "name" : "Damage",
+                            "values" : [
+                                {
+                                    "value" : 1,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 2,
+                                    "cost" : 20
+                                },
+                                {
+                                    "value" : 3,
+                                    "cost" : 40
+                                },
+                                {
+                                    "value" : 4,
+                                    "cost" : 70
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "tracking",
+                            "name" : "Tracking",
+                            "values" : [
+                                {
+                                    "value" : 1,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 2,
+                                    "cost" : 20
+                                },
+                                {
+                                    "value" : 3,
+                                    "cost" : 40
+                                },
+                                {
+                                    "value" : 4,
+                                    "cost" : 70
+                                }
+                            ]
+                        }]
+                }
+
+            ]
+        }
+    ]
+
+
+}

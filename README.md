@@ -71,10 +71,14 @@ MVProto
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
 * Alusten ja niiden stattien ostaminen kälin kautta
-    * Hintalistan parsiminen
+    * Katalogin parsiminen -> käyttöliittymä
+    * Aluskokonaisuuden muuttaminen
     * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
-    * Ostonappulat
-    * Nykyisten stattien näyttäminen webbikälissä
+    * Osto-UI
+        * Take a test-flight -nappi
+        * Nykyisten stattien näyttäminen
+* Client-side tallettaminen
+    * Joko jokin clientside storage, tai cookiet
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
     * Eri pisteiden visualisointi
     * Ajaminen pisteistä toisiin

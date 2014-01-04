@@ -9,6 +9,7 @@ import com.rasanenj.warp.messaging.MessageDelegator;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.screens.ChatScreen;
+import com.rasanenj.warp.screens.FleetBuildingScreen;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,7 @@ public class WarpGame extends Game implements ResizeHandler {
 
     ChatScreen chatScreen;
     BattleScreen battleScreen;
+    FleetBuildingScreen fleetBuildingScreen;
 
     @Override
 	public void create() {
@@ -31,8 +33,10 @@ public class WarpGame extends Game implements ResizeHandler {
 
         chatScreen = new ChatScreen(serverConnection);
         battleScreen = new BattleScreen(serverConnection);
+        fleetBuildingScreen = new FleetBuildingScreen();
 
-        setScreen(chatScreen);
+        setScreen(fleetBuildingScreen);
+        // setScreen(chatScreen);
         // setScreen(battleScreen);
 
         serverConnection.open();
