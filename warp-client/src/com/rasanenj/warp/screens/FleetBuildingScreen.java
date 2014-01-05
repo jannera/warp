@@ -4,14 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.esotericsoftware.tablelayout.Cell;
 import com.rasanenj.warp.entities.ShipStats;
 
 import static com.rasanenj.warp.Log.log;
@@ -23,8 +25,7 @@ public class FleetBuildingScreen implements Screen {
     Skin skin;
     Stage stage;
     SpriteBatch batch;
-    Label total;
-    FleetBuild currentBuild = new FleetBuild();
+    FleetBuild currentBuild;
 
     /**
      * NOTE: ATM we're happily mixing Model, View and Controller all together in these
@@ -80,14 +81,28 @@ public class FleetBuildingScreen implements Screen {
 
     private class ShipBuild {
         private final int typeId;
+        private final Window window;
+        private Label total;
 
         public ShipBuild(int typeId) {
+            window = new Window("Ship properties", skin);
+            window.setMovable(false);
             this.typeId = typeId;
+        }
+
+        public void updateUI() {
+            total.setText("Total: " + getTotalCost());
         }
 
         public void add(PropertySlider slider) {
             sliders.add(slider);
 
+        }
+
+        public void addTotal() {
+            total = new Label("", skin);
+            window.row().fill().expand();
+            window.add(total).expand().fill().colspan(0);
         }
 
         public ShipStats getStats() {
@@ -105,10 +120,42 @@ public class FleetBuildingScreen implements Screen {
         }
 
         private final Array<PropertySlider> sliders = new Array<PropertySlider>(false, 16);
+
+        private Window getWindow() {
+            return window;
+        }
     }
 
     private class FleetBuild {
         private final Array<ShipBuild> shipBuilds = new Array<ShipBuild>(false, 16);
+        private final Window window;
+        int activeBuild = -1;
+        HorizontalGroup buttonGroup;
+        TextButton addButton;
+        Label totalCost;
+
+        public FleetBuild() {
+            window = new Window("Fleet properties", skin);
+            window.row().fill().expand();
+            buttonGroup = new HorizontalGroup();
+
+            // create a button to add builds
+            addButton = new TextButton("+", skin);
+            addButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    add(createShipFromCatalog(1));
+                }
+            });
+            buttonGroup.addActor(addButton);
+            window.add(buttonGroup);
+
+            // idea: how about create a group of some sort that will be a container for holding the active ship window?
+
+            totalCost = new Label("", skin);
+            window.row().fill().expand().left();
+            window.add(totalCost);
+        }
 
         public float getTotalCost() {
             float totalCost = 0;
@@ -120,7 +167,45 @@ public class FleetBuildingScreen implements Screen {
         }
 
         public void add(ShipBuild shipBuild) {
+            // add a button to activate the new build
+            final int index = shipBuilds.size;
+            TextButton activate = new TextButton(Integer.toString(index + 1), skin);
+            activate.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    showOnly(index);
+                }
+            });
+            buttonGroup.addActorBefore(addButton, activate);
+
             shipBuilds.add(shipBuild);
+            showOnly(index);
+        }
+
+        private Window getWindow() {
+            return window;
+        }
+
+        public void updateUI() {
+            for (ShipBuild shipBuild : shipBuilds) {
+                shipBuild.updateUI();
+            }
+            totalCost.setText("Fleet total: " + getTotalCost());
+        }
+
+        // shows the one with given index, hides everyone else
+        // TODO: maybe use Stack instead of adding and removing?
+        public void showOnly(int toBeShown) {
+            if (activeBuild == toBeShown) {
+                return;
+            }
+            if (activeBuild != -1) {
+                // remove the old one
+                window.removeActor(shipBuilds.get(activeBuild).getWindow());
+            }
+            window.add(shipBuilds.get(toBeShown).getWindow());
+            activeBuild = toBeShown;
+            window.pack();
         }
     }
 
@@ -129,20 +214,15 @@ public class FleetBuildingScreen implements Screen {
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
+
         stage = new Stage(screenWidth, screenHeight, true);
 
-        Window window = new Window("Ship properties", skin);
-        window.setPosition( (screenWidth - 300) /2f, (screenHeight - 200) /2f);
+        currentBuild = new FleetBuild();
+        currentBuild.getWindow().setPosition((screenWidth - 300) / 2f, (screenHeight - 200) / 2f);
 
-        currentBuild.add(createShipFromCatalog(window, 1));
+        currentBuild.add(createShipFromCatalog(1));
 
-        total = new Label("", skin);
-        window.row().fill().expand();
-        window.add(total).expand().fill().colspan(0);
-
-        window.pack();
-
-        stage.addActor(window);
+        stage.addActor(currentBuild.getWindow());
     }
 
     @Override
@@ -150,7 +230,7 @@ public class FleetBuildingScreen implements Screen {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-        total.setText("Total: " + currentBuild.getTotalCost());
+        currentBuild.updateUI();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
@@ -186,7 +266,7 @@ public class FleetBuildingScreen implements Screen {
 
     }
 
-    private ShipBuild createShipFromCatalog(Window window, int shipTypeId) {
+    private ShipBuild createShipFromCatalog(int shipTypeId) {
         JsonReader reader = new JsonReader();
         JsonValue catalog = reader.parse(Gdx.files.internal("data/shipCatalog.json"));
 
@@ -198,11 +278,12 @@ public class FleetBuildingScreen implements Screen {
                 continue;
             }
 
+            ShipBuild build = new ShipBuild(id);
+            Window window = build.getWindow();
+
             String typeName = shipType.getString("typeName");
             window.row().fill().expandX().fillX();
             window.add(new Label("Type: " + typeName, skin));
-
-            ShipBuild build = new ShipBuild(id);
 
             JsonValue categories = shipType.require("categories");
             for (JsonValue category : categories) {
@@ -223,6 +304,8 @@ public class FleetBuildingScreen implements Screen {
                             property.getString("name"), valueArr, costArr));
                 }
             }
+            build.addTotal();
+            window.pack();
             return build;
         }
 
