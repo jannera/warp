@@ -71,12 +71,18 @@ MVProto
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
 * Alusten ja niiden stattien ostaminen kälin kautta
-    * Katalogin parsiminen -> käyttöliittymä
-    * Aluskokonaisuuden muuttaminen
-    * Kokonaishinnan laskeminen ja näyttäminen webbikälissä
+    * DONE Katalogin parsiminen -> käyttöliittymä
+    * DONE Kokonaishinnan laskeminen ja näyttäminen webbikälissä
     * Osto-UI
         * Take a test-flight -nappi
+        * Save/load fleet
+        * Save/load ship
         * Nykyisten stattien näyttäminen
+        * Yksiköt näkyville
+        * Aluksen tyypin valitseminen lisättäessä
+        * Lukumäärän antaminen aluksille. Voisi näkyä myös UI:ssa
+        * Delete ship
+* Alusten statteja voisi muuttaa lennossa kun on testflight -moodissa?
 * Client-side tallettaminen
     * Joko jokin clientside storage, tai cookiet
 * Go To -komentoon useita eri pisteitä (shift pohjassa)

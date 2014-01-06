@@ -5,32 +5,25 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.esotericsoftware.tablelayout.Cell;
 import com.rasanenj.warp.entities.ShipStats;
 
 import static com.rasanenj.warp.Log.log;
 
 /**
- * @author gilead
+ * NOTE: ATM we're happily mixing Model, View and Controller all together in these
+ * Classes below. You might want to change that at some point.
  */
 public class FleetBuildingScreen implements Screen {
     Skin skin;
     Stage stage;
     SpriteBatch batch;
     FleetBuild currentBuild;
-
-    /**
-     * NOTE: ATM we're happily mixing Model, View and Controller all together in these
-     * PropertySliders. You might want to change that at some point.
-     */
     private class PropertySlider {
         private Slider slider;
         private Label description;
@@ -130,14 +123,16 @@ public class FleetBuildingScreen implements Screen {
         private final Array<ShipBuild> shipBuilds = new Array<ShipBuild>(false, 16);
         private final Window window;
         int activeBuild = -1;
-        HorizontalGroup buttonGroup;
+        HorizontalGroup shipSelectionGroup, bottomUIGroup;
         TextButton addButton;
         Label totalCost;
+        Table buildTable;
+        float oldTotalCost = -1;
 
         public FleetBuild() {
             window = new Window("Fleet properties", skin);
             window.row().fill().expand();
-            buttonGroup = new HorizontalGroup();
+            shipSelectionGroup = new HorizontalGroup();
 
             // create a button to add builds
             addButton = new TextButton("+", skin);
@@ -147,14 +142,26 @@ public class FleetBuildingScreen implements Screen {
                     add(createShipFromCatalog(1));
                 }
             });
-            buttonGroup.addActor(addButton);
-            window.add(buttonGroup);
+            shipSelectionGroup.addActor(addButton);
+            shipSelectionGroup.pack();
+            window.add(shipSelectionGroup);
 
-            // idea: how about create a group of some sort that will be a container for holding the active ship window?
+            buildTable = new Table(skin);
+            window.row().fillX();
+            window.add(buildTable);
 
             totalCost = new Label("", skin);
-            window.row().fill().expand().left();
+            window.row().left();
             window.add(totalCost);
+
+            bottomUIGroup = new HorizontalGroup();
+            bottomUIGroup.addActor(new TextButton("Save", skin));
+            bottomUIGroup.addActor(new TextButton("Load", skin));
+            bottomUIGroup.addActor(new TextButton("Test flight", skin));
+            window.row().left();
+            window.add(bottomUIGroup);
+
+            window.pack();
         }
 
         public float getTotalCost() {
@@ -176,7 +183,8 @@ public class FleetBuildingScreen implements Screen {
                     showOnly(index);
                 }
             });
-            buttonGroup.addActorBefore(addButton, activate);
+            shipSelectionGroup.addActorBefore(addButton, activate);
+
 
             shipBuilds.add(shipBuild);
             showOnly(index);
@@ -190,7 +198,12 @@ public class FleetBuildingScreen implements Screen {
             for (ShipBuild shipBuild : shipBuilds) {
                 shipBuild.updateUI();
             }
-            totalCost.setText("Fleet total: " + getTotalCost());
+            float total = getTotalCost();
+            if (total != oldTotalCost) {
+                oldTotalCost = total;
+                totalCost.setText("Fleet total: " + getTotalCost());
+                window.pack();
+            }
         }
 
         // shows the one with given index, hides everyone else
@@ -201,9 +214,10 @@ public class FleetBuildingScreen implements Screen {
             }
             if (activeBuild != -1) {
                 // remove the old one
-                window.removeActor(shipBuilds.get(activeBuild).getWindow());
+                buildTable.removeActor(shipBuilds.get(activeBuild).getWindow());
             }
-            window.add(shipBuilds.get(toBeShown).getWindow());
+            Window toBeAdded = shipBuilds.get(toBeShown).getWindow();
+            buildTable.add(toBeAdded);
             activeBuild = toBeShown;
             window.pack();
         }
@@ -220,9 +234,9 @@ public class FleetBuildingScreen implements Screen {
         currentBuild = new FleetBuild();
         currentBuild.getWindow().setPosition((screenWidth - 300) / 2f, (screenHeight - 200) / 2f);
 
-        currentBuild.add(createShipFromCatalog(1));
-
         stage.addActor(currentBuild.getWindow());
+
+        currentBuild.add(createShipFromCatalog(1));
     }
 
     @Override
