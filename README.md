@@ -51,6 +51,9 @@ Future Ideas
 
 MVProto
 ===
+* Muuta nykyinen buildi JSONiksi aina kun siihen tehdään muutoksia, ja lataa se kun softa käynnistyy
+* Yhdistä Fleet Building ja Chat (ja mahdollisesti Welcome) screenit yhdeksi
+* Oikea määrä pikseleitä chatti-ikkunalle
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
@@ -74,7 +77,7 @@ MVProto
     * DONE Katalogin parsiminen -> käyttöliittymä
     * DONE Kokonaishinnan laskeminen ja näyttäminen webbikälissä
     * Osto-UI
-        * Take a test-flight -nappi
+        * DONE Take a test-flight -nappi
         * Save/load fleet
         * Save/load ship
         * Nykyisten stattien näyttäminen
@@ -180,7 +183,6 @@ MVProto DONE
     * DONE Orbit, CW/CCW
     * DONE Go to (nykyinen pistenavigointi aktivoituna näppiksen kautta)
 * DONE Oikea määrä pikseleitä tappeluruudulle. resoluution suhde ei saa muuttua kun vaihtaa ikkunan kokoa
-* DONE Oikea määrä pikseleitä chatti-ikkunalle
 * DONE Erota ammusten piirtäminen damagetekstin näyttämisestä kooditasolla
 * DONE Ammuksille matkanopeus, mistä riippuu aika jonka ammus on ruudulla
 * DONE Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut

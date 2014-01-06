@@ -307,9 +307,12 @@ public class FleetBuildingScreen implements Screen {
         stage = new Stage(screenWidth, screenHeight, true);
 
         currentBuild = new FleetBuild();
-        currentBuild.getWindow().setPosition((screenWidth - 300) / 2f, (screenHeight - 200) / 2f);
 
         stage.addActor(currentBuild.getWindow());
+
+        Window buildWindow = currentBuild.getWindow();
+        buildWindow.setPosition((screenWidth - buildWindow.getWidth()) / 2f,
+                (screenHeight - buildWindow.getHeight()) / 2f);
 
         currentBuild.add(createShipFromCatalog(1));
     }
