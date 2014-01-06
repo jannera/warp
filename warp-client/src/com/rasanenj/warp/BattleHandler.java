@@ -546,6 +546,7 @@ public class BattleHandler {
 
         @Override
         public void onOpen() {
+            /*
             conn.send(new JoinServerMessage("gilead", -1, -1));
 
             StatsToFleet transformer = new StatsToFleet();
@@ -556,6 +557,7 @@ public class BattleHandler {
             else {
                 statsFetcher.loadJSON(transformer);
             }
+            */
         }
 
         @Override

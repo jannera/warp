@@ -11,7 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.rasanenj.warp.WarpGame;
 import com.rasanenj.warp.entities.ShipStats;
+import com.rasanenj.warp.messaging.JoinServerMessage;
+import com.rasanenj.warp.messaging.ServerConnection;
+import com.rasanenj.warp.messaging.ShipStatsMessage;
+
+import java.util.HashMap;
+import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -20,6 +27,8 @@ import static com.rasanenj.warp.Log.log;
  * Classes below. You might want to change that at some point.
  */
 public class FleetBuildingScreen implements Screen {
+    private final ServerConnection serverConnection;
+    private final WarpGame game;
     Skin skin;
     Stage stage;
     SpriteBatch batch;
@@ -99,7 +108,46 @@ public class FleetBuildingScreen implements Screen {
         }
 
         public ShipStats getStats() {
-            return null;
+            HashMap<String, Float> values = new HashMap<String, Float>(sliders.size);
+            for (PropertySlider slider : sliders) {
+                values.put(slider.getId(), slider.getValue());
+            }
+
+            float mass = 0; // atm fixed in server code
+            float inertia = 0; // atm fixed in server code
+            float force = 0; // atm derived from the acceleration
+
+            float maxHealth = getValue(values, "maxHealth");
+            float maxVelocity = getValue(values, "maxVelocity");
+            float maxAcceleration = getValue(values, "maxAcceleration");
+            float maxAngularVelocity = getValue(values, "maxAngularVelocity");
+            float maxAngularAcceleration = getValue(values, "maxAngularAcceleration");
+            float signatureResolution = getValue(values, "signatureResolution");
+            float weaponOptimal = getValue(values, "weaponOptimal");
+            float weaponFalloff = getValue(values, "weaponFalloff");
+            float weaponDamage = getValue(values, "weaponDamage");
+            float weaponCooldown = getValue(values, "weaponCooldown");
+            float cost = getTotalCost();
+
+            // TODO: add weapon tracking
+            return new ShipStats(mass, inertia, force, force, force, force, maxHealth, maxVelocity,
+                    maxAngularVelocity, maxAngularAcceleration, signatureResolution, weaponCooldown,
+                    signatureResolution, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown,
+                    maxAcceleration, cost);
+        }
+
+        private float getValue(HashMap<String, Float> values, String value) {
+            try {
+                return values.get(value);
+            }
+            catch (Throwable t) {
+                log(Level.SEVERE, "Couldn't read property " + value + " from the ship definition");
+            }
+            return Float.NaN;
+        }
+
+        public void validate() {
+            getStats();
         }
 
         public float getTotalCost() {
@@ -157,7 +205,14 @@ public class FleetBuildingScreen implements Screen {
             bottomUIGroup = new HorizontalGroup();
             bottomUIGroup.addActor(new TextButton("Save", skin));
             bottomUIGroup.addActor(new TextButton("Load", skin));
-            bottomUIGroup.addActor(new TextButton("Test flight", skin));
+            TextButton startFight = new TextButton("Test flight", skin);
+            startFight.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    startTestFlight();
+                }
+            });
+            bottomUIGroup.addActor(startFight);
             window.row().left();
             window.add(bottomUIGroup);
 
@@ -221,9 +276,29 @@ public class FleetBuildingScreen implements Screen {
             activeBuild = toBeShown;
             window.pack();
         }
+
+        public Array<ShipStats> getStats() {
+            Array<ShipStats> stats = new Array<ShipStats>(false, shipBuilds.size);
+            for (ShipBuild build : shipBuilds) {
+                stats.add(build.getStats());
+            }
+            return stats;
+        }
     }
 
-    public FleetBuildingScreen() {
+    private void startTestFlight() {
+        serverConnection.send(new JoinServerMessage("gilead", -1, -1));
+
+        for (ShipStats stats : currentBuild.getStats()) {
+            serverConnection.send(new ShipStatsMessage(stats));
+        }
+
+        game.setScreen(WarpGame.ScreenType.BATTLE);
+    }
+
+    public FleetBuildingScreen(ServerConnection serverConnection, WarpGame warpGame) {
+        this.game = warpGame;
+        this.serverConnection = serverConnection;
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         float screenWidth = Gdx.graphics.getWidth();
@@ -320,6 +395,7 @@ public class FleetBuildingScreen implements Screen {
             }
             build.addTotal();
             window.pack();
+            build.validate();
             return build;
         }
 

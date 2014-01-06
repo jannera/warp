@@ -23,6 +23,10 @@ public class WarpGame extends Game implements ResizeHandler {
     BattleScreen battleScreen;
     FleetBuildingScreen fleetBuildingScreen;
 
+    public enum ScreenType {
+        CHAT, BATTLE, BUILD_FLEET
+    }
+
     @Override
 	public void create() {
         Assets.load();
@@ -33,7 +37,7 @@ public class WarpGame extends Game implements ResizeHandler {
 
         chatScreen = new ChatScreen(serverConnection);
         battleScreen = new BattleScreen(serverConnection);
-        fleetBuildingScreen = new FleetBuildingScreen();
+        fleetBuildingScreen = new FleetBuildingScreen(serverConnection, this);
 
         setScreen(fleetBuildingScreen);
         // setScreen(chatScreen);
@@ -49,5 +53,19 @@ public class WarpGame extends Game implements ResizeHandler {
 
     public static int scaleSize(int size) {
         return (int) (size * 0.97f);
+    }
+
+    public void setScreen(ScreenType type) {
+        switch (type) {
+            case CHAT:
+                setScreen(chatScreen);
+                break;
+            case BATTLE:
+                setScreen(battleScreen);
+                break;
+            case BUILD_FLEET:
+                setScreen(fleetBuildingScreen);
+                break;
+        }
     }
 }

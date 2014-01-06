@@ -5,37 +5,140 @@
             "typeName" : "Frigate",
             "categories" : [
                 {
-                    "name" : "Engine",
+                    "name" : "Hull",
                     "properties" : [
                         {
-                            "id" : "velocity",
-                            "name" : "Max velocity",
+                            "id" : "maxHealth",
+                            "name" : "Health",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 40,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 2,
-                                    "cost" : 20
+                                    "value" : 50,
+                                    "cost" : 30
                                 },
                                 {
-                                    "value" : 3,
-                                    "cost" : 40
+                                    "value" : 60,
+                                    "cost" : 50
+                                },
+                                {
+                                    "value" : 70,
+                                    "cost" : 90
                                 }
                             ]
                         },
                         {
-                            "id" : "acceleration",
-                            "name" : "Max acceleration",
+                            "id" : "signatureResolution",
+                            "name" : "Signature",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 40,
                                     "cost" : 10
                                 },
                                 {
+                                    "value" : 35,
+                                    "cost" : 40
+                                },
+                                {
+                                    "value" : 30,
+                                    "cost" : 60
+                                },
+                                {
+                                    "value" : 25,
+                                    "cost" : 100
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name" : "Engine",
+                    "properties" : [
+                        {
+                            "id" : "maxVelocity",
+                            "name" : "Max velocity",
+                            "values" : [
+                                {
+                                    "value" : 3,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 4.5,
+                                    "cost" : 40
+                                },
+                                {
+                                    "value" : 6,
+                                    "cost" : 80
+                                }
+                                ,
+                                {
+                                    "value" : 7.5,
+                                    "cost" : 130
+                                }
+                                ,
+                                {
+                                    "value" : 9,
+                                    "cost" : 190
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "maxAcceleration",
+                            "name" : "Max acceleration",
+                            "values" : [
+                                {
                                     "value" : 2,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 3,
                                     "cost" : 20
+                                },
+                                {
+                                    "value" : 4,
+                                    "cost" : 40
+                                },
+                                {
+                                    "value" : 5,
+                                    "cost" : 60
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "maxAngularVelocity",
+                            "name" : "Max angular velocity",
+                            "values" : [
+                                {
+                                    "value" : 0.75,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 1.5,
+                                    "cost" : 20
+                                },
+                                {
+                                    "value" : 2.25,
+                                    "cost" : 30
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "maxAngularAcceleration",
+                            "name" : "Max angular acceleration",
+                            "values" : [
+                                {
+                                    "value" : 3,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 4,
+                                    "cost" : 20
+                                },
+                                {
+                                    "value" : 5,
+                                    "cost" : 30
                                 }
                             ]
                         }]
@@ -44,29 +147,51 @@
                     "name" : "Guns",
                     "properties" : [
                         {
-                            "id" : "damage",
+                            "id" : "weaponDamage",
                             "name" : "Damage",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 4,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 2,
-                                    "cost" : 20
+                                    "value" : 6,
+                                    "cost" : 30
                                 },
                                 {
-                                    "value" : 3,
-                                    "cost" : 40
+                                    "value" : 8,
+                                    "cost" : 60
                                 },
                                 {
-                                    "value" : 4,
-                                    "cost" : 70
+                                    "value" : 10,
+                                    "cost" : 100
                                 }
                             ]
                         },
                         {
-                            "id" : "tracking",
+                            "id" : "weaponCooldown",
+                            "name" : "Cooldown",
+                            "values" : [
+                                {
+                                    "value" : 10,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 8,
+                                    "cost" : 30
+                                },
+                                {
+                                    "value" : 6,
+                                    "cost" : 60
+                                },
+                                {
+                                    "value" : 4,
+                                    "cost" : 100
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "weaponTracking",
                             "name" : "Tracking",
                             "values" : [
                                 {
@@ -74,21 +199,78 @@
                                     "cost" : 10
                                 },
                                 {
+                                    "value" : 1.5,
+                                    "cost" : 30
+                                },
+                                {
                                     "value" : 2,
+                                    "cost" : 50
+                                },
+                                {
+                                    "value" : 2.5,
+                                    "cost" : 70
+                                }
+                                ,
+                                {
+                                    "value" : 3,
+                                    "cost" : 90
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "weaponOptimal",
+                            "name" : "Optimal",
+                            "values" : [
+                                {
+                                    "value" : 2,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 7,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 3,
+                                    "value" : 12,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 4,
-                                    "cost" : 70
+                                    "value" : 17,
+                                    "cost" : 80
+                                },
+                                {
+                                    "value" : 22,
+                                    "cost" : 130
                                 }
                             ]
-                        }]
+                        },
+                        {
+                            "id" : "weaponFalloff",
+                            "name" : "Falloff",
+                            "values" : [
+                                {
+                                    "value" : 1,
+                                    "cost" : 5
+                                },
+                                {
+                                    "value" : 3.5,
+                                    "cost" : 10
+                                },
+                                {
+                                    "value" : 6,
+                                    "cost" : 20
+                                },
+                                {
+                                    "value" : 8.5,
+                                    "cost" : 40
+                                },
+                                {
+                                    "value" : 11,
+                                    "cost" : 75
+                                }
+                            ]
+                        }
+                    ]
                 }
-
             ]
         }
     ]
