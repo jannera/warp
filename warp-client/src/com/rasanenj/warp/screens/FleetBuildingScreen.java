@@ -203,6 +203,10 @@ public class FleetBuildingScreen implements Screen {
         private Window getWindow() {
             return window;
         }
+
+        private int getTypeId() {
+            return typeId;
+        }
     }
 
     private class FleetBuild {
@@ -245,14 +249,14 @@ public class FleetBuildingScreen implements Screen {
             save.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    saveJson();
+                    saveCurrentBuild();
                 }
             });
             TextButton load = new TextButton("Load", skin);
             load.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    loadJson();
+                    loadCurrentBuild();
                 }
             });
             bottomUIGroup.addActor(save);
@@ -271,54 +275,62 @@ public class FleetBuildingScreen implements Screen {
             window.pack();
         }
 
-        public void loadJson() {
-            String rawText = LocalStorage.fetch(LocalStorage.CURRENT_BUILD);
+        private static final String TYPE_ID = "typeId", INDEXES = "indexes";
 
-            log(rawText);
-
+        public void loadFromJson(String rawText) {
             JsonReader reader = new JsonReader();
             JsonValue root = reader.parse(rawText);
 
-            HashMap<String, Integer> indexes = new HashMap<String, Integer>();
+            clear();
 
-            for (JsonValue value : root) {
-                indexes.put(value.name(), value.asInt());
-            }
+            for (JsonValue jShipBuild : root) {
+                int typeid = jShipBuild.require(TYPE_ID).asInt();
+                JsonValue jIndexes = jShipBuild.require(INDEXES);
+                HashMap<String, Integer> indexes = new HashMap<String, Integer>();
 
-            // for now, only load and save the first ship
-            ShipBuild build = shipBuilds.first();
+                for (JsonValue value : jIndexes) {
+                    indexes.put(value.name(), value.asInt());
+                }
 
-            if (build == null) {
-                build = createShipFromCatalog(1);
+                ShipBuild build = createShipFromCatalog(typeid);
+                build.setSliders(indexes);
                 add(build);
             }
-
-            build.setSliders(indexes);
         }
 
-        public void saveJson() {
-            String json = getJson();
-            log(json);
-            LocalStorage.store(LocalStorage.CURRENT_BUILD, json);
-        }
-
-        private String getJson() {
-            ShipBuild build = shipBuilds.first();
-
-            if (build == null) {
-                return "";
+        private void clear() {
+            if (activeBuild != -1) {
+                buildTable.removeActor(shipBuilds.get(activeBuild).getWindow());
             }
+            shipBuilds.clear();
+            shipSelectionGroup.clear();
+            shipSelectionGroup.addActor(addButton);
+            shipSelectionGroup.pack();
+            activeBuild = -1;
+            oldTotalCost = -1;
+        }
 
-            HashMap<String, Integer> indexes = build.getSliders();
+        public String getJson() {
             Json json = new Json();
             StringWriter writer = new StringWriter();
             json.setWriter(writer);
-            json.writeObjectStart();
 
-            for (Map.Entry<String, Integer> entry : indexes.entrySet()) {
-                json.writeValue(entry.getKey(), entry.getValue());
+            json.writeArrayStart();
+            for (ShipBuild build : shipBuilds) {
+                HashMap<String, Integer> indexes = build.getSliders();
+                json.writeObjectStart();
+
+                json.writeValue(TYPE_ID, build.getTypeId());
+
+                json.writeObjectStart(INDEXES);
+
+                for (Map.Entry<String, Integer> entry : indexes.entrySet()) {
+                    json.writeValue(entry.getKey(), entry.getValue());
+                }
+                json.writeObjectEnd();
+                json.writeObjectEnd();
             }
-            json.writeObjectEnd();
+            json.writeArrayEnd();
 
             return writer.toString();
         }
@@ -344,7 +356,6 @@ public class FleetBuildingScreen implements Screen {
             });
             shipSelectionGroup.addActorBefore(addButton, activate);
 
-
             shipBuilds.add(shipBuild);
             showOnly(index);
         }
@@ -359,6 +370,10 @@ public class FleetBuildingScreen implements Screen {
             }
             float total = getTotalCost();
             if (total != oldTotalCost) {
+                // TODO: this is not a good mechanism, as we need to reset the oldTotalCost
+                // when clearing the screen. better mechanism would be if updateUI would return
+                // true when their state has changed.. ?
+                // .. or just listen to changes, and only then do changes to labels..
                 oldTotalCost = total;
                 totalCost.setText("Fleet total: " + getTotalCost());
                 window.pack();
@@ -388,6 +403,18 @@ public class FleetBuildingScreen implements Screen {
             }
             return stats;
         }
+    }
+
+    private void loadCurrentBuild() {
+        String rawText = LocalStorage.fetch(LocalStorage.CURRENT_BUILD);
+        log(rawText);
+        currentBuild.loadFromJson(rawText);
+    }
+
+    private void saveCurrentBuild() {
+        String json = currentBuild.getJson();
+        log(json);
+        LocalStorage.store(LocalStorage.CURRENT_BUILD, json);
     }
 
     private void startTestFlight() {

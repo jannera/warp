@@ -78,7 +78,7 @@ MVProto
     * DONE Kokonaishinnan laskeminen ja näyttäminen webbikälissä
     * Osto-UI
         * DONE Take a test-flight -nappi
-        * Save/load fleet
+        * DONE Save/load fleet
         * Save/load ship
         * Nykyisten stattien näyttäminen
         * Yksiköt näkyville
@@ -92,8 +92,8 @@ MVProto
 * Alusten statteja voisi muuttaa lennossa kun on testflight -moodissa?
 * Fleetin Client-side tallettaminen
     * Pitäisi tallettaa fleet aina kun tapahtuu muutos -> muutoksien kuunteleminen
-    * Clientside storage json stringinä
-    *
+    * DONE Clientside storage json stringinä
+* Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
     * Eri pisteiden visualisointi
     * Ajaminen pisteistä toisiin
