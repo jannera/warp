@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rasanenj.warp.WarpGame;
@@ -16,8 +17,11 @@ import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.JoinServerMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.messaging.ShipStatsMessage;
+import com.rasanenj.warp.storage.LocalStorage;
 
+import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
@@ -67,6 +71,10 @@ public class FleetBuildingScreen implements Screen {
             return costs[index];
         }
 
+        public int getIndex() {
+            return (int) slider.getValue();
+        }
+
         public float getValue() {
             int index = (int) slider.getValue();
             return values[index];
@@ -78,6 +86,12 @@ public class FleetBuildingScreen implements Screen {
 
         public void update() {
             description.setText(getDescription());
+        }
+
+        public void setIndex(int index) {
+            if (index < values.length && index >= 0) {
+                slider.setValue(index);
+            }
         }
     }
 
@@ -107,11 +121,35 @@ public class FleetBuildingScreen implements Screen {
             window.add(total).expand().fill().colspan(0);
         }
 
-        public ShipStats getStats() {
+        private HashMap<String, Float> getValues() {
             HashMap<String, Float> values = new HashMap<String, Float>(sliders.size);
             for (PropertySlider slider : sliders) {
                 values.put(slider.getId(), slider.getValue());
             }
+            return values;
+        }
+
+        public HashMap<String, Integer> getSliders() {
+            HashMap<String, Integer> values = new HashMap<String, Integer>(sliders.size);
+            for (PropertySlider slider : sliders) {
+                values.put(slider.getId(), slider.getIndex());
+            }
+            return values;
+        }
+
+        public void setSliders(HashMap<String, Integer> indexes) {
+            for (PropertySlider slider : sliders) {
+                String id = slider.getId();
+                Integer index = indexes.get(id);
+                if (index == null) {
+                    continue;
+                }
+                slider.setIndex(index);
+            }
+        }
+
+        public ShipStats getStats() {
+            HashMap<String, Float> values = getValues();
 
             float mass = 0; // atm fixed in server code
             float inertia = 0; // atm fixed in server code
@@ -203,8 +241,22 @@ public class FleetBuildingScreen implements Screen {
             window.add(totalCost);
 
             bottomUIGroup = new HorizontalGroup();
-            bottomUIGroup.addActor(new TextButton("Save", skin));
-            bottomUIGroup.addActor(new TextButton("Load", skin));
+            TextButton save = new TextButton("Save", skin);
+            save.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    saveJson();
+                }
+            });
+            TextButton load = new TextButton("Load", skin);
+            load.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    loadJson();
+                }
+            });
+            bottomUIGroup.addActor(save);
+            bottomUIGroup.addActor(load);
             TextButton startFight = new TextButton("Test flight", skin);
             startFight.addListener(new ChangeListener() {
                 @Override
@@ -217,6 +269,58 @@ public class FleetBuildingScreen implements Screen {
             window.add(bottomUIGroup);
 
             window.pack();
+        }
+
+        public void loadJson() {
+            String rawText = LocalStorage.fetch(LocalStorage.CURRENT_BUILD);
+
+            log(rawText);
+
+            JsonReader reader = new JsonReader();
+            JsonValue root = reader.parse(rawText);
+
+            HashMap<String, Integer> indexes = new HashMap<String, Integer>();
+
+            for (JsonValue value : root) {
+                indexes.put(value.name(), value.asInt());
+            }
+
+            // for now, only load and save the first ship
+            ShipBuild build = shipBuilds.first();
+
+            if (build == null) {
+                build = createShipFromCatalog(1);
+                add(build);
+            }
+
+            build.setSliders(indexes);
+        }
+
+        public void saveJson() {
+            String json = getJson();
+            log(json);
+            LocalStorage.store(LocalStorage.CURRENT_BUILD, json);
+        }
+
+        private String getJson() {
+            ShipBuild build = shipBuilds.first();
+
+            if (build == null) {
+                return "";
+            }
+
+            HashMap<String, Integer> indexes = build.getSliders();
+            Json json = new Json();
+            StringWriter writer = new StringWriter();
+            json.setWriter(writer);
+            json.writeObjectStart();
+
+            for (Map.Entry<String, Integer> entry : indexes.entrySet()) {
+                json.writeValue(entry.getKey(), entry.getValue());
+            }
+            json.writeObjectEnd();
+
+            return writer.toString();
         }
 
         public float getTotalCost() {
@@ -310,11 +414,11 @@ public class FleetBuildingScreen implements Screen {
 
         stage.addActor(currentBuild.getWindow());
 
+        currentBuild.add(createShipFromCatalog(1));
+
         Window buildWindow = currentBuild.getWindow();
         buildWindow.setPosition((screenWidth - buildWindow.getWidth()) / 2f,
                 (screenHeight - buildWindow.getHeight()) / 2f);
-
-        currentBuild.add(createShipFromCatalog(1));
     }
 
     @Override

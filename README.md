@@ -85,9 +85,15 @@ MVProto
         * Aluksen tyypin valitseminen lisättäessä
         * Lukumäärän antaminen aluksille. Voisi näkyä myös UI:ssa
         * Delete ship
+* Katalogin modaaminen netin kautta
+    * Katalogin hakeminen http://openkeyval.org/
+    * http://jsoneditoronline.org/
+    * save / load yksinkertaisilla formeilla + JS warp.ext:iin
 * Alusten statteja voisi muuttaa lennossa kun on testflight -moodissa?
-* Client-side tallettaminen
-    * Joko jokin clientside storage, tai cookiet
+* Fleetin Client-side tallettaminen
+    * Pitäisi tallettaa fleet aina kun tapahtuu muutos -> muutoksien kuunteleminen
+    * Clientside storage json stringinä
+    *
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
     * Eri pisteiden visualisointi
     * Ajaminen pisteistä toisiin

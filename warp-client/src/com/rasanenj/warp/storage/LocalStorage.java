@@ -5,7 +5,7 @@ package com.rasanenj.warp.storage;
  */
 public class LocalStorage {
     // used keys
-    public static String NAME = "name";
+    public static String NAME = "name", CURRENT_BUILD = "CURRENT_BUILD";
 
     public final native static String fetch(String key) /*-{
         return localStorage[key];
