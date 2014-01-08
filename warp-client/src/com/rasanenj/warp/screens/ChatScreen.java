@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.rasanenj.warp.chat.ChatHandler;
@@ -18,6 +19,7 @@ public class ChatScreen implements Screen {
     SpriteBatch batch;
     Label fpsLabel;
     ChatHandler chatHandler;
+    final Window window;
 
 
     public ChatScreen(ServerConnection serverConnection) {
@@ -38,9 +40,9 @@ public class ChatScreen implements Screen {
         final ScrollPane scrollPane = new ScrollPane(chatMessages, skin);
 
         final int rows = 10;
-        Window window = new Window("Chat", skin);
+        window = new Window("Chat", skin);
         // window.debug();
-        window.setPosition( (screenWidth - 300) /2f, (screenHeight - 200) /2f);
+        window.setPosition(MathUtils.ceil((screenWidth - 300) /2f), MathUtils.ceil((screenHeight - 200) /2f));
         window.defaults().spaceBottom(10);
         window.row().fill().expandX();
         window.add(scrollPane).minWidth(300).minHeight(chatMessages.getHeight() * rows).expand().fill().colspan(2);
@@ -51,8 +53,6 @@ public class ChatScreen implements Screen {
         window.pack();
 
         chatMessages.setText("");
-
-        // window.setPosition((screenWidth - window.getPrefWidth()) / 2f, (screenHeight - window.getPrefHeight()) / 2f);
 
         stage.addActor(window);
 
@@ -66,6 +66,7 @@ public class ChatScreen implements Screen {
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
         fpsLabel.setText("fps: " + Gdx.graphics.getFramesPerSecond());
+        window.pack();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
