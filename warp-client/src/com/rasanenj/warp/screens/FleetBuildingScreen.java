@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -444,8 +445,10 @@ public class FleetBuildingScreen implements Screen {
         currentBuild.add(createShipFromCatalog(1));
 
         Window buildWindow = currentBuild.getWindow();
-        buildWindow.setPosition((screenWidth - buildWindow.getWidth()) / 2f,
-                (screenHeight - buildWindow.getHeight()) / 2f);
+
+        buildWindow.setPosition(MathUtils.ceil((screenWidth - buildWindow.getWidth()) / 2f),
+                MathUtils.ceil((screenHeight - buildWindow.getHeight()) / 2f));
+        // NOTE: be sure to give integers as position.. otherwise the fonts might start showing up funny for some weird reason
     }
 
     @Override

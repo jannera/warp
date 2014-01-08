@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -51,8 +52,8 @@ public class WelcomeScreen implements Screen {
         welcomeWindow.add(nameField);
         welcomeWindow.pack();
 
-        welcomeWindow.setPosition( (screenWidth - welcomeWindow.getWidth()) /2f,
-                (screenHeight - welcomeWindow.getHeight()) /2f);
+        welcomeWindow.setPosition(MathUtils.ceil((screenWidth - welcomeWindow.getWidth()) / 2f),
+                MathUtils.ceil((screenHeight - welcomeWindow.getHeight()) / 2f));
 
         stage.addActor(welcomeWindow);
     }

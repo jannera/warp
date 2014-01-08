@@ -4,28 +4,13 @@ Warp is a multiplayer browser game that’s based on GWT, Websockets and libgdx.
 
 Status
 ===
-You can chat, you can move the ships and the demoserver works too.
-Each player has his own fleet, that is read from JSON.
-JSON can be modified via web interface.
-You can shoot, and the damage model works.
+You can chat, you can fight with the ships, also with NPCs and the demoserver works too.
+Fleetbuilding works and save in localStorage.
 
 ATM all code written is throw-away proto code. If more permanent solution will be looked at, language(s) and frameworks might totally change.
 
 Demo: http://warp.ext.vincit.fi (operational only when I start the server)
 
-Steps before Hackfest
-===
-* DONE Screen where you can move a spaceship around: UI, messaging, server side handling
-* Integrate Artemis (Entity System framework) to (at least) server
-* Chat-screen to list online users
-* DONE Demo running to ext.vincit.fi
-
-Steps
-===
-* DONE GWT based Chat Server + Client
-* DONE Better messaging system
-* Change Websocket library to one that really supports byte[] messaging
-* Ship/fleet building window
 
 Stuff Learned
 ===
@@ -49,16 +34,37 @@ Future Ideas
 * Continuous game mode, where every player has fixed amount of warps per day. Every “warp” connects to another player 1v1. Based on how well the fight went, each player gets points. Points are used to build the fleet.
 * Later on, maybe transfer all authentication + fleet management (+ possibly also chat) to a web application, maybe Spring + Backbone/Marionette or Meteor. Then combat screen somehow accesses this data stored in DB, maybe via REST API
 
-MVProto
+
+Steps Before First Catalog-tuning, Need to have
 ===
-* Muuta nykyinen buildi JSONiksi aina kun siihen tehdään muutoksia, ja lataa se kun softa käynnistyy
-* Yhdistä Fleet Building ja Chat (ja mahdollisesti Welcome) screenit yhdeksi
-* Oikea määrä pikseleitä chatti-ikkunalle
+* Nykyisen buildin autosave, listenereillä tilan muuttuessa
+* warp.ext.vincit.fi taas kuntoon
+* Pelin aloittaminen chatista
+* Katalogin modaaminen netin kautta
+    * Katalogin hakeminen http://openkeyval.org/
+    * http://jsoneditoronline.org/
+    * save / load yksinkertaisilla formeilla + JS warp.ext:iin
+
+Steps Before First Catalog-tuning, Nice to have
+===
+* Alusten ja niiden stattien ostaminen kälin kautta
+        * Save/load ship
+        * Save/load fleet
+        * Delete ship
+        * Delete saved fleet
+        * Lukumäärän antaminen aluksille
+        * Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
+* Chat / Fleetbuilding screen yhdistäminen
+    * Myös sisäluokkien rikkominen omiin tiedostoihinsa?
 * Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
-* Näytä jokin graffa aluksen tuhoutuessa
-* Tällä hetkellä kohti ammusta lentäminen hidastaa ammusta.. ammusten pitää yksinkertaisesti alkaa kulkemaan omaa tasaista vauhtiaan
+* Ampumiskohteen asettaminen helpommaksi:
+    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
+* Maksiminopeuden asettaminen
+    * Numeroista asettaminen
+    * Rajoituksen pakottaminen Steeringissä
+    * Rajoituksen näyttäminen aluksen lähellä
 * Rendaa valituille aluksille
     * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
     * Ampumiskohde mikäli sellainen on annettu
@@ -67,12 +73,13 @@ MVProto
     * Aktiivisten käskyjen ikonit pitäisi olla jotenkin
         * Keskenään samanlaisia
         * Selkeästi erotettavissa hiiren kursori-ikoneista joita käytetään kun annetaan käskyjä
-* Ampumiskohteen asettaminen helpommaksi:
-    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
-* Maksiminopeuden asettaminen
-    * Numeroista asettaminen
-    * Rajoituksen pakottaminen Steeringissä
-    * Rajoituksen näyttäminen aluksen lähellä
+* Orbit-etäisyyden muuttamiselle jonkinlainen UI
+    * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
+
+MVProto
+===
+* Näytä jokin graffa aluksen tuhoutuessa
+* Tällä hetkellä kohti ammusta lentäminen hidastaa ammusta.. ammusten pitää yksinkertaisesti alkaa kulkemaan omaa tasaista vauhtiaan
 * Alusten ja niiden stattien ostaminen kälin kautta
     * DONE Katalogin parsiminen -> käyttöliittymä
     * DONE Kokonaishinnan laskeminen ja näyttäminen webbikälissä
@@ -85,26 +92,15 @@ MVProto
         * Aluksen tyypin valitseminen lisättäessä
         * Lukumäärän antaminen aluksille. Voisi näkyä myös UI:ssa
         * Delete ship
-* Katalogin modaaminen netin kautta
-    * Katalogin hakeminen http://openkeyval.org/
-    * http://jsoneditoronline.org/
-    * save / load yksinkertaisilla formeilla + JS warp.ext:iin
 * Alusten statteja voisi muuttaa lennossa kun on testflight -moodissa?
-* Fleetin Client-side tallettaminen
-    * Pitäisi tallettaa fleet aina kun tapahtuu muutos -> muutoksien kuunteleminen
-    * DONE Clientside storage json stringinä
-* Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
     * Eri pisteiden visualisointi
     * Ajaminen pisteistä toisiin
     * Eri pisteidelle numerointi (?) tai nuolet pisteiden välillä
-* Orbit-etäisyyden muuttamiselle jonkinlainen UI
-    * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
 * Reunakolmioiden siirtäminen ui-layerille
 * Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
 * Kameran liikuttelu ei saisi tökkiä
-* Aluksen poistaminen vasta sen jälkeen kun ammus on osunut
-* Ei ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
+* Ei uusia ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
 * Muuta resoluutiota kun selaimen koko muuttuu (muuttamatta kuvasuhdetta)
@@ -194,3 +190,9 @@ MVProto DONE
 * DONE Damagetekstin rendaus vasta sen jälkeen kun ammus on osunut
 * DONE Damagetekstin rendaus satunnaiseen kohtaan aluksen lähelle, ei aina samaan pinoon
 * DONE Chat-ikkuna toimimaan JOIN_CHAT -viesteillä
+* DONE Aluksen poistaminen vasta sen jälkeen kun ammus on osunut
+* DONE Fleetin Client-side tallettaminen
+    * DONE Clientside storage json stringinä
+* DONE Pikseliepätarkkuuden selvittäminen
+    * Mahdollisimman yksinkertainen esimerkki
+    * Toistuuko desktop-versiolla?
