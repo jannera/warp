@@ -1,6 +1,7 @@
 package com.rasanenj.warp.ui.fleetbuilding;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Assets;
@@ -19,6 +20,7 @@ public class ShipBuildWindow {
     private final int typeId;
     private final Window window;
     private Label total;
+    private TextButton activateButton;
 
     public ShipBuildWindow(int typeId) {
         window = new Window("Ship properties", Assets.skin);
@@ -126,5 +128,13 @@ public class ShipBuildWindow {
 
     public int getTypeId() {
         return typeId;
+    }
+
+    public void setActivateButton(TextButton activateButton) {
+        this.activateButton = activateButton;
+    }
+
+    public TextButton getActivateButton() {
+        return activateButton;
     }
 }

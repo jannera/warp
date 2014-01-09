@@ -53,11 +53,9 @@ Steps Before First Catalog-tuning, Nice to have
         * Delete ship
         * Delete saved fleet
         * Lukumäärän antaminen aluksille
-        * Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
+        * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
-* Chat / Fleetbuilding screen yhdistäminen
-    * Myös sisäluokkien rikkominen omiin tiedostoihinsa?
 * Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
 * Ampumiskohteen asettaminen helpommaksi:
     * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
@@ -75,6 +73,7 @@ Steps Before First Catalog-tuning, Nice to have
         * Selkeästi erotettavissa hiiren kursori-ikoneista joita käytetään kun annetaan käskyjä
 * Orbit-etäisyyden muuttamiselle jonkinlainen UI
     * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
+    * Ehkä alpha 0.5 kaikille aktiivisille käskyille
 
 MVProto
 ===
@@ -196,3 +195,5 @@ MVProto DONE
 * DONE Pikseliepätarkkuuden selvittäminen
     * Mahdollisimman yksinkertainen esimerkki
     * Toistuuko desktop-versiolla?
+* DONE Chat / Fleetbuilding screen yhdistäminen
+    * DONE Myös sisäluokkien rikkominen omiin tiedostoihinsa?

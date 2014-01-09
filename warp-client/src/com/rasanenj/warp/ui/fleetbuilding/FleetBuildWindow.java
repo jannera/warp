@@ -1,6 +1,7 @@
 package com.rasanenj.warp.ui.fleetbuilding;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -162,6 +163,7 @@ public class FleetBuildWindow {
                 showOnly(index);
             }
         });
+        shipBuild.setActivateButton(activate);
         shipSelectionGroup.addActorBefore(addButton, activate);
 
         shipBuilds.add(shipBuild);
@@ -196,8 +198,11 @@ public class FleetBuildWindow {
         }
         if (activeBuild != -1) {
             // remove the old one
-            buildTable.removeActor(shipBuilds.get(activeBuild).getWindow());
+            ShipBuildWindow toBeRemoved = shipBuilds.get(activeBuild);
+            toBeRemoved.getActivateButton().setColor(Color.WHITE);
+            buildTable.removeActor(toBeRemoved.getWindow());
         }
+        shipBuilds.get(toBeShown).getActivateButton().setColor(Color.GRAY);
         Window toBeAdded = shipBuilds.get(toBeShown).getWindow();
         buildTable.add(toBeAdded);
         activeBuild = toBeShown;
