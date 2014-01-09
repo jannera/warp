@@ -15,21 +15,7 @@ import static com.rasanenj.warp.Log.log;
  */
 public class ChatHandler {
     private final ChatMessageConsumer consumer;
-    private final ChatMessageListener listener;
-
-    private class ChatMessageListener implements TextField.TextFieldListener {
-        @Override
-        public void keyTyped(TextField textField, char key) {
-            if (key == '\n' || key == '\r') {
-                String msg = textField.getText();
-                if (msg.isEmpty()) {
-                    return;
-                }
-                serverConnection.send(new ChatMessage(msg));
-                textField.setText("");
-            }
-        }
-    }
+    private MessageListener listener;
 
     private class ChatMessageConsumer extends MessageConsumer {
         public ChatMessageConsumer(MessageDelegator delegator) {
@@ -55,14 +41,7 @@ public class ChatHandler {
                 return;
             }
 
-            String msgs = output.getText().toString();
-            if (!msgs.isEmpty()) {
-                msgs += '\n';
-            }
-            msgs += chatMsg;
-
-            output.setText(msgs);
-            outputScroll.setScrollPercentY(1);
+            listener.handle(chatMsg);
         }
 
         @Override
@@ -73,18 +52,18 @@ public class ChatHandler {
     }
 
     private final ServerConnection serverConnection;
-    private final Label output;
-    private final ScrollPane outputScroll;
-    private final TextField input;
 
-    public ChatHandler(ServerConnection serverConnection, Label chatMessages, ScrollPane scrollPane, TextField textfield) {
+    public void send(String message) {
+        serverConnection.send(new ChatMessage(message));
+    }
+
+    public ChatHandler(ServerConnection serverConnection) {
         this.serverConnection = serverConnection;
-        this.output = chatMessages;
-        this.outputScroll = scrollPane;
-        this.input = textfield;
         this.consumer = new ChatMessageConsumer(serverConnection.getDelegator());
-        this.listener = new ChatMessageListener();
-        input.setTextFieldListener(listener);
+    }
+
+    public void setListener(MessageListener listener) {
+        this.listener = listener;
     }
 
     public void processArrivedMessages() {

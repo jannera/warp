@@ -42,8 +42,8 @@ public class WarpGame extends Game implements ResizeHandler {
         fleetBuildingScreen = new FleetBuildingScreen(serverConnection, this);
         welcomeScreen = new WelcomeScreen(serverConnection, this);
 
-        setScreen(welcomeScreen);
-        // setScreen(chatScreen);
+        // setScreen(welcomeScreen);
+        setScreen(chatScreen);
         // setScreen(battleScreen);
 
         serverConnection.open();

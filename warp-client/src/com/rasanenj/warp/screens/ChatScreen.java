@@ -9,54 +9,30 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.rasanenj.warp.chat.ChatHandler;
 import com.rasanenj.warp.messaging.ServerConnection;
+import com.rasanenj.warp.ui.chat.ChatWindow;
 
 /**
  * @author gilead
  */
 public class ChatScreen implements Screen {
-    Skin skin;
     Stage stage;
-    SpriteBatch batch;
-    Label fpsLabel;
     ChatHandler chatHandler;
-    final Window window;
-
 
     public ChatScreen(ServerConnection serverConnection) {
-        batch = new SpriteBatch();
-        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
         stage = new Stage(screenWidth, screenHeight, true);
 
-        TextField textfield = new TextField("", skin);
-        textfield.setMessageText("Write your messages here");
-        fpsLabel = new Label("fps:", skin);
+        ChatWindow chatWindow = new ChatWindow();
 
-        final Label chatMessages = new Label("test message", skin);
-        chatMessages.setFillParent(true);
-        chatMessages.setWrap(true);
-
-        final ScrollPane scrollPane = new ScrollPane(chatMessages, skin);
-
-        final int rows = 10;
-        window = new Window("Chat", skin);
-        // window.debug();
-        window.setPosition(MathUtils.ceil((screenWidth - 300) /2f), MathUtils.ceil((screenHeight - 200) /2f));
-        window.defaults().spaceBottom(10);
-        window.row().fill().expandX();
-        window.add(scrollPane).minWidth(300).minHeight(chatMessages.getHeight() * rows).expand().fill().colspan(2);
-        window.row();
-        window.add(textfield).minWidth(100).expandX().fillX().colspan(3);
-        window.row();
-        window.add(fpsLabel).colspan(4);
-        window.pack();
-
-        chatMessages.setText("");
+        Window window = chatWindow.getWindow();
+        window.setPosition(MathUtils.ceil((screenWidth - 300) / 2f), MathUtils.ceil((screenHeight - 200) /2f));
 
         stage.addActor(window);
 
-        this.chatHandler = new ChatHandler(serverConnection, chatMessages, scrollPane, textfield);
+        this.chatHandler = new ChatHandler(serverConnection);
+        chatHandler.setListener(chatWindow);
+        chatWindow.setChatHandler(chatHandler);
     }
 
     @Override
@@ -64,9 +40,6 @@ public class ChatScreen implements Screen {
         chatHandler.processArrivedMessages();
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        fpsLabel.setText("fps: " + Gdx.graphics.getFramesPerSecond());
-        window.pack();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
@@ -100,6 +73,5 @@ public class ChatScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
     }
 }

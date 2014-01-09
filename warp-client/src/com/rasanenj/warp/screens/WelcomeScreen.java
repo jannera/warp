@@ -38,13 +38,23 @@ public class WelcomeScreen implements Screen {
         welcomeWindow.row().pad(10);
         welcomeWindow.add(new Label("Name:", skin));
         String name = loadEarlierName();
-        TextField nameField = new TextField(name, skin);
+        TextField nameField;
+        if (name == null) {
+            nameField = new TextField("", skin);
+            nameField.setMessageText("Your nick here");
+        }
+        else {
+            nameField = new TextField(name, skin);
+        }
+
+        // TODO: only allow valid characters when entering name
         nameField.setTextFieldListener(new TextField.TextFieldListener() {
             @Override
             public void keyTyped(TextField textField, char key) {
                 if (key == '\r' || key == '\n') {
                     String name = textField.getText();
                     storeName(name);
+                    // TODO: make this open connection
                     game.setScreen(WarpGame.ScreenType.BUILD_FLEET);
                 }
             }
@@ -64,9 +74,6 @@ public class WelcomeScreen implements Screen {
 
     private String loadEarlierName() {
         String name = LocalStorage.fetch(LocalStorage.NAME);
-        if (name == null) {
-            return "";
-        }
         return name;
     }
 
