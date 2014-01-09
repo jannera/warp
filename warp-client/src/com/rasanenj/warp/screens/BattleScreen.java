@@ -120,8 +120,7 @@ public class BattleScreen implements Screen {
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
         cam = (OrthographicCamera) stage.getCamera();
 
-        Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        font = skin.getFont("default-font");
+        font = Assets.skin.getFont("default-font");
 
         battleHandler = new BattleHandler(this, conn);
         for (int i=0; i < 4; i++) {

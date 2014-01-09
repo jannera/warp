@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.WarpGame;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.storage.LocalStorage;
@@ -22,29 +23,27 @@ import static com.rasanenj.warp.Log.log;
 public class WelcomeScreen implements Screen {
     private final ServerConnection serverConnection;
     private final WarpGame game;
-    private final Skin skin;
     private final Stage stage;
 
     public WelcomeScreen(ServerConnection serverConnection, final WarpGame game) {
         this.game = game;
         this.serverConnection = serverConnection;
 
-        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
         stage = new Stage(screenWidth, screenHeight, true);
 
-        Window welcomeWindow = new Window("Welcome to Warp", skin);
+        Window welcomeWindow = new Window("Welcome to Warp", Assets.skin);
         welcomeWindow.row().pad(10);
-        welcomeWindow.add(new Label("Name:", skin));
+        welcomeWindow.add(new Label("Name:", Assets.skin));
         String name = loadEarlierName();
         TextField nameField;
         if (name == null) {
-            nameField = new TextField("", skin);
+            nameField = new TextField("", Assets.skin);
             nameField.setMessageText("Your nick here");
         }
         else {
-            nameField = new TextField(name, skin);
+            nameField = new TextField(name, Assets.skin);
         }
 
         // TODO: only allow valid characters when entering name
@@ -110,6 +109,5 @@ public class WelcomeScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
     }
 }

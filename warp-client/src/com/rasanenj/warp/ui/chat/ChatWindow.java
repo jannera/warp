@@ -1,18 +1,15 @@
 package com.rasanenj.warp.ui.chat;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.chat.ChatHandler;
 import com.rasanenj.warp.chat.MessageListener;
-import com.rasanenj.warp.messaging.ChatMessage;
 
 /**
  * @author gilead
  */
 public class ChatWindow implements MessageListener {
-    final Skin skin;
     final Window window;
     private final Label output;
     private final ScrollPane outputScroll;
@@ -23,20 +20,18 @@ public class ChatWindow implements MessageListener {
     public ChatWindow() {
         this.listener = new ChatMessageListener();
 
-        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-
-        input = new TextField("", skin);
+        input = new TextField("", Assets.skin);
         input.setMessageText("Write your messages here");
 
-        output = new Label("", skin);
+        output = new Label("", Assets.skin);
         output.setHeight(30);
         output.setFillParent(true);
         output.setWrap(true);
 
-        outputScroll = new ScrollPane(output, skin);
+        outputScroll = new ScrollPane(output, Assets.skin);
 
         final int rows = 10;
-        window = new Window("Chat", skin);
+        window = new Window("Chat", Assets.skin);
         // window.debug();
         window.defaults().spaceBottom(10);
         window.row().fill().expandX();
