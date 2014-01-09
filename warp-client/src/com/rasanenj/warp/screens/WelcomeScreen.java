@@ -54,7 +54,7 @@ public class WelcomeScreen implements Screen {
                     String name = textField.getText();
                     storeName(name);
                     // TODO: make this open connection
-                    game.setScreen(WarpGame.ScreenType.BUILD_FLEET);
+                    game.setScreen(WarpGame.ScreenType.LOBBY);
                 }
             }
         });

@@ -7,10 +7,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
 import com.rasanenj.warp.messaging.MessageDelegator;
 import com.rasanenj.warp.messaging.ServerConnection;
-import com.rasanenj.warp.screens.BattleScreen;
-import com.rasanenj.warp.screens.ChatScreen;
-import com.rasanenj.warp.screens.FleetBuildingScreen;
-import com.rasanenj.warp.screens.WelcomeScreen;
+import com.rasanenj.warp.screens.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,13 +17,12 @@ public class WarpGame extends Game implements ResizeHandler {
     final MessageDelegator delegator = new MessageDelegator();
     ServerConnection serverConnection;
 
-    ChatScreen chatScreen;
     BattleScreen battleScreen;
-    FleetBuildingScreen fleetBuildingScreen;
     WelcomeScreen welcomeScreen;
+    LobbyScreen lobbyScreen;
 
     public enum ScreenType {
-        CHAT, BATTLE, BUILD_FLEET
+        BATTLE, LOBBY
     }
 
     @Override
@@ -37,15 +33,14 @@ public class WarpGame extends Game implements ResizeHandler {
         serverConnection = new ServerConnection(host, delegator);
         // TODO: move this connecting to servers to Screens (or their handlers)
 
-        chatScreen = new ChatScreen(serverConnection);
         battleScreen = new BattleScreen(serverConnection);
-        fleetBuildingScreen = new FleetBuildingScreen(serverConnection, this);
+
         welcomeScreen = new WelcomeScreen(serverConnection, this);
 
+        lobbyScreen = new LobbyScreen(serverConnection, this);
+
         // setScreen(welcomeScreen);
-        setScreen(fleetBuildingScreen);
-        // setScreen(chatScreen);
-        // setScreen(battleScreen);
+        setScreen(lobbyScreen);
 
         serverConnection.open();
     }
@@ -61,14 +56,11 @@ public class WarpGame extends Game implements ResizeHandler {
 
     public void setScreen(ScreenType type) {
         switch (type) {
-            case CHAT:
-                setScreen(chatScreen);
+            case LOBBY:
+                setScreen(lobbyScreen);
                 break;
             case BATTLE:
                 setScreen(battleScreen);
-                break;
-            case BUILD_FLEET:
-                setScreen(fleetBuildingScreen);
                 break;
         }
     }
