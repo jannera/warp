@@ -34,6 +34,8 @@ public class MessageFactory {
                 return new ShipDestructionMessage(msg);
             case JOIN_CHAT:
                 return new JoinChatMessage(msg);
+            case JOIN_BATTLE:
+                return new JoinBattleMessage(msg);
         }
         log(Level.SEVERE, "MessageFactory could not decode type " + type);
         return null;

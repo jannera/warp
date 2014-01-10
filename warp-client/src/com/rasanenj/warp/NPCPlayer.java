@@ -109,7 +109,8 @@ public class NPCPlayer {
 
         @Override
         public void onOpen() {
-            conn.send(new JoinServerMessage("npc", -1, -1));
+            conn.send(new JoinServerMessage("npc", -1));
+            conn.send(new JoinBattleMessage("npc", -1, -1));
             Array<ShipStats> stats = FleetStatsFetcher.parse(Constants.NPC_INVENTORY);
             float pointsLeft = maxFleetCost;
 
@@ -166,10 +167,10 @@ public class NPCPlayer {
                     ship.setUpdateTime(updateTime);
                 }
             }
-            else if (msg.getType() == Message.MessageType.JOIN_SERVER) {
-                JoinServerMessage message = (JoinServerMessage) msg;
+            else if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
+                JoinBattleMessage message = (JoinBattleMessage) msg;
                 if (myId == -1) {
-                    myId = message.getId();
+                    myId = message.getPlayerId();
                 }
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
@@ -207,7 +208,7 @@ public class NPCPlayer {
         public Collection<Message.MessageType> getMessageTypes() {
             return Arrays.asList(Message.MessageType.UPDATE_SHIP_PHYSICS,
                     Message.MessageType.CREATE_SHIP,
-                    Message.MessageType.JOIN_SERVER,
+                    Message.MessageType.JOIN_BATTLE,
                     Message.MessageType.SHOOT_DAMAGE,
                     Message.MessageType.SHIP_DESTRUCTION);
         }

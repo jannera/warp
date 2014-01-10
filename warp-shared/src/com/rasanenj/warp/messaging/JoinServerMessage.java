@@ -10,20 +10,17 @@ import java.nio.ByteBuffer;
 public class JoinServerMessage extends Message {
     final String playerName;
     final long id;
-    private final int colorIndex;
 
     public JoinServerMessage(ByteBuffer b) {
         id = b.getLong();
-        colorIndex = b.getInt();
         byte[] newArr = new byte[b.remaining()];
         b.get(newArr);
         playerName = Message.decode(newArr);
     }
 
-    public JoinServerMessage(String playerName, long id, int colorIndex) {
+    public JoinServerMessage(String playerName, long id) {
         this.playerName = playerName;
         this.id = id;
-        this.colorIndex = colorIndex;
     }
 
     @Override
@@ -35,9 +32,8 @@ public class JoinServerMessage extends Message {
     public byte[] encode() {
         byte[] nameInBytes = Message.encode(playerName);
 
-        ByteBuffer b = create(Long.SIZE/8 + Integer.SIZE/8 + nameInBytes.length);
+        ByteBuffer b = create(Long.SIZE/8 + nameInBytes.length);
         b.putLong(id);
-        b.putInt(colorIndex);
         b.put(nameInBytes);
 
         return b.array();
@@ -49,9 +45,5 @@ public class JoinServerMessage extends Message {
 
     public long getId() {
         return id;
-    }
-
-    public int getColorIndex() {
-        return colorIndex;
     }
 }

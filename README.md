@@ -39,7 +39,6 @@ Steps Before First Catalog-tuning, Need to have
 ===
 * Nykyisen buildin autosave, listenereillä tilan muuttuessa
 * warp.ext.vincit.fi taas kuntoon
-* Pelin aloittaminen chatista
 * Katalogin modaaminen netin kautta
     * Katalogin hakeminen http://openkeyval.org/
     * http://jsoneditoronline.org/
@@ -48,12 +47,12 @@ Steps Before First Catalog-tuning, Need to have
 Steps Before First Catalog-tuning, Nice to have
 ===
 * Alusten ja niiden stattien ostaminen kälin kautta
-        * Save/load ship
-        * Save/load fleet
-        * Delete ship
-        * Delete saved fleet
-        * Lukumäärän antaminen aluksille
-        * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
+    * Save/load ship
+    * Save/load fleet
+    * Delete ship
+    * Delete saved fleet
+    * Lukumäärän antaminen aluksille
+    * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?

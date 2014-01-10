@@ -3,15 +3,15 @@ package com.rasanenj.warp.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.WarpGame;
+import com.rasanenj.warp.messaging.JoinChatMessage;
+import com.rasanenj.warp.messaging.JoinServerMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.storage.LocalStorage;
 
@@ -25,7 +25,7 @@ public class WelcomeScreen implements Screen {
     private final WarpGame game;
     private final Stage stage;
 
-    public WelcomeScreen(ServerConnection serverConnection, final WarpGame game) {
+    public WelcomeScreen(final ServerConnection serverConnection, final WarpGame game) {
         this.game = game;
         this.serverConnection = serverConnection;
 
@@ -53,7 +53,8 @@ public class WelcomeScreen implements Screen {
                 if (key == '\r' || key == '\n') {
                     String name = textField.getText();
                     storeName(name);
-                    // TODO: make this open connection
+                    serverConnection.send(new JoinServerMessage(name, -1));
+                    serverConnection.send(new JoinChatMessage(name));
                     game.setScreen(WarpGame.ScreenType.LOBBY);
                 }
             }

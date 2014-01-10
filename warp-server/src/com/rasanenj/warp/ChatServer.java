@@ -32,9 +32,9 @@ public class ChatServer extends RunnableFPS {
         @Override
         public void consume(Player player, Message message) {
             log("ChatServer: Received " + message.getType());
-            if (message.getType() == Message.MessageType.JOIN_SERVER) {
+            if (message.getType() == Message.MessageType.JOIN_CHAT) {
                 JoinChatMessage joinChatMessage = new JoinChatMessage(
-                        ((JoinServerMessage) message).getPlayerName());
+                        ((JoinChatMessage) message).getMsg());
                 server.sendToAll(joinChatMessage);
             }
             else if (message.getType() == Message.MessageType.CHAT_MSG) {
@@ -45,7 +45,7 @@ public class ChatServer extends RunnableFPS {
 
         @Override
         public Collection<Message.MessageType> getMessageTypes() {
-            return Arrays.asList(Message.MessageType.JOIN_SERVER,
+            return Arrays.asList(Message.MessageType.JOIN_CHAT,
                     Message.MessageType.CHAT_MSG);
         }
     }

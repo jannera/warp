@@ -42,25 +42,24 @@ public class BattleServer extends IntervalTask {
 
         @Override
         public void consume(Player player, Message msg) {
-            if (msg.getType() == Message.MessageType.JOIN_SERVER) {
-                // TODO: send the player StartBattleMessage
+            if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
                 ServerPlayer serverPlayer = (ServerPlayer) player;
 
                 shipOffsetCounters[serverPlayer.getColorIndex()] = 0;
 
                 // notify the player about himself
-                serverPlayer.send(new JoinServerMessage(serverPlayer.getName(), serverPlayer.getId(), serverPlayer.getColorIndex()));
+                serverPlayer.send(new JoinBattleMessage(serverPlayer.getName(), serverPlayer.getId(), serverPlayer.getColorIndex()));
 
                 // notify the new player about existing players
                 for (Player p : battleLoop.getPlayers()) {
                     // log("notifying " + serverPlayer + " about " + p);
-                    serverPlayer.send(new JoinServerMessage(p.getName(), p.getId(), p.getColorIndex()));
+                    serverPlayer.send(new JoinBattleMessage(p.getName(), p.getId(), p.getColorIndex()));
                 }
 
                 // notify existing players about the new player
                 for (Player p : battleLoop.getPlayers()) {
                     // log("notifying " + p + " about " + serverPlayer);
-                    ((ServerPlayer) p).send(new JoinServerMessage(player.getName(), player.getId(), player.getColorIndex()));
+                    ((ServerPlayer) p).send(new JoinBattleMessage(player.getName(), player.getId(), player.getColorIndex()));
                 }
 
                 battleLoop.addPlayer(player);
@@ -143,7 +142,7 @@ public class BattleServer extends IntervalTask {
 
         @Override
         public Collection<Message.MessageType> getMessageTypes() {
-            return Arrays.asList(Message.MessageType.JOIN_SERVER,
+            return Arrays.asList(Message.MessageType.JOIN_BATTLE,
                     Message.MessageType.SET_ACCELERATION,
                     Message.MessageType.DISCONNECT,
                     Message.MessageType.SHIP_STATS,

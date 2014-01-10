@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rasanenj.warp.WarpGame;
 import com.rasanenj.warp.chat.ChatHandler;
 import com.rasanenj.warp.entities.ShipStats;
-import com.rasanenj.warp.messaging.JoinServerMessage;
+import com.rasanenj.warp.messaging.JoinBattleMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.messaging.ShipStatsMessage;
 import com.rasanenj.warp.ui.chat.ChatWindow;
@@ -72,6 +72,8 @@ public class LobbyScreen implements Screen {
 
         buildWindow.setPosition(MathUtils.floor(padding * 2f + window.getWidth()),
                 MathUtils.ceil((screenHeight - buildWindow.getHeight()) / 2f));
+
+        serverConnection.register(new ConnectionListener());
     }
 
     @Override
@@ -113,12 +115,24 @@ public class LobbyScreen implements Screen {
     }
 
     private void startTestFlight() {
-        serverConnection.send(new JoinServerMessage("gilead", -1, -1));
+        serverConnection.send(new JoinBattleMessage("gilead", -1, -1));
 
         for (ShipStats stats : currentBuild.getStats()) {
             serverConnection.send(new ShipStatsMessage(stats));
         }
 
         game.setScreen(WarpGame.ScreenType.BATTLE);
+    }
+
+    private class ConnectionListener implements ServerConnection.OpenCloseListener {
+
+        @Override
+        public void onOpen() {
+        }
+
+        @Override
+        public void onClose() {
+            // TODO: notify the user that the connection to server has been lost
+        }
     }
 }

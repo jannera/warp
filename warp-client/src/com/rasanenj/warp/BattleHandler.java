@@ -126,14 +126,14 @@ public class BattleHandler {
                 }
             }
 
-            else if (msg.getType() == Message.MessageType.JOIN_SERVER) {
-                JoinServerMessage message = (JoinServerMessage) msg;
-                if (message.getId() != -1) {
+            else if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
+                JoinBattleMessage message = (JoinBattleMessage) msg;
+                if (message.getPlayerId() != -1) {
                     // terrible hack in order to use JoinServerMessages in both battle and chat
-                    Player p = new Player(message.getPlayerName(), message.getId(), message.getColorIndex());
+                    Player p = new Player(message.getPlayerName(), message.getPlayerId(), message.getColorIndex());
                     log("joined in battle:" + p);
                     if (myId == -1) {
-                        myId = message.getId();
+                        myId = message.getPlayerId();
                         manualSteeringTask.setMyId(myId);
                     }
                     players.add(p);
@@ -179,7 +179,7 @@ public class BattleHandler {
         public Collection<Message.MessageType> getMessageTypes() {
             return Arrays.asList(Message.MessageType.UPDATE_SHIP_PHYSICS,
                     Message.MessageType.CREATE_SHIP,
-                    Message.MessageType.JOIN_SERVER,
+                    Message.MessageType.JOIN_BATTLE,
                     Message.MessageType.SHOOT_DAMAGE,
                     Message.MessageType.SHIP_DESTRUCTION);
         }
@@ -534,30 +534,8 @@ public class BattleHandler {
     }
 
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
-        private class StatsToFleet implements FleetStatsFetcher.StatsReceiver {
-
-            @Override
-            public void receive(Array<ShipStats> stats) {
-                for(ShipStats s : stats) {
-                    conn.send(new ShipStatsMessage(s));
-                }
-            }
-        }
-
         @Override
         public void onOpen() {
-            /*
-            conn.send(new JoinServerMessage("gilead", -1, -1));
-
-            StatsToFleet transformer = new StatsToFleet();
-
-            if (Settings.OFFLINE_MODE) {
-                transformer.receive(statsFetcher.parse(Constants.OFFLINE_FLEET));
-            }
-            else {
-                statsFetcher.loadJSON(transformer);
-            }
-            */
         }
 
         @Override

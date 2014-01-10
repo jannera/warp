@@ -76,6 +76,7 @@ public class WSServer extends WebSocketServer {
             player = new ServerPlayer(conn, joinServerMsg.getPlayerName(), getNextFreeColorIndex());
             log(player.getName() + " (" + player.getId() + ") joined server");
             players.add(player);
+            return; // don't delegate server joins
         }
         else {
             player = getPlayer(conn);
