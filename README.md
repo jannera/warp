@@ -46,22 +46,6 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
-* Alusten ja niiden stattien ostaminen kälin kautta
-    * Save/load ship
-    * Save/load fleet
-    * Delete ship
-    * Delete saved fleet
-    * Lukumäärän antaminen aluksille
-    * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
-* Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
-  atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
-* Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
-* Ampumiskohteen asettaminen helpommaksi:
-    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
-* Maksiminopeuden asettaminen
-    * Numeroista asettaminen
-    * Rajoituksen pakottaminen Steeringissä
-    * Rajoituksen näyttäminen aluksen lähellä
 * Rendaa valituille aluksille
     * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
     * Ampumiskohde mikäli sellainen on annettu
@@ -73,6 +57,23 @@ Steps Before First Catalog-tuning, Nice to have
 * Orbit-etäisyyden muuttamiselle jonkinlainen UI
     * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
     * Ehkä alpha 0.5 kaikille aktiivisille käskyille
+* Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
+  atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
+* Alusten ja niiden stattien ostaminen kälin kautta
+    * Save/load ship
+    * Save/load fleet
+    * Delete ship
+    * Delete saved fleet
+    * Lukumäärän antaminen aluksille
+    * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
+* Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
+* Ampumiskohteen asettaminen helpommaksi:
+    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
+* Maksiminopeuden asettaminen
+    * Numeroista asettaminen
+    * Rajoituksen pakottaminen Steeringissä
+    * Rajoituksen näyttäminen aluksen lähellä
+
 
 MVProto
 ===
@@ -196,3 +197,4 @@ MVProto DONE
     * Toistuuko desktop-versiolla?
 * DONE Chat / Fleetbuilding screen yhdistäminen
     * DONE Myös sisäluokkien rikkominen omiin tiedostoihinsa?
+* DONE Eri screeneistä aloittaminen toimimaan oikein

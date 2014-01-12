@@ -264,7 +264,7 @@ public class FleetBuildWindow {
         return null;
     }
 
-    private void loadCurrentBuild() {
+    public void loadCurrentBuild() {
         String rawText = LocalStorage.fetch(LocalStorage.CURRENT_BUILD);
         log(rawText);
         loadFromJson(rawText);

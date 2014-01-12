@@ -115,14 +115,14 @@ public class BattleScreen implements Screen {
         }
     }
 
-    public BattleScreen(ServerConnection conn) {
+    public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen) {
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
         cam = (OrthographicCamera) stage.getCamera();
 
         font = Assets.skin.getFont("default-font");
 
-        battleHandler = new BattleHandler(this, conn);
+        battleHandler = new BattleHandler(this, conn, lobbyScreen);
         for (int i=0; i < 4; i++) {
             corners[i] = new Vector2();
         }

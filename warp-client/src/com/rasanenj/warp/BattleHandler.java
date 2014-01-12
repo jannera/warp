@@ -12,6 +12,7 @@ import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
+import com.rasanenj.warp.screens.LobbyScreen;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 import com.rasanenj.warp.tasks.*;
@@ -41,13 +42,14 @@ public class BattleHandler {
     private final ShipShooting shipShooting;
     private final ShipTextUpdater shipTextUpdater;
     private final ManualSteeringTask manualSteeringTask;
+    private final LobbyScreen lobbyScreen;
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
     private final ShipSelection selection = new ShipSelection();
     private MouseState mouseState = MouseState.DEFAULT;
 
-    public BattleHandler(BattleScreen screen, ServerConnection conn) {
+    public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
         conn.register(new ConnectionListener());
         this.statsFetcher = new FleetStatsFetcher();
         this.screen = screen;
@@ -65,6 +67,7 @@ public class BattleHandler {
         taskHandler.addToTaskList(shipTextUpdater);
         this.manualSteeringTask = new ManualSteeringTask(selection, screen);
         taskHandler.addToTaskList(manualSteeringTask);
+        this.lobbyScreen = lobbyScreen;
     }
 
     private enum MouseState {
@@ -536,6 +539,11 @@ public class BattleHandler {
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
         @Override
         public void onOpen() {
+            if (WarpGame.START_SCREEN == WarpGame.ScreenType.BATTLE) {
+                conn.send(new JoinServerMessage("", -1));
+                lobbyScreen.loadEarlierBuild();
+                lobbyScreen.startTestFlight();
+            }
         }
 
         @Override

@@ -72,7 +72,7 @@ public class WelcomeScreen implements Screen {
         LocalStorage.store(LocalStorage.NAME, name);
     }
 
-    private String loadEarlierName() {
+    public static String loadEarlierName() {
         String name = LocalStorage.fetch(LocalStorage.NAME);
         return name;
     }

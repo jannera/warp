@@ -22,7 +22,7 @@ public class WarpGame extends Game implements ResizeHandler {
     LobbyScreen lobbyScreen;
 
     public enum ScreenType {
-        BATTLE, LOBBY
+        BATTLE, LOBBY, WELCOME
     }
 
     @Override
@@ -33,14 +33,13 @@ public class WarpGame extends Game implements ResizeHandler {
         serverConnection = new ServerConnection(host, delegator);
         // TODO: move this connecting to servers to Screens (or their handlers)
 
-        battleScreen = new BattleScreen(serverConnection);
-
         welcomeScreen = new WelcomeScreen(serverConnection, this);
 
         lobbyScreen = new LobbyScreen(serverConnection, this);
 
-        setScreen(welcomeScreen);
-        // setScreen(lobbyScreen);
+        battleScreen = new BattleScreen(serverConnection, lobbyScreen);
+
+        setScreen(START_SCREEN);
 
         serverConnection.open();
     }
@@ -62,6 +61,10 @@ public class WarpGame extends Game implements ResizeHandler {
             case BATTLE:
                 setScreen(battleScreen);
                 break;
+            case WELCOME:
+                setScreen(welcomeScreen);
         }
     }
+
+    public static final ScreenType START_SCREEN = ScreenType.WELCOME;
 }

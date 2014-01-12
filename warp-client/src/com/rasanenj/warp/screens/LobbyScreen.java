@@ -11,9 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rasanenj.warp.WarpGame;
 import com.rasanenj.warp.chat.ChatHandler;
 import com.rasanenj.warp.entities.ShipStats;
-import com.rasanenj.warp.messaging.JoinBattleMessage;
-import com.rasanenj.warp.messaging.ServerConnection;
-import com.rasanenj.warp.messaging.ShipStatsMessage;
+import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.ui.chat.ChatWindow;
 import com.rasanenj.warp.ui.fleetbuilding.FleetBuildWindow;
 
@@ -27,7 +25,7 @@ public class LobbyScreen implements Screen {
     ChatHandler chatHandler;
     FleetBuildWindow currentBuild;
 
-    public LobbyScreen (ServerConnection serverConnection, WarpGame game) {
+    public LobbyScreen (ServerConnection serverConnection, final WarpGame game) {
         this.game = game;
         this.serverConnection = serverConnection;
 
@@ -59,6 +57,7 @@ public class LobbyScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 startTestFlight();
+                game.setScreen(WarpGame.ScreenType.BATTLE);
             }
         });
 
@@ -114,20 +113,26 @@ public class LobbyScreen implements Screen {
         stage.dispose();
     }
 
-    private void startTestFlight() {
-        serverConnection.send(new JoinBattleMessage("gilead", -1, -1));
+    public void loadEarlierBuild() {
+        currentBuild.loadCurrentBuild();
+    }
+
+    public void startTestFlight() {
+        serverConnection.send(new JoinBattleMessage("gilead", -1, -1)); // TODO: fetch this elsewhere
 
         for (ShipStats stats : currentBuild.getStats()) {
             serverConnection.send(new ShipStatsMessage(stats));
         }
-
-        game.setScreen(WarpGame.ScreenType.BATTLE);
     }
 
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
 
         @Override
         public void onOpen() {
+            if (WarpGame.START_SCREEN == WarpGame.ScreenType.LOBBY) {
+                serverConnection.send(new JoinServerMessage(WelcomeScreen.loadEarlierName(), -1));
+                serverConnection.send(new JoinChatMessage(WelcomeScreen.loadEarlierName()));
+            }
         }
 
         @Override
