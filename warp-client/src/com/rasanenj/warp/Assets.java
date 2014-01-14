@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
  */
 public class Assets {
     public static Texture shipTexture, moveTargetTexture, aimingTargetTexture,
-            backgroundTexture, projectileTexture, selectionCircleTexture;
+            backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture;
     public static Skin skin;
 
     public static void load() {
@@ -23,6 +23,8 @@ public class Assets {
         projectileTexture = new Texture(Gdx.files.internal("data/projectile.png"));
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         selectionCircleTexture = new Texture(Gdx.files.internal("data/circle.png"));
+        orbitCWTexture = new Texture(Gdx.files.internal("data/orbit_cw_cursor.png"));
+        orbitCCWTexture= new Texture(Gdx.files.internal("data/orbit_ccw_cursor.png"));
     }
 
     public static final Color

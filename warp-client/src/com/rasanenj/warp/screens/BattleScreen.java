@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -43,7 +44,9 @@ public class BattleScreen implements Screen {
     private static final int CAMERA_SIZE = 20;
     private final static float GRID_SIZE = 8;
     private final static float NAVIGATION_TARGET_SIZE = 60f;
-    private final static float FIRING_TARGET_SIZE = 90f;
+    private final static float ACTIVE_FIRING_TARGET_SIZE = 60f;
+    private final static float ACTIVE_ORBIT_TARGET_SIZE = 60f;
+    private final static float HOVERING_FIRING_TARGET_SIZE = 90f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Vector2 tmp = new Vector2(), force = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
@@ -160,7 +163,12 @@ public class BattleScreen implements Screen {
         renderProjectiles();
         renderSelectionCircles();
         renderHealthBars();
+
+        // render active commands for selected ships
+        renderOrbitTargets();
         renderNavigationTargets();
+        renderFiringTargets();
+
         renderHoveringTarget();
         renderOptimals();
         renderOrbitCircle();
@@ -170,6 +178,39 @@ public class BattleScreen implements Screen {
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private void renderOrbitTargets() {
+        batch.begin();
+        final float halfSize = ACTIVE_ORBIT_TARGET_SIZE / 2f;
+        for (ClientShip ship : battleHandler.getSelectedShips()) {
+            Texture t = Assets.orbitCCWTexture;
+            if (ship.isOrbitCW()) {
+                t = Assets.orbitCWTexture;
+            }
+            renderAtTarget(ship.getOrbitShip(), t, ACTIVE_ORBIT_TARGET_SIZE, halfSize);
+        }
+        batch.end();
+    }
+
+    private void renderAtTarget(ClientShip target, Texture tex, float size, float halfSize) {
+        if (target == null) {
+            return;
+        }
+        target.getCenterPos(tmp);
+        tmp3.set(tmp.x, tmp.y, 0);
+        cam.project(tmp3);
+        batch.draw(tex, tmp3.x - halfSize, tmp3.y - halfSize, size, size);
+    }
+
+    private void renderFiringTargets() {
+        batch.begin();
+        final float halfSize = ACTIVE_FIRING_TARGET_SIZE / 2f;
+        for (ClientShip ship : battleHandler.getSelectedShips()) {
+            renderAtTarget(ship.getFiringTarget(), Assets.aimingTargetTexture,
+                    ACTIVE_FIRING_TARGET_SIZE, halfSize);
+        }
+        batch.end();
     }
 
     private void renderOrbitCircle() {
@@ -276,7 +317,7 @@ public class BattleScreen implements Screen {
             return;
         }
         batch.begin();
-        final float width = FIRING_TARGET_SIZE;
+        final float width = HOVERING_FIRING_TARGET_SIZE;
         final float height = width;
         tmp3.set(hoveringTarget.getX(), hoveringTarget.getY(), 0);
         cam.project(tmp3);
@@ -289,7 +330,7 @@ public class BattleScreen implements Screen {
         batch.begin();
         float halfWidth = NAVIGATION_TARGET_SIZE / 2f;
         float halfHeight = NAVIGATION_TARGET_SIZE / 2f;
-        for (ClientShip ship : battleHandler.getShips()) {
+        for (ClientShip ship : battleHandler.getSelectedShips()) {
             if (!ship.hasTargetPos()) {
                 continue;
             }

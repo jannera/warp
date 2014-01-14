@@ -47,14 +47,16 @@ Steps Before First Catalog-tuning, Need to have
 Steps Before First Catalog-tuning, Nice to have
 ===
 * Rendaa valituille aluksille
-    * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
-    * Ampumiskohde mikäli sellainen on annettu
+    * DONE Orbit-kursori mikäli orbit on päällä
+    * Orbitin ympyränuoli mikäli orbit on päällä
+    * DONE Ampumiskohde mikäli sellainen on annettu
     * Direction-nuoli mikäli direction-lento on päällä
-    * Go-to-ikoni VAIN valituille aluksille
+    * DONE Go-to-ikoni VAIN valituille aluksille
     * Aktiivisten käskyjen ikonit pitäisi olla jotenkin
         * Keskenään samanlaisia
         * Selkeästi erotettavissa hiiren kursori-ikoneista joita käytetään kun annetaan käskyjä
     * Ikonien kuvien ei pitäisi sisältää sävyä, vaan se voitaisiin asettaa ohjelmallisesti (kaikille samaksi, helppo muuttaminen ja testailu)
+        * Paitsi että tuskin mahdollista hiiren kursoreille jotka määritellään CSS:ssä..
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Alusten ja niiden stattien ostaminen kälin kautta
