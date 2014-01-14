@@ -177,8 +177,6 @@ public class ShipSteering extends IntervalTask {
 
         float desiredDst2 = ship.getOrbitDst2();
 
-        log(desiredDst2);
-
         final float orbitMargin = 0.5f * desiredDst2;
         /**
          * if margin is too high, ship starts oscillating.. if too low,

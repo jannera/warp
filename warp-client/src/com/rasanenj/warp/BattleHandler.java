@@ -230,9 +230,11 @@ public class BattleHandler {
             log("clicked " + clientShip + " @ (" + x + ", " + y + ")");
 
             if (clientShip.getOwner().getId() == myId) {
-                // clicked friendly ship, so select it
-                selection.clear();
-                selection.add(clientShip);
+                // clicked friendly ship, so select it.. if mouse state is correct
+                if (mouseState == MouseState.DEFAULT) {
+                    selection.clear();
+                    selection.add(clientShip);
+                }
             }
             else {
                 // clicked non-friendly ship, so set it target for all friendly selected ships

@@ -66,7 +66,6 @@ Steps Before First Catalog-tuning, Nice to have
     * Delete saved fleet
     * Lukumäärän antaminen aluksille
     * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
-* Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
 * Ampumiskohteen asettaminen helpommaksi:
     * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
 * Maksiminopeuden asettaminen
@@ -200,3 +199,4 @@ MVProto DONE
 * DONE Orbit-etäisyyden muuttamiselle jonkinlainen UI
     * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
     * Ehkä alpha 0.5 kaikille aktiivisille käskyille
+* DONE Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
