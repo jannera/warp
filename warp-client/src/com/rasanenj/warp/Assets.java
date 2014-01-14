@@ -1,6 +1,7 @@
 package com.rasanenj.warp;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -10,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
  */
 public class Assets {
     public static Texture shipTexture, moveTargetTexture, aimingTargetTexture,
-            backgroundTexture, projectileTexture;
+            backgroundTexture, projectileTexture, selectionCircleTexture;
     public static Skin skin;
 
     public static void load() {
@@ -21,5 +22,12 @@ public class Assets {
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         projectileTexture = new Texture(Gdx.files.internal("data/projectile.png"));
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        selectionCircleTexture = new Texture(Gdx.files.internal("data/circle.png"));
     }
+
+    public static final Color
+            newCommandsColor = Color.GREEN,
+            existingCommandsColor = Color.YELLOW,
+            statisticsColor = new Color(30f/255f, 191f/255f, 1, 1) // dodger blue
+                    ;
 }

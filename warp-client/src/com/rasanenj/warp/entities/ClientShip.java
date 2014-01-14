@@ -1,14 +1,13 @@
 package com.rasanenj.warp.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.rasanenj.warp.Assets;
-import com.rasanenj.warp.ZOrder;
 import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.systems.ShipSteering;
 
@@ -36,6 +35,7 @@ public class ClientShip extends Group {
     private boolean orbitCW;
     private ClientShip orbitShip;
     private float orbitDst2;
+    private Color circled;
 
     public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -182,6 +182,22 @@ public class ClientShip extends Group {
 
     public boolean hasOrbitTarget() {
         return orbitShip != null;
+    }
+
+    public void setCircled(Color circled) {
+        this.circled = circled;
+    }
+
+    public boolean isCircled() {
+        return circled != null;
+    }
+
+    public Color getCircleColor() {
+        return circled;
+    }
+
+    public void clearCircle() {
+        circled = null;
     }
 
     public enum TurningState {

@@ -50,13 +50,11 @@ Steps Before First Catalog-tuning, Nice to have
     * Orbit-kursori ja ympyränuoli mikäli orbit on päällä
     * Ampumiskohde mikäli sellainen on annettu
     * Direction-nuoli mikäli direction-lento on päällä
-    * DONE Go-to-ikoni mikäli Go To on päällä
+    * Go-to-ikoni VAIN valituille aluksille
     * Aktiivisten käskyjen ikonit pitäisi olla jotenkin
         * Keskenään samanlaisia
         * Selkeästi erotettavissa hiiren kursori-ikoneista joita käytetään kun annetaan käskyjä
-* Orbit-etäisyyden muuttamiselle jonkinlainen UI
-    * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
-    * Ehkä alpha 0.5 kaikille aktiivisille käskyille
+    * Ikonien kuvien ei pitäisi sisältää sävyä, vaan se voitaisiin asettaa ohjelmallisesti (kaikille samaksi, helppo muuttaminen ja testailu)
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Alusten ja niiden stattien ostaminen kälin kautta
@@ -73,7 +71,6 @@ Steps Before First Catalog-tuning, Nice to have
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
-
 
 MVProto
 ===
@@ -198,3 +195,6 @@ MVProto DONE
 * DONE Chat / Fleetbuilding screen yhdistäminen
     * DONE Myös sisäluokkien rikkominen omiin tiedostoihinsa?
 * DONE Eri screeneistä aloittaminen toimimaan oikein
+* DONE Orbit-etäisyyden muuttamiselle jonkinlainen UI
+    * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
+    * Ehkä alpha 0.5 kaikille aktiivisille käskyille

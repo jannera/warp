@@ -13,12 +13,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Random;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.BattleHandler;
+import com.rasanenj.warp.OrbitUIHandler;
 import com.rasanenj.warp.Settings;
 import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.entities.ClientShip;
@@ -51,7 +51,6 @@ public class BattleScreen implements Screen {
 
     private static final float PROJECTILE_SIZE = 3f;
 
-    private static final Color DODGER_BLUE = new Color(30f/255f, 191f/255f, 1, 1);
     final BitmapFont font;
     private NumberFormat decimalFormatter = NumberFormat.getFormat("#.##");
 
@@ -75,6 +74,7 @@ public class BattleScreen implements Screen {
     private ClientShip hoveringTarget = null;
 
     private final Array<PathPlotterTask> plotters = new Array<PathPlotterTask>(false, 0);
+    private OrbitUIHandler orbitUIHandler;
 
     public OrthographicCamera getCam() {
         return cam;
@@ -91,6 +91,10 @@ public class BattleScreen implements Screen {
             }
         }
         return false;
+    }
+
+    public void setOrbitUIHandler(OrbitUIHandler orbitUIHandler) {
+        this.orbitUIHandler = orbitUIHandler;
     }
 
     public enum OptimalRenderingState {
@@ -154,16 +158,55 @@ public class BattleScreen implements Screen {
         renderVectors();
         renderOffScreenShips();
         renderProjectiles();
+        renderSelectionCircles();
         renderHealthBars();
         renderNavigationTargets();
         renderHoveringTarget();
         renderOptimals();
+        renderOrbitCircle();
         renderDamageTexts();
         renderShipTexts();
         renderManualSteering();
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+    }
+
+    private void renderOrbitCircle() {
+        // log("orbit " + orbitCircleTarget + " @ " + orbitCircleRadius);
+        if (orbitUIHandler.getState() != OrbitUIHandler.State.SELECTING_RADIUS) {
+            return;
+        }
+
+        ClientShip orbitCircleTarget = orbitUIHandler.getOrbitTargetShip();
+
+        if (orbitCircleTarget == null) {
+            return;
+        }
+
+        float orbitCircleRadius = orbitUIHandler.getOrbitRadius();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Assets.newCommandsColor);
+        shapeRenderer.circle(orbitCircleTarget.getX(), orbitCircleTarget.getY(), orbitCircleRadius);
+        shapeRenderer.end();
+    }
+
+    private void renderSelectionCircles() {
+        batch.begin();
+
+        for (ClientShip ship : battleHandler.getShips()) {
+            if (!ship.isCircled()) {
+                continue;
+            }
+            ship.getCenterPos(tmp);
+            tmp3.set(tmp.x, tmp.y, 0);
+            cam.project(tmp3);
+            batch.setColor(ship.getCircleColor());
+            float width = 60, height = width;
+            batch.draw(Assets.selectionCircleTexture, tmp3.x - width/2f, tmp3.y - height/2f, width, height);
+        }
+        batch.end();
     }
 
     private void renderPaths() {
@@ -191,6 +234,7 @@ public class BattleScreen implements Screen {
         }
         long timeNow = System.currentTimeMillis();
         batch.begin();
+        batch.setColor(Color.GRAY);
         for (DamageProjectile projectile : damageProjectiles) {
             float fade = (timeNow - projectile.startTime) / projectile.timeToLive;
             tmp3.set(projectile.startX, projectile.startY, 0);
@@ -493,11 +537,10 @@ public class BattleScreen implements Screen {
             ship.getCenterPos(tmp);
 
             if (Settings.renderShipVelocity) {
-                shapeRenderer.setColor(DODGER_BLUE);
+                shapeRenderer.setColor(Assets.statisticsColor);
                 shapeRenderer.line(tmp.x, tmp.y,
                         tmp.x + ship.getVelocity().x, tmp.y + ship.getVelocity().y);
             }
-
 
             if (Settings.renderMaxForceRectangle) {
             // render the rectangle that limits the maximum force vector
@@ -521,7 +564,7 @@ public class BattleScreen implements Screen {
             }
 
             if (Settings.renderImpulse) {
-                shapeRenderer.setColor(DODGER_BLUE);
+                shapeRenderer.setColor(Assets.statisticsColor);
                 shapeRenderer.line(tmp.x, tmp.y,
                         tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);
 

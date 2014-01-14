@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
-import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.screens.LobbyScreen;
@@ -43,6 +42,8 @@ public class BattleHandler {
     private final ShipTextUpdater shipTextUpdater;
     private final ManualSteeringTask manualSteeringTask;
     private final LobbyScreen lobbyScreen;
+    private final OrbitUIHandler orbitUIHandler;
+
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
@@ -68,10 +69,16 @@ public class BattleHandler {
         this.manualSteeringTask = new ManualSteeringTask(selection, screen);
         taskHandler.addToTaskList(manualSteeringTask);
         this.lobbyScreen = lobbyScreen;
+        this.orbitUIHandler = new OrbitUIHandler(taskHandler, screen.getCam(), ships, selection);
+        screen.setOrbitUIHandler(orbitUIHandler);
     }
 
     private enum MouseState {
-        DEFAULT, DIRECTION, GO_TO, ORBIT_CW, ORBIT_CCW
+        DEFAULT, DIRECTION, GO_TO, ORBIT_CW, ORBIT_CCW;
+
+        public boolean isOrbit() {
+            return this == ORBIT_CCW || this == ORBIT_CW;
+        }
     }
 
     public void createNPC() {
@@ -349,24 +356,14 @@ public class BattleHandler {
             else if (mouseState == MouseState.DIRECTION) {
                 changeMouseState(MouseState.DEFAULT);
             }
-            else if (mouseState == MouseState.ORBIT_CW ||
-                    mouseState == MouseState.ORBIT_CCW) {
-                ClientShip closest = getClosestShip(x, y);
-                closest.getCenterPos(tmp2);
-                if (closest == null) {
-                    return;
+            else if (mouseState.isOrbit()) {
+                if (orbitUIHandler.getState() == OrbitUIHandler.State.SELECTING_TARGET) {
+                    orbitUIHandler.setState(OrbitUIHandler.State.SELECTING_RADIUS);
                 }
-                for (ClientShip s : selection) {
-                    if (s == closest) {
-                        // don't tell a ship to orbit itself
-                        continue;
-                    }
-                    s.getCenterPos(tmp);
-                    float dst2 = tmp.dst2(tmp2);
-                    boolean clockWise = mouseState == MouseState.ORBIT_CW;
-                    s.setOrbit(closest, dst2, clockWise);
+                else {
+                    orbitUIHandler.setOrbit(mouseState == MouseState.ORBIT_CW);
+                    changeMouseState(MouseState.DEFAULT);
                 }
-                changeMouseState(MouseState.DEFAULT);
             }
         }
 
@@ -448,20 +445,6 @@ public class BattleHandler {
         }
     }
 
-    private ClientShip getClosestShip(float x, float y) {
-        ClientShip closest = null;
-        float closestDst2 = Float.MAX_VALUE;
-        for (ClientShip s : ships) {
-            s.getCenterPos(tmp);
-            float dst2 = tmp.dst2(x, y);
-            if (dst2 < closestDst2) {
-                closest = s;
-                closestDst2 = dst2;
-            }
-        }
-        return closest;
-    }
-
     private final ServerConnection conn;
     private final BattleScreen screen;
     private final ShipSteering shipSteering;
@@ -494,10 +477,6 @@ public class BattleHandler {
     }
 
     public void update(float delta) {
-        long timeNow = System.currentTimeMillis();
-        for (ClientShip s : ships) {
-            // s.updatePos(timeNow);
-        }
         consumer.consumeStoredMessages();
         shipSteering.update();
         shipShooting.update();
@@ -627,6 +606,10 @@ public class BattleHandler {
             lastWeightedPos.set(tmp);
             return posDiff;
         }
+
+        public boolean contains(ClientShip ship) {
+            return selectedShips.contains(ship, true);
+        }
     }
 
     public long getMyId() {
@@ -647,12 +630,18 @@ public class BattleHandler {
         if (mouseState == MouseState.DIRECTION) {
             manualSteeringTask.disable();
         }
+        else if (mouseState.isOrbit()) {
+            orbitUIHandler.setState(OrbitUIHandler.State.DISABLED);
+        }
 
         changeMouseCursor(newState);
 
         // activate the new state
         if (newState == MouseState.DIRECTION) {
             manualSteeringTask.activate();
+        }
+        else if (newState.isOrbit()) {
+            orbitUIHandler.setState(OrbitUIHandler.State.SELECTING_TARGET);
         }
 
         mouseState = newState;
