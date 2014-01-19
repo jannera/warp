@@ -33,8 +33,6 @@ public class BattleServer extends IntervalTask {
         }
     }
 
-    private static final float SHIP_HEIGHT = 0.4f, SHIP_WIDTH = 1f;
-
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
             super(delegator);
@@ -105,9 +103,10 @@ public class BattleServer extends IntervalTask {
 
                 // add a new ship based on the stats
                 Vector2 position = startingPositions[serverPlayer.getColorIndex()];
-                float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * SHIP_WIDTH * 5;
+                float shipWidth = message.getStats().getWidth();
+                float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * shipWidth * 5;
                 shipOffsetCounters[serverPlayer.getColorIndex()]++;
-                ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0, SHIP_WIDTH, SHIP_HEIGHT,
+                ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0,
                         serverPlayer, message.getStats());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship

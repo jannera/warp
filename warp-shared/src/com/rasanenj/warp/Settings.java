@@ -11,5 +11,5 @@ public class Settings {
     public static boolean renderImpulse = true;
     public static boolean renderAcceleration = false;
     public static boolean renderAngularAcceleration = false;
-    public static final boolean renderPhysicsFixtures = false;
+    public static final boolean renderPhysicsFixtures = true;
 }

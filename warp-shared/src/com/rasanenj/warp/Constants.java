@@ -63,7 +63,7 @@ public class Constants {
         "'weapon_1_signature_radius': 30, 'weapon_1_optimal': 5.0, 'weapon_1_falloff': 2.0, " +
         "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
         "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0," +
-        "'cost' : 10}, " +
+        "'cost' : 10, 'width': 1, 'height': 0.4}, " +
 
         // small sniper
         "{'id': 1, 'fleet': 1, 'acceleration': 2.0, 'max_speed': 3.0, " +
@@ -74,7 +74,7 @@ public class Constants {
         "'weapon_1_signature_radius': 30, 'weapon_1_optimal': 15.0, 'weapon_1_falloff': 5.0, " +
         "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
         "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0," +
-        "'cost' : 20}, " +
+        "'cost' : 20, 'width': 1, 'height': 0.4}, " +
 
         // medium brawler
         "{'id': 1, 'fleet': 1, 'acceleration': 1.0, 'max_speed': 2.0, " +
@@ -85,7 +85,7 @@ public class Constants {
         "'weapon_1_signature_radius': 80, 'weapon_1_optimal': 8.0, 'weapon_1_falloff': 2.0, " +
         "'weapon_2_damage': 6.0, 'weapon_2_cooldown': 7.0, 'weapon_2_tracking': 8.0, " +
         "'weapon_2_optimal': 3.0, 'weapon_2_falloff': 2.0," +
-        "'cost' : 40} " +
+        "'cost' : 40, 'width': 1, 'height': 0.4} " +
         "]";
 
 }

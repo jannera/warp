@@ -27,13 +27,15 @@ import static com.rasanenj.warp.Log.log;
 public class ShipBuildWindow {
     private final int typeId;
     private final Window window;
+    private final HashMap<String, Float> constants;
     private Label total, amountLabel;
     private TextButton activateButton, plusAmount, minusAmount;
     private int amount = 1;
     private final String icon;
 
-    public ShipBuildWindow(int typeId, String icon) {
+    public ShipBuildWindow(int typeId, String icon, HashMap<String, Float> constants) {
         this.icon = icon;
+        this.constants = constants;
         window = new Window("Ship properties", Assets.skin);
         window.setMovable(false);
         this.typeId = typeId;
@@ -152,13 +154,15 @@ public class ShipBuildWindow {
         float weaponFalloff = getValue(values, "weaponFalloff");
         float weaponDamage = getValue(values, "weaponDamage");
         float weaponCooldown = getValue(values, "weaponCooldown");
+        float width = getValue(constants, "width");
+        float height = getValue(constants, "height");
         float cost = getTotalCost();
 
         // TODO: add weapon tracking
         return new ShipStats(mass, inertia, force, force, force, force, maxHealth, maxVelocity,
                 maxAngularVelocity, maxAngularAcceleration, signatureResolution, weaponCooldown,
                 signatureResolution, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown,
-                maxAcceleration, cost);
+                maxAcceleration, cost, width, height);
     }
 
     private float getValue(HashMap<String, Float> values, String value) {
@@ -212,8 +216,14 @@ public class ShipBuildWindow {
             }
 
             String icon = shipType.getString("icon");
+            HashMap<String, Float> constants = new HashMap<String, Float>(2);
 
-            ShipBuildWindow build = new ShipBuildWindow(id, icon);
+            JsonValue jConstants = shipType.require("constants");
+            for (JsonValue constant : jConstants) {
+                constants.put(constant.name(), constant.asFloat());
+            }
+
+            ShipBuildWindow build = new ShipBuildWindow(id, icon, constants);
             Window window = build.getWindow();
             build.createActivateButton();
 

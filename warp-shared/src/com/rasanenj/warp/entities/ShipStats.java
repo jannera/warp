@@ -16,6 +16,7 @@ public class ShipStats {
     private final float maxHealth;
     private final float maxAcceleration;
     private final float cost;
+    private final float width, height;
 
     public ShipStats(float mass, float inertia,
                      float maxLinearForceForward, float maxLinearForceBackward,
@@ -25,7 +26,8 @@ public class ShipStats {
                      float weaponTracking, float weaponSignatureRadius,
                      float weaponOptimal, float weaponFalloff,
                      float weaponDamage, float weaponCooldown, float maxAcceleration,
-                     float cost) {
+                     float cost,
+                     float width, float height) {
         this.mass = mass;
         this.inertia = inertia;
         this.maxLinearForceForward = maxLinearForceForward;
@@ -45,6 +47,8 @@ public class ShipStats {
         this.weaponCooldown = weaponCooldown;
         this.maxAcceleration = maxAcceleration;
         this.cost = cost;
+        this.width = width;
+        this.height = height;
     }
 
     public ShipStats(ByteBuffer b) {
@@ -67,6 +71,8 @@ public class ShipStats {
         this.weaponCooldown = b.getFloat();
         this.maxAcceleration = b.getFloat();
         this.cost = b.getFloat();
+        this.width = b.getFloat();
+        this.height = b.getFloat();
     }
 
     public void encode(ByteBuffer b) {
@@ -74,11 +80,11 @@ public class ShipStats {
                 maxLinearForceLeft, maxLinearForceRight, maxHealth, maxLinearVelocity,
                 maxAngularVelocity, maxAngularAcceleration, signatureResolution,
                 weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff,
-                weaponDamage, weaponCooldown, maxAcceleration, cost);
+                weaponDamage, weaponCooldown, maxAcceleration, cost, width, height);
     }
 
     public static int getLengthInBytes() {
-        return Float.SIZE/8 * 19;
+        return Float.SIZE/8 * 21;
     }
 
     public float getSignatureResolution() {
@@ -187,5 +193,13 @@ public class ShipStats {
 
     public float getCost() {
         return cost;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 }

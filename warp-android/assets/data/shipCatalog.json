@@ -4,6 +4,10 @@
             "id" : 1,
             "typeName" : "Frigate",
             "icon" : "F",
+            "constants" : {
+                "width" : 1.2,
+                "height" : 0.3
+            },
             "categories" : [
                 {
                     "name" : "Hull",

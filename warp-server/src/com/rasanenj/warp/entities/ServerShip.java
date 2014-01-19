@@ -41,10 +41,10 @@ public class ServerShip extends Entity {
 
 
 
-    public ServerShip(World world, float x, float y, float angleRad, float width, float height, ServerPlayer player,
+    public ServerShip(World world, float x, float y, float angleRad, ServerPlayer player,
                       ShipStats stats) {
-        this.width = width;
-        this.height = height;
+        this.width = stats.getWidth();
+        this.height = stats.getHeight();
         body = world.createBody(bodyDef);
         body.setTransform(x, y, angleRad);
         Vector2 localCenter = new Vector2(width/2f, height/2f);
