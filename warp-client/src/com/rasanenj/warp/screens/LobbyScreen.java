@@ -14,6 +14,7 @@ import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.ui.chat.ChatWindow;
 import com.rasanenj.warp.ui.fleetbuilding.FleetBuildWindow;
+import com.rasanenj.warp.ui.fleetbuilding.ShipBuildWindow;
 
 /**
  * @author gilead
@@ -48,7 +49,7 @@ public class LobbyScreen implements Screen {
 
         stage.addActor(currentBuild.getWindow());
 
-        currentBuild.add(currentBuild.createShipFromCatalog(1));
+        currentBuild.add(ShipBuildWindow.createShipFromCatalog(1));
 
         Window buildWindow = currentBuild.getWindow();
         // NOTE: be sure to give integers as position.. otherwise the fonts might start showing up funny for some weird reason

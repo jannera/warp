@@ -1,14 +1,22 @@
 package com.rasanenj.warp.ui.fleetbuilding;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.ui.PropertySlider;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
@@ -19,8 +27,9 @@ import static com.rasanenj.warp.Log.log;
 public class ShipBuildWindow {
     private final int typeId;
     private final Window window;
-    private Label total;
-    private TextButton activateButton;
+    private Label total, amountLabel;
+    private TextButton activateButton, plusAmount, minusAmount;
+    private int amount = 1;
 
     public ShipBuildWindow(int typeId) {
         window = new Window("Ship properties", Assets.skin);
@@ -32,15 +41,54 @@ public class ShipBuildWindow {
         total.setText("Total: " + getTotalCost());
     }
 
-    public void add(PropertySlider slider) {
+    private void add(PropertySlider slider) {
         sliders.add(slider);
 
     }
 
-    public void addTotal() {
+    private void addTotal() {
         total = new Label("", Assets.skin);
         window.row().fill().expand();
         window.add(total).expand().fill().colspan(0);
+    }
+
+    private void addAmountUI() {
+        window.row().fill().expand();
+        window.add(new Label("Amount", Assets.skin));
+        HorizontalGroup group = new HorizontalGroup();
+        amountLabel = new Label("", Assets.skin);
+        plusAmount = new TextButton("+", Assets.skin);
+        minusAmount = new TextButton("-", Assets.skin);
+
+        plusAmount.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                setAmount(amount + 1);
+            }
+        });
+
+        minusAmount.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                setAmount(amount - 1);
+            }
+        });
+
+        group.addActor(amountLabel);
+        group.addActor(plusAmount);
+        group.addActor(minusAmount);
+        window.add(group);
+
+        setAmount(1);
+    }
+
+    private void setAmount(int amount) {
+        if (amount < 1) {
+            return;
+        }
+        this.amount = amount;
+        amountLabel.setText(Integer.toString(this.amount) + " ");
+        window.pack();
     }
 
     private HashMap<String, Float> getValues() {
@@ -117,7 +165,7 @@ public class ShipBuildWindow {
             slider.update();
             totalCost += slider.getCost();
         }
-        return totalCost;
+        return totalCost * amount;
     }
 
     private final Array<PropertySlider> sliders = new Array<PropertySlider>(false, 16);
@@ -136,5 +184,90 @@ public class ShipBuildWindow {
 
     public TextButton getActivateButton() {
         return activateButton;
+    }
+
+    public static ShipBuildWindow createShipFromCatalog(int shipTypeId) {
+        JsonReader reader = new JsonReader();
+        JsonValue catalog = reader.parse(Gdx.files.internal("data/shipCatalog.json"));
+
+        JsonValue shipTypes = catalog.require("shipTypes");
+
+        for (JsonValue shipType : shipTypes) {
+            int id = shipType.getInt("id");
+            if (id != shipTypeId) {
+                continue;
+            }
+
+            ShipBuildWindow build = new ShipBuildWindow(id);
+            Window window = build.getWindow();
+
+            String typeName = shipType.getString("typeName");
+            window.row().fill().expandX().fillX();
+            window.add(new Label("Type", Assets.skin));
+            window.add(new Label(typeName, Assets.skin));
+
+            build.addAmountUI();
+
+            JsonValue categories = shipType.require("categories");
+            for (JsonValue category : categories) {
+                window.row().fill().expandX();
+                window.add(new Label(category.getString("name"), Assets.skin));
+
+                JsonValue properties = category.require("properties");
+                for (JsonValue property : properties) {
+                    JsonValue values = property.require("values");
+                    final float[] valueArr = new float[values.size];
+                    final float[] costArr = new float[values.size];
+                    int i = 0;
+                    for (JsonValue value : values) {
+                        valueArr[i] = value.getFloat("value");
+                        costArr[i++] = value.getFloat("cost");
+                    }
+                    build.add(new PropertySlider(property.getString("id"), window,
+                            property.getString("name"), valueArr, costArr));
+                }
+            }
+            build.addTotal();
+            window.pack();
+            build.validate();
+            return build;
+        }
+
+        return null;
+    }
+
+    private static final String TYPE_ID = "typeId", INDEXES = "indexes", AMOUNT = "amount";
+
+    public void writeToJson(Json json) {
+        HashMap<String, Integer> indexes = getSliders();
+        json.writeObjectStart();
+
+        json.writeValue(TYPE_ID, getTypeId());
+
+        json.writeValue(AMOUNT, amount);
+
+        json.writeObjectStart(INDEXES);
+
+        for (Map.Entry<String, Integer> entry : indexes.entrySet()) {
+            json.writeValue(entry.getKey(), entry.getValue());
+        }
+        json.writeObjectEnd();
+        json.writeObjectEnd();
+    }
+
+    public static ShipBuildWindow loadFromJson(JsonValue jShipBuild) {
+        int typeid = jShipBuild.require(TYPE_ID).asInt();
+        int amount = jShipBuild.require(AMOUNT).asInt();
+        JsonValue jIndexes = jShipBuild.require(INDEXES);
+        HashMap<String, Integer> indexes = new HashMap<String, Integer>();
+
+        for (JsonValue value : jIndexes) {
+            indexes.put(value.name(), value.asInt());
+        }
+
+        ShipBuildWindow build = ShipBuildWindow.createShipFromCatalog(typeid);
+        build.setSliders(indexes);
+        build.setAmount(amount);
+        return build;
     }
 }

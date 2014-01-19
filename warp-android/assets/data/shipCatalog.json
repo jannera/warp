@@ -3,6 +3,7 @@
         {
             "id" : 1,
             "typeName" : "Frigate",
+            "icon" : "F",
             "categories" : [
                 {
                     "name" : "Hull",

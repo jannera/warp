@@ -44,7 +44,7 @@ public class FleetBuildWindow {
         addButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                add(createShipFromCatalog(1));
+                add(ShipBuildWindow.createShipFromCatalog(1));
             }
         });
         shipSelectionGroup.addActor(addButton);
@@ -84,8 +84,6 @@ public class FleetBuildWindow {
         window.pack();
     }
 
-    private static final String TYPE_ID = "typeId", INDEXES = "indexes";
-
     public void loadFromJson(String rawText) {
         JsonReader reader = new JsonReader();
         JsonValue root = reader.parse(rawText);
@@ -93,16 +91,7 @@ public class FleetBuildWindow {
         clear();
 
         for (JsonValue jShipBuild : root) {
-            int typeid = jShipBuild.require(TYPE_ID).asInt();
-            JsonValue jIndexes = jShipBuild.require(INDEXES);
-            HashMap<String, Integer> indexes = new HashMap<String, Integer>();
-
-            for (JsonValue value : jIndexes) {
-                indexes.put(value.name(), value.asInt());
-            }
-
-            ShipBuildWindow build = createShipFromCatalog(typeid);
-            build.setSliders(indexes);
+            ShipBuildWindow build = ShipBuildWindow.loadFromJson(jShipBuild);
             add(build);
         }
     }
@@ -126,18 +115,7 @@ public class FleetBuildWindow {
 
         json.writeArrayStart();
         for (ShipBuildWindow build : shipBuilds) {
-            HashMap<String, Integer> indexes = build.getSliders();
-            json.writeObjectStart();
-
-            json.writeValue(TYPE_ID, build.getTypeId());
-
-            json.writeObjectStart(INDEXES);
-
-            for (Map.Entry<String, Integer> entry : indexes.entrySet()) {
-                json.writeValue(entry.getKey(), entry.getValue());
-            }
-            json.writeObjectEnd();
-            json.writeObjectEnd();
+            build.writeToJson(json);
         }
         json.writeArrayEnd();
 
@@ -215,53 +193,6 @@ public class FleetBuildWindow {
             stats.add(build.getStats());
         }
         return stats;
-    }
-
-    public static ShipBuildWindow createShipFromCatalog(int shipTypeId) {
-        JsonReader reader = new JsonReader();
-        JsonValue catalog = reader.parse(Gdx.files.internal("data/shipCatalog.json"));
-
-        JsonValue shipTypes = catalog.require("shipTypes");
-
-        for (JsonValue shipType : shipTypes) {
-            int id = shipType.getInt("id");
-            if (id != shipTypeId) {
-                continue;
-            }
-
-            ShipBuildWindow build = new ShipBuildWindow(id);
-            Window window = build.getWindow();
-
-            String typeName = shipType.getString("typeName");
-            window.row().fill().expandX().fillX();
-            window.add(new Label("Type: " + typeName, Assets.skin));
-
-            JsonValue categories = shipType.require("categories");
-            for (JsonValue category : categories) {
-                window.row().fill().expandX();
-                window.add(new Label(category.getString("name"), Assets.skin));
-
-                JsonValue properties = category.require("properties");
-                for (JsonValue property : properties) {
-                    JsonValue values = property.require("values");
-                    final float[] valueArr = new float[values.size];
-                    final float[] costArr = new float[values.size];
-                    int i = 0;
-                    for (JsonValue value : values) {
-                        valueArr[i] = value.getFloat("value");
-                        costArr[i++] = value.getFloat("cost");
-                    }
-                    build.add(new PropertySlider(property.getString("id"), window,
-                            property.getString("name"), valueArr, costArr));
-                }
-            }
-            build.addTotal();
-            window.pack();
-            build.validate();
-            return build;
-        }
-
-        return null;
     }
 
     public void loadCurrentBuild() {

@@ -59,15 +59,18 @@ Steps Before First Catalog-tuning, Nice to have
         * Paitsi että tuskin mahdollista hiiren kursoreille jotka määritellään CSS:ssä..
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
+* Erilaiset alustyypit
+    * Koko katalogiin, ja koon välittäminen läpi luontiketjun
+    * Eri graffat
+    * Eri alustyyppien luominen fleet build windowiin
+* Määrän ja tyypin näyttäminen buildin valintanapissa
 * Alusten ja niiden stattien ostaminen kälin kautta
     * Save/load ship
-    * Save/load fleet
+    * DONE Save/load fleet
     * Delete ship
     * Delete saved fleet
-    * Lukumäärän antaminen aluksille
+    * DONE Lukumäärän antaminen aluksille
     * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
-* Ampumiskohteen asettaminen helpommaksi:
-    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
 * Maksiminopeuden asettaminen
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
@@ -75,6 +78,8 @@ Steps Before First Catalog-tuning, Nice to have
 
 MVProto
 ===
+* Ampumiskohteen asettaminen helpommaksi:
+    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
 * Näytä jokin graffa aluksen tuhoutuessa
 * Tällä hetkellä kohti ammusta lentäminen hidastaa ammusta.. ammusten pitää yksinkertaisesti alkaa kulkemaan omaa tasaista vauhtiaan
 * Alusten ja niiden stattien ostaminen kälin kautta
