@@ -1,5 +1,6 @@
 package com.rasanenj.warp.ui.fleetbuilding;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -13,6 +14,7 @@ import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.storage.LocalStorage;
 
 import java.io.StringWriter;
+import java.util.HashMap;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -24,27 +26,42 @@ public class FleetBuildWindow {
     private final Window window;
     ShipBuildWindow activeBuild = null;
     final HorizontalGroup shipSelectionGroup, topUIGroup, bottomUIGroup;
+    final SelectBox shipTypeSelect;
     Label totalCost;
     Table buildTable;
     private final TextButton startFight;
+    private final HashMap<String, Integer> shipTypes;
 
     public FleetBuildWindow() {
+        shipTypes = readShipTypesFromJSON();
+
         window = new Window("Fleet properties", Assets.skin);
         window.row().fill().expand();
         topUIGroup = new HorizontalGroup();
         shipSelectionGroup = new HorizontalGroup();
         topUIGroup.addActor(shipSelectionGroup);
 
-        // create a button to add builds
+        // drop down menu for selecting new ship type
+        Object[] shipTypeNames = new Object[shipTypes.size()];
+        int i = 0;
+        for (String name : shipTypes.keySet()) {
+            shipTypeNames[i++] = name;
+        }
+        shipTypeSelect = new SelectBox(shipTypeNames, Assets.skin);
+        topUIGroup.addActor(shipTypeSelect);
+
+        // button to add builds
         TextButton  addButton = new TextButton("+", Assets.skin);
         addButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                add(ShipBuildWindow.createShipFromCatalog(1));
+                int type = getCurrentlySelectedShipType();
+                add(ShipBuildWindow.createShipFromCatalog(type));
             }
         });
         topUIGroup.addActor(addButton);
 
+        // button to remove builds
         TextButton removeButton = new TextButton("-", Assets.skin);
         removeButton.addListener(new ChangeListener() {
             @Override
@@ -88,6 +105,29 @@ public class FleetBuildWindow {
         window.add(bottomUIGroup);
 
         window.pack();
+    }
+
+    private HashMap<String, Integer> readShipTypesFromJSON() {
+        HashMap<String, Integer> result = new HashMap<String, Integer>(2);
+
+        JsonReader reader = new JsonReader();
+        JsonValue catalog = reader.parse(Gdx.files.internal("data/shipCatalog.json"));
+
+        JsonValue shipTypes = catalog.require("shipTypes");
+
+        for (JsonValue shipType : shipTypes) {
+            int id = shipType.getInt("id");
+            String typeName = shipType.getString("typeName");
+
+            result.put(typeName, id);
+        }
+
+        return result;
+    }
+
+    private int getCurrentlySelectedShipType() {
+        log (shipTypeSelect.getSelection());
+        return shipTypes.get(shipTypeSelect.getSelection());
     }
 
     private void removeCurrentBuild() {

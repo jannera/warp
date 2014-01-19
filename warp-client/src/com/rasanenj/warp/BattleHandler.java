@@ -118,8 +118,7 @@ public class BattleHandler {
                 CreateShipMessage message = (CreateShipMessage) msg;
                 Player owningPlayer = getPlayer(message.getOwnerId());
 
-                ClientShip ship = new ClientShip(message.getId(), owningPlayer, message.getWidth(),
-                        message.getHeight(), message.getStats());
+                ClientShip ship = new ClientShip(message.getId(), owningPlayer, message.getStats());
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.getClickRegionImage().addListener(shipClickListener);

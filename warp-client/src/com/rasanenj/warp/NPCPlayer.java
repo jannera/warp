@@ -175,8 +175,7 @@ public class NPCPlayer {
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
-                ClientShip ship = new ClientShip(message.getId(), null, message.getWidth(),
-                        message.getHeight(), message.getStats());
+                ClientShip ship = new ClientShip(message.getId(), null, message.getStats());
                 if (message.getOwnerId() == myId) {
                     myShips.add(ship);
                     infos.put(ship.getId(), new MyShipInfo());

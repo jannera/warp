@@ -65,8 +65,7 @@ public class BattleServer extends IntervalTask {
                 // notify the new player about existing ships
                 for (ServerShip ship : battleLoop.getShips()) {
                     // log ("player id was " + ship.getPlayer().getId());
-                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(),
-                            ship.getHeight(), ship.getStats()));
+                    serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getStats()));
                 }
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
@@ -110,8 +109,7 @@ public class BattleServer extends IntervalTask {
                         serverPlayer, message.getStats());
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
-                sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getWidth(), ship.getHeight(),
-                        ship.getStats()));
+                sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getStats()));
             }
             else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {
                 ShootRequestMessage message = (ShootRequestMessage) msg;

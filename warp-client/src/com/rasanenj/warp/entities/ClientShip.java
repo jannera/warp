@@ -37,11 +37,13 @@ public class ClientShip extends Group {
     private float orbitDst2;
     private Color circled;
 
-    public ClientShip(long id, Player owner, float width, float height, ShipStats stats) {
+    public ClientShip(long id, Player owner, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
         this.clickRegionImage = new Image(Assets.shipTexture);
         this.clickRegionImage.setColor(1, 1, 1, 0);
         this.clickRegionImage.setVisible(true);
+        float width = stats.getWidth();
+        float height = stats.getHeight();
         clickRegionImage.setWidth(width * CLICKREGION_MULTIPLIER);
         clickRegionImage.setHeight(height * CLICKREGION_MULTIPLIER);
         addActor(image);

@@ -20,7 +20,7 @@ public class ClientShipTest {
         Assets.moveTargetTexture = mock(Texture.class);
         Player player = new Player("name", 0);
         ShipStats stats = new ShipStats(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-        ClientShip ship = new ClientShip(1, player, 1, 1, stats);
+        ClientShip ship = new ClientShip(1, player, stats);
         ship.setVelocity(0, 0, 1, 1000);
         ship.setVelocity(0, 0, 2, 2000);
         assertEquals("Acceleration should've been set", 1f, ship.getAngularAcceleration(), epsilon);

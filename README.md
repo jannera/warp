@@ -60,9 +60,11 @@ Steps Before First Catalog-tuning, Nice to have
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Erilaiset alustyypit
-    * Koko katalogiin, ja koon välittäminen läpi luontiketjun
+    * DONE Koko katalogiin, ja koon välittäminen läpi luontiketjun
+    * Alustyyppi ShipStatseihin
     * Eri graffat
-    * Eri alustyyppien luominen fleet build windowiin
+    * DONE Eri alustyyppien luominen fleet build windowiin
+* Selvitä minkä takia fysiikkafixturessa on päddingiä verrattuna graffaan
 * Alusten ja niiden stattien ostaminen kälin kautta
     * Save/load ship
     * Save/load fleet nimillä
