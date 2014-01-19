@@ -1,6 +1,5 @@
 package com.rasanenj.warp.ui.fleetbuilding;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -12,11 +11,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.storage.LocalStorage;
-import com.rasanenj.warp.ui.PropertySlider;
 
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -31,7 +27,6 @@ public class FleetBuildWindow {
     TextButton addButton;
     Label totalCost;
     Table buildTable;
-    float oldTotalCost = -1;
     private final TextButton startFight;
 
     public FleetBuildWindow() {
@@ -105,7 +100,6 @@ public class FleetBuildWindow {
         shipSelectionGroup.addActor(addButton);
         shipSelectionGroup.pack();
         activeBuild = -1;
-        oldTotalCost = -1;
     }
 
     public String getJson() {
@@ -134,18 +128,26 @@ public class FleetBuildWindow {
     public void add(ShipBuildWindow shipBuild) {
         // add a button to activate the new build
         final int index = shipBuilds.size;
-        TextButton activate = new TextButton(Integer.toString(index + 1), Assets.skin);
+        TextButton activate = shipBuild.getActivateButton();
         activate.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 showOnly(index);
             }
         });
-        shipBuild.setActivateButton(activate);
         shipSelectionGroup.addActorBefore(addButton, activate);
+
+        shipBuild.getWindow().addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                updateUI();
+            }
+        });
 
         shipBuilds.add(shipBuild);
         showOnly(index);
+
+        updateUI();
     }
 
     public Window getWindow() {
@@ -153,23 +155,12 @@ public class FleetBuildWindow {
     }
 
     public void updateUI() {
-        for (ShipBuildWindow shipBuild : shipBuilds) {
-            shipBuild.updateUI();
-        }
-        float total = getTotalCost();
-        if (total != oldTotalCost) {
-            // TODO: this is not a good mechanism, as we need to reset the oldTotalCost
-            // when clearing the screen. better mechanism would be if updateUI would return
-            // true when their state has changed.. ?
-            // .. or just listen to changes, and only then do changes to labels..
-            oldTotalCost = total;
-            totalCost.setText("Fleet total: " + getTotalCost());
-            window.pack();
-        }
+        log("updated fleet UI");
+        totalCost.setText("Fleet total: " + getTotalCost());
+        window.pack();
     }
 
     // shows the one with given index, hides everyone else
-    // TODO: maybe use Stack instead of adding and removing?
     public void showOnly(int toBeShown) {
         if (activeBuild == toBeShown) {
             return;

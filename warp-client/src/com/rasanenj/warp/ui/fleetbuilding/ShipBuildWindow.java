@@ -30,15 +30,26 @@ public class ShipBuildWindow {
     private Label total, amountLabel;
     private TextButton activateButton, plusAmount, minusAmount;
     private int amount = 1;
+    private final String icon;
 
-    public ShipBuildWindow(int typeId) {
+    public ShipBuildWindow(int typeId, String icon) {
+        this.icon = icon;
         window = new Window("Ship properties", Assets.skin);
         window.setMovable(false);
         this.typeId = typeId;
+
+        window.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                updateUI();
+            }
+        });
     }
 
     public void updateUI() {
+        log("updated shipbuild UI");
         total.setText("Total: " + getTotalCost());
+        window.pack();
     }
 
     private void add(PropertySlider slider) {
@@ -46,13 +57,17 @@ public class ShipBuildWindow {
 
     }
 
-    private void addTotal() {
+    public void createActivateButton() {
+        activateButton = new TextButton("", Assets.skin);
+    }
+
+    private void createTotalLabel() {
         total = new Label("", Assets.skin);
         window.row().fill().expand();
         window.add(total).expand().fill().colspan(0);
     }
 
-    private void addAmountUI() {
+    private void createAmountUI() {
         window.row().fill().expand();
         window.add(new Label("Amount", Assets.skin));
         HorizontalGroup group = new HorizontalGroup();
@@ -87,8 +102,9 @@ public class ShipBuildWindow {
             return;
         }
         this.amount = amount;
-        amountLabel.setText(Integer.toString(this.amount) + " ");
-        window.pack();
+        String amountText = Integer.toString(this.amount);
+        amountLabel.setText(amountText + " ");
+        activateButton.setText(amountText + " x " + icon);
     }
 
     private HashMap<String, Float> getValues() {
@@ -178,10 +194,6 @@ public class ShipBuildWindow {
         return typeId;
     }
 
-    public void setActivateButton(TextButton activateButton) {
-        this.activateButton = activateButton;
-    }
-
     public TextButton getActivateButton() {
         return activateButton;
     }
@@ -198,15 +210,18 @@ public class ShipBuildWindow {
                 continue;
             }
 
-            ShipBuildWindow build = new ShipBuildWindow(id);
+            String icon = shipType.getString("icon");
+
+            ShipBuildWindow build = new ShipBuildWindow(id, icon);
             Window window = build.getWindow();
+            build.createActivateButton();
 
             String typeName = shipType.getString("typeName");
             window.row().fill().expandX().fillX();
             window.add(new Label("Type", Assets.skin));
             window.add(new Label(typeName, Assets.skin));
 
-            build.addAmountUI();
+            build.createAmountUI();
 
             JsonValue categories = shipType.require("categories");
             for (JsonValue category : categories) {
@@ -227,8 +242,8 @@ public class ShipBuildWindow {
                             property.getString("name"), valueArr, costArr));
                 }
             }
-            build.addTotal();
-            window.pack();
+            build.createTotalLabel();
+            build.updateUI();
             build.validate();
             return build;
         }

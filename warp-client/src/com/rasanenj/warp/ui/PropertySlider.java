@@ -1,5 +1,7 @@
 package com.rasanenj.warp.ui;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -25,7 +27,7 @@ public class PropertySlider {
         this.costs = costs;
         Label label = new Label(propertyName, Assets.skin);
         window.row().fill().expandX().fillX();
-        window.add(label);
+        window.add(label).padLeft(10);
         slider = new Slider(0, costs.length - 1, 1, false, Assets.skin);
         window.add(slider);
         description = new Label("", Assets.skin);
