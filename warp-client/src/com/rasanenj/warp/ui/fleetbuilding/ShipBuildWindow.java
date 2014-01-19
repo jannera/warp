@@ -124,7 +124,8 @@ public class ShipBuildWindow {
     }
 
     public void setSliders(HashMap<String, Integer> indexes) {
-        for (PropertySlider slider : sliders) {
+        for (int i=0; i < sliders.size; i++) {
+            PropertySlider slider = sliders.get(i);
             String id = slider.getId();
             Integer index = indexes.get(id);
             if (index == null) {

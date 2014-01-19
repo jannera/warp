@@ -141,6 +141,7 @@ public class FleetBuildWindow {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 updateUI();
+                saveCurrentBuild();
             }
         });
 
@@ -148,6 +149,7 @@ public class FleetBuildWindow {
         showOnly(index);
 
         updateUI();
+        saveCurrentBuild();
     }
 
     public Window getWindow() {

@@ -49,7 +49,7 @@ public class LobbyScreen implements Screen {
 
         stage.addActor(currentBuild.getWindow());
 
-        currentBuild.add(ShipBuildWindow.createShipFromCatalog(1));
+        currentBuild.loadCurrentBuild();
 
         Window buildWindow = currentBuild.getWindow();
         // NOTE: be sure to give integers as position.. otherwise the fonts might start showing up funny for some weird reason
