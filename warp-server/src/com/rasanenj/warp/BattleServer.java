@@ -102,8 +102,8 @@ public class BattleServer extends IntervalTask {
 
                 // add a new ship based on the stats
                 Vector2 position = startingPositions[serverPlayer.getColorIndex()];
-                float shipWidth = message.getStats().getWidth();
-                float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * shipWidth * 5;
+                float shipHeight = message.getStats().getHeight();
+                float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * shipHeight * 4;
                 shipOffsetCounters[serverPlayer.getColorIndex()]++;
                 ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0,
                         serverPlayer, message.getStats());

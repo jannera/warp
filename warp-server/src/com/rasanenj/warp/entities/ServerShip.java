@@ -48,7 +48,7 @@ public class ServerShip extends Entity {
         body = world.createBody(bodyDef);
         body.setTransform(x, y, angleRad);
         Vector2 localCenter = new Vector2(width/2f, height/2f);
-        polygonShape.setAsBox(width, height, localCenter, 0f);
+        polygonShape.setAsBox(width/2f, height/2f, localCenter, 0f);
         body.createFixture(fixtureDef);
         this.player = player;
         storeOldPosition();
