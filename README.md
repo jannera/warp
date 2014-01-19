@@ -63,11 +63,10 @@ Steps Before First Catalog-tuning, Nice to have
     * Koko katalogiin, ja koon välittäminen läpi luontiketjun
     * Eri graffat
     * Eri alustyyppien luominen fleet build windowiin
-* Määrän ja tyypin näyttäminen buildin valintanapissa
 * Alusten ja niiden stattien ostaminen kälin kautta
     * Save/load ship
-    * DONE Save/load fleet
-    * Delete ship
+    * Save/load fleet nimillä
+    * DONE Delete ship
     * Delete saved fleet
     * DONE Lukumäärän antaminen aluksille
     * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
@@ -205,3 +204,4 @@ MVProto DONE
     * Orbittia annettaessa näytetään nuoli halutulla etäisyydellä, ja hiiren rullalla voi kasvattaa/pienentää etäisyyttä
     * Ehkä alpha 0.5 kaikille aktiivisille käskyille
 * DONE Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
+* DONE Määrän ja tyypin näyttäminen buildin valintanapissa

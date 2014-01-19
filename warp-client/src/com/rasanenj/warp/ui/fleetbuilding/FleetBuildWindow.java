@@ -22,9 +22,8 @@ import static com.rasanenj.warp.Log.log;
 public class FleetBuildWindow {
     private final Array<ShipBuildWindow> shipBuilds = new Array<ShipBuildWindow>(false, 16);
     private final Window window;
-    int activeBuild = -1;
-    HorizontalGroup shipSelectionGroup, bottomUIGroup;
-    TextButton addButton;
+    ShipBuildWindow activeBuild = null;
+    final HorizontalGroup shipSelectionGroup, topUIGroup, bottomUIGroup;
     Label totalCost;
     Table buildTable;
     private final TextButton startFight;
@@ -32,19 +31,31 @@ public class FleetBuildWindow {
     public FleetBuildWindow() {
         window = new Window("Fleet properties", Assets.skin);
         window.row().fill().expand();
+        topUIGroup = new HorizontalGroup();
         shipSelectionGroup = new HorizontalGroup();
+        topUIGroup.addActor(shipSelectionGroup);
 
         // create a button to add builds
-        addButton = new TextButton("+", Assets.skin);
+        TextButton  addButton = new TextButton("+", Assets.skin);
         addButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 add(ShipBuildWindow.createShipFromCatalog(1));
             }
         });
-        shipSelectionGroup.addActor(addButton);
-        shipSelectionGroup.pack();
-        window.add(shipSelectionGroup);
+        topUIGroup.addActor(addButton);
+
+        TextButton removeButton = new TextButton("-", Assets.skin);
+        removeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                removeCurrentBuild();
+            }
+        });
+        topUIGroup.addActor(removeButton);
+
+        topUIGroup.pack();
+        window.add(topUIGroup);
 
         buildTable = new Table(Assets.skin);
         window.row().fillX();
@@ -79,6 +90,31 @@ public class FleetBuildWindow {
         window.pack();
     }
 
+    private void removeCurrentBuild() {
+        if (shipBuilds.size <= 1) {
+            return;
+        }
+        if (activeBuild == null) {
+            return;
+        }
+        ShipBuildWindow toBeRemoved = activeBuild;
+
+        int index = shipBuilds.indexOf(toBeRemoved, true);
+        int nextIndex = index + 1;
+        if (nextIndex >= shipBuilds.size) {
+            nextIndex = index -1;
+        }
+        ShipBuildWindow nextToBeActive = shipBuilds.get(nextIndex);
+        showOnly(nextToBeActive);
+
+        shipBuilds.removeValue(toBeRemoved, true);
+        shipSelectionGroup.removeActor(toBeRemoved.getActivateButton());
+
+        shipSelectionGroup.pack();
+        updateUI();
+        saveCurrentBuild();
+    }
+
     public void loadFromJson(String rawText) {
         JsonReader reader = new JsonReader();
         JsonValue root = reader.parse(rawText);
@@ -92,14 +128,14 @@ public class FleetBuildWindow {
     }
 
     private void clear() {
-        if (activeBuild != -1) {
-            buildTable.removeActor(shipBuilds.get(activeBuild).getWindow());
+        if (activeBuild != null) {
+            buildTable.removeActor(activeBuild.getWindow());
         }
         shipBuilds.clear();
         shipSelectionGroup.clear();
-        shipSelectionGroup.addActor(addButton);
         shipSelectionGroup.pack();
-        activeBuild = -1;
+        topUIGroup.pack();
+        activeBuild = null;
     }
 
     public String getJson() {
@@ -125,17 +161,17 @@ public class FleetBuildWindow {
         return totalCost;
     }
 
-    public void add(ShipBuildWindow shipBuild) {
+    public void add(final ShipBuildWindow shipBuild) {
         // add a button to activate the new build
-        final int index = shipBuilds.size;
         TextButton activate = shipBuild.getActivateButton();
         activate.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                showOnly(index);
+                showOnly(shipBuild);
             }
         });
-        shipSelectionGroup.addActorBefore(addButton, activate);
+        shipSelectionGroup.addActor(activate);
+        shipSelectionGroup.pack();
 
         shipBuild.getWindow().addListener(new ChangeListener() {
             @Override
@@ -146,7 +182,7 @@ public class FleetBuildWindow {
         });
 
         shipBuilds.add(shipBuild);
-        showOnly(index);
+        showOnly(shipBuild);
 
         updateUI();
         saveCurrentBuild();
@@ -163,18 +199,14 @@ public class FleetBuildWindow {
     }
 
     // shows the one with given index, hides everyone else
-    public void showOnly(int toBeShown) {
-        if (activeBuild == toBeShown) {
-            return;
-        }
-        if (activeBuild != -1) {
+    public void showOnly(ShipBuildWindow toBeShown) {
+        if (activeBuild != null) {
             // remove the old one
-            ShipBuildWindow toBeRemoved = shipBuilds.get(activeBuild);
-            toBeRemoved.getActivateButton().setColor(Color.WHITE);
-            buildTable.removeActor(toBeRemoved.getWindow());
+            activeBuild.getActivateButton().setColor(Color.WHITE);
+            buildTable.removeActor(activeBuild.getWindow());
         }
-        shipBuilds.get(toBeShown).getActivateButton().setColor(Color.GRAY);
-        Window toBeAdded = shipBuilds.get(toBeShown).getWindow();
+        toBeShown.getActivateButton().setColor(Color.GRAY);
+        Window toBeAdded = toBeShown.getWindow();
         buildTable.add(toBeAdded);
         activeBuild = toBeShown;
         window.pack();
