@@ -255,7 +255,9 @@ public class FleetBuildWindow {
     public Array<ShipStats> getStats() {
         Array<ShipStats> stats = new Array<ShipStats>(false, shipBuilds.size);
         for (ShipBuildWindow build : shipBuilds) {
-            stats.add(build.getStats());
+            for (int i = 0; i < build.getAmount(); i++) {
+                stats.add(build.getStats());
+            }
         }
         return stats;
     }

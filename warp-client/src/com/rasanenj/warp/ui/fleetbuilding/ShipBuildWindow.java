@@ -296,4 +296,8 @@ public class ShipBuildWindow {
         build.setAmount(amount);
         return build;
     }
+
+    public int getAmount() {
+        return amount;
+    }
 }

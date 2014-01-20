@@ -401,15 +401,15 @@
                             "name" : "Max angular velocity",
                             "values" : [
                                 {
-                                    "value" : 0.75,
+                                    "value" : 0.3,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 1.5,
+                                    "value" : 0.7,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 2.25,
+                                    "value" : 1.1,
                                     "cost" : 30
                                 }
                             ]
