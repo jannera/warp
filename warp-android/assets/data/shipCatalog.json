@@ -107,7 +107,19 @@
                                 },
                                 {
                                     "value" : 5,
-                                    "cost" : 60
+                                    "cost" : 70
+                                },
+                                {
+                                    "value" : 6,
+                                    "cost" : 110
+                                },
+                                {
+                                    "value" : 7,
+                                    "cost" : 160
+                                },
+                                {
+                                    "value" : 8,
+                                    "cost" : 210
                                 }
                             ]
                         },
@@ -134,15 +146,15 @@
                             "name" : "Max angular acceleration",
                             "values" : [
                                 {
-                                    "value" : 3,
+                                    "value" : 0.25,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 4,
+                                    "value" : 0.5,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 5,
+                                    "value" : 0.7,
                                     "cost" : 30
                                 }
                             ]
@@ -344,26 +356,21 @@
                             "name" : "Max velocity",
                             "values" : [
                                 {
-                                    "value" : 3,
+                                    "value" : 1,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 4.5,
-                                    "cost" : 40
+                                    "value" : 2,
+                                    "cost" : 20
                                 },
                                 {
-                                    "value" : 6,
-                                    "cost" : 80
+                                    "value" : 3,
+                                    "cost" : 40
                                 }
                                 ,
                                 {
-                                    "value" : 7.5,
-                                    "cost" : 130
-                                }
-                                ,
-                                {
-                                    "value" : 9,
-                                    "cost" : 190
+                                    "value" : 4,
+                                    "cost" : 70
                                 }
                             ]
                         },
@@ -372,19 +379,19 @@
                             "name" : "Max acceleration",
                             "values" : [
                                 {
-                                    "value" : 2,
+                                    "value" : 0.5,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 3,
+                                    "value" : 1,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 4,
+                                    "value" : 1.5,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 5,
+                                    "value" : 2,
                                     "cost" : 60
                                 }
                             ]
@@ -412,15 +419,15 @@
                             "name" : "Max angular acceleration",
                             "values" : [
                                 {
-                                    "value" : 3,
+                                    "value" : 0.25,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 4,
+                                    "value" : 0.5,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 5,
+                                    "value" : 0.7,
                                     "cost" : 30
                                 }
                             ]

@@ -64,7 +64,6 @@ Steps Before First Catalog-tuning, Nice to have
     * Alustyyppi ShipStatseihin
     * Eri graffat
     * DONE Eri alustyyppien luominen fleet build windowiin
-* Selvitä minkä takia fysiikkafixturessa on päddingiä verrattuna graffaan
 * Alusten ja niiden stattien ostaminen kälin kautta
     * Save/load ship
     * Save/load fleet nimillä
@@ -76,9 +75,12 @@ Steps Before First Catalog-tuning, Nice to have
     * Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
     * Rajoituksen näyttäminen aluksen lähellä
+* Yliampumisen poistaminen steerauksen angular impulsen hakemisesta
 
 MVProto
 ===
+* Kääntymisnopeutta voisi myös rajoittaa serverin päässä
+* Jotenkin pitäisi rajoittaa ettei kääntymisen max kiihtyminen voi olla suurempi kuin max velocity.. tai korjata steering
 * Ampumiskohteen asettaminen helpommaksi:
     * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
 * Näytä jokin graffa aluksen tuhoutuessa
@@ -92,8 +94,8 @@ MVProto
         * Save/load ship
         * Nykyisten stattien näyttäminen
         * Yksiköt näkyville
-        * Aluksen tyypin valitseminen lisättäessä
-        * Lukumäärän antaminen aluksille. Voisi näkyä myös UI:ssa
+        * DONE Aluksen tyypin valitseminen lisättäessä
+        * DONE Lukumäärän antaminen aluksille. Voisi näkyä myös UI:ssa
         * Delete ship
 * Alusten statteja voisi muuttaa lennossa kun on testflight -moodissa?
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
@@ -207,3 +209,4 @@ MVProto DONE
     * Ehkä alpha 0.5 kaikille aktiivisille käskyille
 * DONE Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
 * DONE Määrän ja tyypin näyttäminen buildin valintanapissa
+* DONE Selvitä minkä takia fysiikkafixturessa on päddingiä verrattuna graffaan
