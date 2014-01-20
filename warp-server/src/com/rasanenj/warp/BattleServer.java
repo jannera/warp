@@ -25,11 +25,11 @@ public class BattleServer extends IntervalTask {
 
     private final Vector2[] startingPositions = {new Vector2(400, 400), new Vector2(420, 400),
        new Vector2(400, 420), new Vector2(420, 420), new Vector2(440, 400), new Vector2(400, 440)};
-    private static final int[] shipOffsetCounters = new int[8];
+    private static final float[] shipOffsets = new float[8];
 
     static {
-        for (int i=0; i < shipOffsetCounters.length; i++) {
-            shipOffsetCounters[i] = 0;
+        for (int i=0; i < shipOffsets.length; i++) {
+            shipOffsets[i] = 0;
         }
     }
 
@@ -43,7 +43,7 @@ public class BattleServer extends IntervalTask {
             if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
                 ServerPlayer serverPlayer = (ServerPlayer) player;
 
-                shipOffsetCounters[serverPlayer.getColorIndex()] = 0;
+                shipOffsets[serverPlayer.getColorIndex()] = 0;
 
                 // notify the player about himself
                 serverPlayer.send(new JoinBattleMessage(serverPlayer.getName(), serverPlayer.getId(), serverPlayer.getColorIndex()));
@@ -103,10 +103,13 @@ public class BattleServer extends IntervalTask {
                 // add a new ship based on the stats
                 Vector2 position = startingPositions[serverPlayer.getColorIndex()];
                 float shipHeight = message.getStats().getHeight();
-                float yOffSet = shipOffsetCounters[serverPlayer.getColorIndex()] * shipHeight * 4;
-                shipOffsetCounters[serverPlayer.getColorIndex()]++;
-                ServerShip ship = new ServerShip(world, position.x, position.y + yOffSet, 0,
+
+                shipOffsets[serverPlayer.getColorIndex()] += shipHeight * 2;
+
+                ServerShip ship = new ServerShip(world, position.x,
+                        position.y + shipOffsets[serverPlayer.getColorIndex()], 0,
                         serverPlayer, message.getStats());
+                shipOffsets[serverPlayer.getColorIndex()] += shipHeight * 2;
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
                 sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getStats()));
