@@ -77,53 +77,32 @@ public class ShipSteering extends IntervalTask {
             angleDiff -= 360;
         }
 
+        angleDiff *= MathUtils.degreesToRadians;
+
         float change;
 
-        float maxAccelerationInTimestep = ship.getStats().getMaxAngularAcceleration() * STEP_LENGTH;
+        float maxAcceleration = ship.getStats().getMaxAngularAcceleration();
+        float maxAccelerationInTimestep = maxAcceleration * STEP_LENGTH;
 
-        float minimumBreakingDistance = 0f;
-
-        for (float velocity = Math.abs(ship.getAngularVelocity()) - maxAccelerationInTimestep;
-             velocity > 0;
-             velocity -= maxAccelerationInTimestep) {
-            minimumBreakingDistance += STEP_LENGTH * velocity
-                    - 1/2f * maxAccelerationInTimestep * STEP_LENGTH * STEP_LENGTH;
-        }
+        float maxVelocity = ship.getStats().getMaxAngularVelocity();
+        float decelerationTime = ship.getAngularVelocity() / maxAcceleration; // atm this calculation doesn't take time steps (STEP_LENGTH) into account
 
         maxAccelerationInTimestep *= ship.getStats().getInertia();
 
+        float minimumBreakingDistance = decelerationTime * ship.getAngularVelocity() - maxAcceleration * decelerationTime * decelerationTime / 2f;
+        if (minimumBreakingDistance > 0) {
+            float rampedSpeed = -1f * maxVelocity * angleDiff / minimumBreakingDistance;
 
-        // log(minimumBreakingDistance + " vs " + angleDiff);
+            float desiredVelocity = MathUtils.clamp(rampedSpeed, -maxVelocity, maxVelocity);
 
-        if (Math.abs(angleDiff) > minimumBreakingDistance) {
-            ship.setTurningState(TurningState.FULL_SPEED);
-            float desiredVelocity = ship.getStats().getMaxAngularVelocity();
-            if (angleDiff > 0) {
-                desiredVelocity *= -1f;
-            }
             change = ship.getStats().getInertia() * (desiredVelocity - ship.getAngularVelocity());
+
             change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
         }
         else {
-            if (ship.getTurningState() == TurningState.DONE_BRAKING) {
-                change = 0;
-            }
-            else {
-                if (ship.getTurningState() == TurningState.FULL_SPEED) {
-                    ship.setBrakingLeft(-1f * ship.getStats().getInertia() * ship.getAngularVelocity());
-                    ship.setTurningState(TurningState.BRAKING);
-                }
-
-                change = ship.getBrakingLeft();
-                if (Math.abs(change) < maxAccelerationInTimestep) {
-                    ship.setTurningState(TurningState.DONE_BRAKING);
-                }
-                change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
-                ship.setBrakingLeft(ship.getBrakingLeft() - change);
-            }
+            change = 0f;
         }
 
-        change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
         return change;
     }
 

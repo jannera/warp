@@ -46,6 +46,16 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
+* Maksiminopeuden asettaminen
+    * Numeroista asettaminen
+    * Rajoituksen pakottaminen Steeringissä
+    * Rajoituksen näyttäminen aluksen lähellä
+
+MVProto
+===
+* Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
+  atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
+* Pitäisikö kyetä kiihdyttämään/jarruttamaan vain aluksen suuntaan?
 * Rendaa valituille aluksille
     * DONE Orbit-kursori mikäli orbit on päällä
     * Orbitin ympyränuoli mikäli orbit on päällä
@@ -57,13 +67,6 @@ Steps Before First Catalog-tuning, Nice to have
         * Selkeästi erotettavissa hiiren kursori-ikoneista joita käytetään kun annetaan käskyjä
     * Ikonien kuvien ei pitäisi sisältää sävyä, vaan se voitaisiin asettaa ohjelmallisesti (kaikille samaksi, helppo muuttaminen ja testailu)
         * Paitsi että tuskin mahdollista hiiren kursoreille jotka määritellään CSS:ssä..
-* Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
-  atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
-* Erilaiset alustyypit
-    * DONE Koko katalogiin, ja koon välittäminen läpi luontiketjun
-    * Alustyyppi ShipStatseihin
-    * Eri graffat
-    * DONE Eri alustyyppien luominen fleet build windowiin
 * Alusten ja niiden stattien ostaminen kälin kautta
     * Save/load ship
     * Save/load fleet nimillä
@@ -71,14 +74,14 @@ Steps Before First Catalog-tuning, Nice to have
     * Delete saved fleet
     * DONE Lukumäärän antaminen aluksille
     * DONE Tällä hetkellä aktiivisen laivan nappulan pitäisi erottua muista.. kenties yksinkertaisesti eri värinen?
-* Maksiminopeuden asettaminen
-    * Numeroista asettaminen
-    * Rajoituksen pakottaminen Steeringissä
-    * Rajoituksen näyttäminen aluksen lähellä
-* Yliampumisen poistaminen steerauksen angular impulsen hakemisesta
-
-MVProto
-===
+* Erilaiset alustyypit
+    * DONE Koko katalogiin, ja koon välittäminen läpi luontiketjun
+    * Alustyyppi ShipStatseihin
+    * Eri graffat
+    * DONE Eri alustyyppien luominen fleet build windowiin
+* Orbit-käskyä annettaessa voisi näyttää numerona rangen ja kiertonopeuden rad/s
+* Trailin pitäisi toimia aluksen keskikohdasta
+* Isojen alusten hitboxit ovat valtavia, vois pienentää tai jättää kokonaan pois?
 * Kääntymisnopeutta voisi myös rajoittaa serverin päässä
 * Jotenkin pitäisi rajoittaa ettei kääntymisen max kiihtyminen voi olla suurempi kuin max velocity.. tai korjata steering
 * Ampumiskohteen asettaminen helpommaksi:
@@ -210,3 +213,4 @@ MVProto DONE
 * DONE Alus pitäisi valita klikatessa ainostaan hiiren default-moodissa.. minkä voisi uudelleennimetä default_selectiksi?
 * DONE Määrän ja tyypin näyttäminen buildin valintanapissa
 * DONE Selvitä minkä takia fysiikkafixturessa on päddingiä verrattuna graffaan
+* DONE Yliampumisen poistaminen steerauksen angular impulsen hakemisesta
