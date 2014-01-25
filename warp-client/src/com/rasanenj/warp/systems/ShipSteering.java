@@ -80,22 +80,28 @@ public class ShipSteering extends IntervalTask {
         angleDiff *= MathUtils.degreesToRadians;
 
         float change;
+        float minimumBreakingDistance;
 
         float maxAcceleration = ship.getStats().getMaxAngularAcceleration();
-        float maxAccelerationInTimestep = maxAcceleration * STEP_LENGTH;
-
         float maxVelocity = ship.getStats().getMaxAngularVelocity();
-        float decelerationTime = ship.getAngularVelocity() / maxAcceleration; // atm this calculation doesn't take time steps (STEP_LENGTH) into account
 
-        maxAccelerationInTimestep *= ship.getStats().getInertia();
-
-        float minimumBreakingDistance = decelerationTime * ship.getAngularVelocity() - maxAcceleration * decelerationTime * decelerationTime / 2f;
+        if (ship.getAngularVelocity() != 0) {
+            float decelerationTime = ship.getAngularVelocity() / maxAcceleration; // atm this calculation doesn't take time steps (STEP_LENGTH) into account
+            minimumBreakingDistance = decelerationTime * ship.getAngularVelocity() - maxAcceleration * decelerationTime * decelerationTime / 2f;
+        }
+        else {
+            float decelerationTime = maxVelocity / maxAcceleration;
+            minimumBreakingDistance = decelerationTime * maxVelocity - maxAcceleration * decelerationTime * decelerationTime / 2f;
+        }
         if (minimumBreakingDistance > 0) {
             float rampedSpeed = -1f * maxVelocity * angleDiff / minimumBreakingDistance;
 
             float desiredVelocity = MathUtils.clamp(rampedSpeed, -maxVelocity, maxVelocity);
 
             change = ship.getStats().getInertia() * (desiredVelocity - ship.getAngularVelocity());
+
+            float maxAccelerationInTimestep = maxAcceleration * STEP_LENGTH;
+            maxAccelerationInTimestep *= ship.getStats().getInertia();
 
             change = MathUtils.clamp(change, -maxAccelerationInTimestep, maxAccelerationInTimestep);
         }

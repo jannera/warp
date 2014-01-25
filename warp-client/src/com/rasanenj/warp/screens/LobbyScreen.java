@@ -129,8 +129,12 @@ public class LobbyScreen implements Screen {
         @Override
         public void onOpen() {
             if (WarpGame.START_SCREEN == WarpGame.ScreenType.LOBBY) {
-                serverConnection.send(new JoinServerMessage(WelcomeScreen.loadEarlierName(), -1));
-                serverConnection.send(new JoinChatMessage(WelcomeScreen.loadEarlierName()));
+                String name = WelcomeScreen.loadEarlierName();
+                if (name == null) {
+                    name = "dummyname";
+                }
+                serverConnection.send(new JoinServerMessage(name, -1));
+                serverConnection.send(new JoinChatMessage(name));
             }
         }
 

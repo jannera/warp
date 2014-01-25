@@ -4,6 +4,9 @@
     <root id="root">
       <element id="gwt-compiler-output" facet="warp-html/gwt/GWT" />
       <element id="javaee-facet-resources" facet="warp-html/web/Web" />
+      <element id="directory" name="assets">
+        <element id="dir-copy" path="$PROJECT_DIR$/warp-android/assets" />
+      </element>
     </root>
   </artifact>
 </component>
