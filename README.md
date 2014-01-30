@@ -47,12 +47,16 @@ Steps Before First Catalog-tuning, Need to have
 Steps Before First Catalog-tuning, Nice to have
 ===
 * Maksiminopeuden asettaminen
-    * Numeroista asettaminen
+    * DONE Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
+        * Orbitissa pitäisi kyetä lähestymään täysillä, ja hidastamaan vasta kun on lähellä orbitointia
+        * Go To
+        * Fly In Direction
     * Rajoituksen näyttäminen aluksen lähellä
 
 MVProto
 ===
+* Density pitäisi kyetä antamaan katalogissa -> painavammat isommat laivat
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?
 * Pitäisikö kyetä kiihdyttämään/jarruttamaan vain aluksen suuntaan?
@@ -79,7 +83,9 @@ MVProto
     * Alustyyppi ShipStatseihin
     * Eri graffat
     * DONE Eri alustyyppien luominen fleet build windowiin
-* Orbit-käskyä annettaessa voisi näyttää numerona rangen ja kiertonopeuden rad/s
+* Orbit-käskyä annettaessa voisi näyttää numerona
+    * rangen
+    * DONE kiertonopeuden rad/s
 * Trailin pitäisi toimia aluksen keskikohdasta
 * Isojen alusten hitboxit ovat valtavia, vois pienentää tai jättää kokonaan pois?
 * Kääntymisnopeutta voisi myös rajoittaa serverin päässä

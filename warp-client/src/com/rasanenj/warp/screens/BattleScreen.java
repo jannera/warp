@@ -17,10 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Random;
-import com.rasanenj.warp.Assets;
-import com.rasanenj.warp.BattleHandler;
-import com.rasanenj.warp.OrbitUIHandler;
-import com.rasanenj.warp.Settings;
+import com.rasanenj.warp.*;
 import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
@@ -178,6 +175,44 @@ public class BattleScreen implements Screen {
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
+
+        renderTextBelowMouseCursor();
+    }
+
+    final Array<Float> velocities = new Array<Float>(false, 16);
+
+    private void renderTextBelowMouseCursor() {
+        if (orbitUIHandler.getState() != OrbitUIHandler.State.SELECTING_RADIUS) {
+            return;
+        }
+
+        float orbitCircleRadius = orbitUIHandler.getOrbitRadius();
+
+
+        velocities.clear();
+        for (ClientShip s : battleHandler.getSelectedShips()) {
+            float vel = s.getDesiredVelocity();
+            if (!velocities.contains(vel, false)) {
+                velocities.add(vel);
+            }
+        }
+
+        String textBelowCursor = "";
+        for (Float f : velocities) {
+            float angularSpeed = Geometry.getAngularSpeed(f, orbitCircleRadius);
+            if (!textBelowCursor.isEmpty()) {
+                textBelowCursor += ", ";
+            }
+            textBelowCursor += decimalFormatter.format(angularSpeed);
+        }
+
+        float x = Gdx.input.getX();
+        float y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30f;
+
+        batch.begin();
+        font.setColor(1, 1, 1, 1);
+        font.draw(batch, textBelowCursor, x, y);
+        batch.end();
     }
 
     private void renderOrbitTargets() {
@@ -229,7 +264,8 @@ public class BattleScreen implements Screen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Assets.newCommandsColor);
-        shapeRenderer.circle(orbitCircleTarget.getX(), orbitCircleTarget.getY(), orbitCircleRadius);
+        orbitCircleTarget.getCenterPos(tmp);
+        shapeRenderer.circle(tmp.x, tmp.y, orbitCircleRadius);
         shapeRenderer.end();
     }
 

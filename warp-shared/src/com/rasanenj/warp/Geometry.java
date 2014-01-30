@@ -77,4 +77,8 @@ public class Geometry {
         a.scl(adotb / bdotb);
         return a;
     }
+
+    public static float getAngularSpeed(float velocity, float radius) {
+        return velocity / radius;
+    }
 }
