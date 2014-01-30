@@ -202,4 +202,36 @@ public class ShipStats {
     public float getHeight() {
         return height;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ShipStats shipStats = (ShipStats) o;
+
+        if (Float.compare(shipStats.cost, cost) != 0) return false;
+        if (Float.compare(shipStats.height, height) != 0) return false;
+        if (Float.compare(shipStats.inertia, inertia) != 0) return false;
+        if (Float.compare(shipStats.mass, mass) != 0) return false;
+        if (Float.compare(shipStats.maxAcceleration, maxAcceleration) != 0) return false;
+        if (Float.compare(shipStats.maxAngularAcceleration, maxAngularAcceleration) != 0) return false;
+        if (Float.compare(shipStats.maxAngularVelocity, maxAngularVelocity) != 0) return false;
+        if (Float.compare(shipStats.maxHealth, maxHealth) != 0) return false;
+        if (Float.compare(shipStats.maxLinearForceBackward, maxLinearForceBackward) != 0) return false;
+        if (Float.compare(shipStats.maxLinearForceForward, maxLinearForceForward) != 0) return false;
+        if (Float.compare(shipStats.maxLinearForceLeft, maxLinearForceLeft) != 0) return false;
+        if (Float.compare(shipStats.maxLinearForceRight, maxLinearForceRight) != 0) return false;
+        if (Float.compare(shipStats.maxLinearVelocity, maxLinearVelocity) != 0) return false;
+        if (Float.compare(shipStats.signatureResolution, signatureResolution) != 0) return false;
+        if (Float.compare(shipStats.weaponCooldown, weaponCooldown) != 0) return false;
+        if (Float.compare(shipStats.weaponDamage, weaponDamage) != 0) return false;
+        if (Float.compare(shipStats.weaponFalloff, weaponFalloff) != 0) return false;
+        if (Float.compare(shipStats.weaponOptimal, weaponOptimal) != 0) return false;
+        if (Float.compare(shipStats.weaponSignatureRadius, weaponSignatureRadius) != 0) return false;
+        if (Float.compare(shipStats.weaponTracking, weaponTracking) != 0) return false;
+        if (Float.compare(shipStats.width, width) != 0) return false;
+
+        return true;
+    }
 }

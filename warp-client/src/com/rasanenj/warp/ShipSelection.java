@@ -73,4 +73,11 @@ public class ShipSelection implements Iterable<ClientShip> {
             s.setDesiredRelativeVelocity(velocity);
         }
     }
+
+    public void set(Iterable<ClientShip> newSet) {
+        clear();
+        for (ClientShip s : newSet) {
+            add(s);
+        }
+    }
 }

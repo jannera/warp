@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.screens.LobbyScreen;
@@ -18,10 +19,7 @@ import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 import com.rasanenj.warp.tasks.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
@@ -48,6 +46,7 @@ public class BattleHandler {
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
     private final ShipSelection selection = new ActiveShipSelection();
     private MouseState mouseState = MouseState.DEFAULT;
+    private final Array<Array<ClientShip>> shipQuickGroups = new Array<Array<ClientShip>>(true, 9);
 
     public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
         conn.register(new ConnectionListener());
@@ -68,6 +67,9 @@ public class BattleHandler {
         this.lobbyScreen = lobbyScreen;
         this.orbitUIHandler = new OrbitUIHandler(taskHandler, screen.getCam(), ships, selection);
         screen.setOrbitUIHandler(orbitUIHandler);
+        for (int i=0; i < 9; i++) {
+            shipQuickGroups.add(new Array<ClientShip>(false, 0));
+        }
     }
 
     private enum MouseState {
@@ -115,7 +117,8 @@ public class BattleHandler {
                 CreateShipMessage message = (CreateShipMessage) msg;
                 Player owningPlayer = getPlayer(message.getOwnerId());
 
-                ClientShip ship = new ClientShip(message.getId(), owningPlayer, message.getStats());
+                ShipStats stats = message.getStats();
+                ClientShip ship = new ClientShip(message.getId(), owningPlayer, stats);
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.getClickRegionImage().addListener(shipClickListener);
@@ -129,6 +132,18 @@ public class BattleHandler {
                 else {
                     Color c = Assets.getBasicColor(owningPlayer);
                     ship.getImage().setColor(c);
+                }
+
+                // if these are my ships, put ships with the same stats into groups
+                if (message.getOwnerId() == myId) {
+                    for(Array<ClientShip> group : shipQuickGroups) {
+                        if (group.size == 0 ||
+                            group.get(0).getStats().equals(ship.getStats())) {
+                            // if found an empty group or a group that has similar ships
+                            group.add(ship);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -467,6 +482,12 @@ public class BattleHandler {
             }
             else if (event.getKeyCode() == Input.Keys.R) {
                 selection.setDesiredRelativeVelocity(1.0f);
+                return true;
+            }
+            else if (event.getKeyCode() >= Input.Keys.NUM_1 &&
+                     event.getKeyCode() <= Input.Keys.NUM_9) {
+                int index = event.getKeyCode() - Input.Keys.NUM_1;
+                selection.set(shipQuickGroups.get(index));
                 return true;
             }
             else {

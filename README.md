@@ -220,3 +220,4 @@ MVProto DONE
 * DONE Selvitä minkä takia fysiikkafixturessa on päddingiä verrattuna graffaan
 * DONE Yliampumisen poistaminen steerauksen angular impulsen hakemisesta
 * DONE Kameran liikuttelu ei saisi tökkiä
+* DONE Quickselect groupit numeroilla.. atm ryhmät luodaan automaattisesti pelin alussa
