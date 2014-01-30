@@ -36,6 +36,7 @@ public class ClientShip extends Group {
     private ClientShip orbitShip;
     private float orbitDst2;
     private Color circled;
+    private float relativeVelocity = 1f;
 
     public ClientShip(long id, Player owner, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -200,6 +201,18 @@ public class ClientShip extends Group {
 
     public void clearCircle() {
         circled = null;
+    }
+
+    public void setDesiredRelativeVelocity(float relativeVelocity) {
+        this.relativeVelocity = relativeVelocity;
+    }
+
+    public float getRelativeVelocity() {
+        return relativeVelocity;
+    }
+
+    public float getDesiredVelocity() {
+        return stats.getMaxLinearVelocity() * relativeVelocity;
     }
 
     public enum TurningState {

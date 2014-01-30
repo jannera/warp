@@ -429,6 +429,22 @@ public class BattleHandler {
                 }
                 return true;
             }
+            else if (event.getKeyCode() == Input.Keys.Q) {
+                selection.setDesiredRelativeVelocity(0.0f);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.W) {
+                selection.setDesiredRelativeVelocity(0.33f);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.E) {
+                selection.setDesiredRelativeVelocity(0.67f);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.R) {
+                selection.setDesiredRelativeVelocity(1.0f);
+                return true;
+            }
             else {
                 return false;
             }
@@ -610,6 +626,12 @@ public class BattleHandler {
 
         public boolean contains(ClientShip ship) {
             return selectedShips.contains(ship, true);
+        }
+
+        public void setDesiredRelativeVelocity(float velocity) {
+            for (ClientShip s : this) {
+                s.setDesiredRelativeVelocity(velocity);
+            }
         }
     }
 
