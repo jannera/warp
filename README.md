@@ -107,7 +107,6 @@ MVProto
     * Eri pisteidelle numerointi (?) tai nuolet pisteiden välillä
 * Reunakolmioiden siirtäminen ui-layerille
 * Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
-* Kameran liikuttelu ei saisi tökkiä
 * Ei uusia ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
@@ -214,3 +213,4 @@ MVProto DONE
 * DONE Määrän ja tyypin näyttäminen buildin valintanapissa
 * DONE Selvitä minkä takia fysiikkafixturessa on päddingiä verrattuna graffaan
 * DONE Yliampumisen poistaminen steerauksen angular impulsen hakemisesta
+* DONE Kameran liikuttelu ei saisi tökkiä

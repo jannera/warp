@@ -1,9 +1,11 @@
 package com.rasanenj.warp;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -33,7 +35,6 @@ public class BattleHandler {
     private final BattleMessageConsumer consumer;
     private final ShipClickListener shipClickListener;
     private final TaskHandler taskHandler;
-    private final MoveCameraTask moveCameraTask;
     private static final Color[] playerColors = {new Color(0.5f, 0, 0, 1), new Color(0, 0.5f, 0, 1), new Color(0, 0, 0.5f, 1), new Color(0, 0.5f, 0.5f, 1)};
     private static final Color[] hiliteColors = {new Color(1f, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0,0,1,1), new Color(0, 1, 1, 1)};
     private final Array<Player> players = new Array<Player>(true, 1);
@@ -61,9 +62,7 @@ public class BattleHandler {
         shipShooting = new ShipShooting(ships, conn);
         this.consumer = new BattleMessageConsumer(conn.getDelegator());
         this.taskHandler = new TaskHandler();
-        this.moveCameraTask = new MoveCameraTask(screen);
         this.hoverOverShipListener = new ShipHover();
-        taskHandler.addToTaskList(moveCameraTask);
         this.shipTextUpdater = new ShipTextUpdater(ships, selection, true, true);
         taskHandler.addToTaskList(shipTextUpdater);
         this.manualSteeringTask = new ManualSteeringTask(selection, screen);
@@ -256,11 +255,28 @@ public class BattleHandler {
 
     private class StageListener extends InputListener {
         DragState dragState;
+        private final Camera cam;
 
         private final Vector2 startPoint = new Vector2();
+        private final Vector3 screenCoordinates = new Vector3(),
+                tmp3_1 = new Vector3(),
+                tmp3_2 = new Vector3();
 
         public StageListener() {
             startPoint.set(screen.getStage().getCamera().position.x, screen.getStage().getCamera().position.y);
+            cam = screen.getStage().getCamera();
+        }
+
+        // returns the amount of world units that corresponds to one screen unit
+        private float getLengthModifier(Vector3 tmp) {
+            tmp.set(0, 0, 0);
+            cam.unproject(tmp);
+            float x1 = tmp.x;
+            tmp.set(1, 0, 0);
+            cam.unproject(tmp);
+            float x2 = tmp.x;
+
+            return x2 - x1;
         }
 
         public void touchDragged (InputEvent event, float x, float y, int pointer) {
@@ -276,14 +292,16 @@ public class BattleHandler {
             }
 
             if (dragState == DragState.PANNING) {
-                float dx = startPoint.x - x;
-                float dy = startPoint.y - y;
-                if (dx != 0 && dy != 0) {
-                    moveCameraTask.setTarget(dx, dy);
+                tmp3_1.set(x, y, 0);
+                cam.project(tmp3_1);
+
+                tmp3_2.set(tmp3_1);
+                tmp3_2.sub(screenCoordinates); // now it contains diff between last position and this position, in pixels
+                if (tmp3_2.x != 0 || tmp3_2.y != 0) {
+                    tmp3_2.scl(getLengthModifier(screenCoordinates)); // now it contains the same distance in units
+                    screen.translateCamera(-tmp3_2.x, -tmp3_2.y);
+                    screenCoordinates.set(tmp3_1);
                 }
-                log(x + ", " + y + " -> " + dx + ", " + dy);
-                // screen.translateCamera(dx, dy);
-                startPoint.set(x, y);
             }
             else if (dragState == DragState.MULTISELECTING) {
                 screen.setSelectionRectangleEnd(x, y);
@@ -295,7 +313,9 @@ public class BattleHandler {
             }
             if (event.getButton() == RIGHT_MOUSE) {
                 dragState = DragState.STARTING_PANNING;
-                startPoint.set(x, y);
+                screenCoordinates.set(x, y, 0);
+                cam.project(screenCoordinates);
+                log("at touchdown " + screenCoordinates.x + "," + screenCoordinates.y);
             }
             else if (event.getButton() == LEFT_MOUSE) {
                 dragState = DragState.STARTING_MULTISELECTING;
