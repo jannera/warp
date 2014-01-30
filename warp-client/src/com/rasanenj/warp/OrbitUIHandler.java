@@ -17,7 +17,7 @@ public class OrbitUIHandler {
     private final MouseShipSelector mouseShipSelector;
 
     private final Vector2 tmp = new Vector2(), tmp2 = new Vector2();
-    private final BattleHandler.ShipSelection selection;
+    private final ShipSelection selection;
 
     private ClientShip orbitTargetShip;
 
@@ -28,7 +28,7 @@ public class OrbitUIHandler {
     }
 
     public OrbitUIHandler(TaskHandler taskHandler, Camera cam, ArrayList<ClientShip> ships,
-                          BattleHandler.ShipSelection selection) {
+                          ShipSelection selection) {
         this.mouseShipSelector = new MouseShipSelector(cam, ships);
         taskHandler.addToTaskList(mouseShipSelector);
         orbitPosTask = new MousePositionTrackerTask(cam);

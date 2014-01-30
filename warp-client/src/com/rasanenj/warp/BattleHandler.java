@@ -35,8 +35,6 @@ public class BattleHandler {
     private final BattleMessageConsumer consumer;
     private final ShipClickListener shipClickListener;
     private final TaskHandler taskHandler;
-    private static final Color[] playerColors = {new Color(0.5f, 0, 0, 1), new Color(0, 0.5f, 0, 1), new Color(0, 0, 0.5f, 1), new Color(0, 0.5f, 0.5f, 1)};
-    private static final Color[] hiliteColors = {new Color(1f, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0,0,1,1), new Color(0, 1, 1, 1)};
     private final Array<Player> players = new Array<Player>(true, 1);
     private final ShipHover hoverOverShipListener;
     private final ShipShooting shipShooting;
@@ -48,7 +46,7 @@ public class BattleHandler {
     private long myId = -1;
     private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
-    private final ShipSelection selection = new ShipSelection();
+    private final ShipSelection selection = new ActiveShipSelection();
     private MouseState mouseState = MouseState.DEFAULT;
 
     public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
@@ -129,7 +127,7 @@ public class BattleHandler {
                     log(Level.SEVERE, "Couldn't find player with id: " + message.getOwnerId());
                 }
                 else {
-                    Color c = selection.getBasicColor(owningPlayer);
+                    Color c = Assets.getBasicColor(owningPlayer);
                     ship.getImage().setColor(c);
                 }
             }
@@ -403,7 +401,13 @@ public class BattleHandler {
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.A && ctrlDown) {
-                selection.selectAllMyShips();
+                selection.clear();
+                for (ClientShip s : ships) {
+                    if (s.getOwner().getId() == myId) {
+                        selection.add(s);
+                    }
+                }
+
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.N) {
@@ -565,93 +569,6 @@ public class BattleHandler {
         @Override
         public void onClose() {
             // TODO: maybe tell the screen the connection was lost?
-        }
-    }
-
-    public class ShipSelection implements Iterable<ClientShip> {
-        private Array<ClientShip> selectedShips = new Array<ClientShip>(false, 16);
-        private final Vector2 lastWeightedPos = new Vector2(Float.NaN, Float.NaN),
-        posDiff = new Vector2(0, 0), tmp = new Vector2(0, 0);
-
-        public Color getHiliteColor(Player player) {
-            return hiliteColors[player.getColorIndex()];
-        }
-
-        public Color getBasicColor(Player player) {
-            return playerColors[player.getColorIndex()];
-        }
-
-        public void selectAllMyShips() {
-            selectedShips.clear();
-            for (ClientShip s : ships) {
-                if (s.getOwner().getId() == myId) {
-                    add(s);
-                }
-            }
-        }
-
-        public void clear() {
-            if (selectedShips.size > 0) {
-                for (ClientShip s : selectedShips) {
-                    s.getImage().setColor(getBasicColor(s.getOwner()));
-                }
-                selectedShips.clear();
-            }
-        }
-
-        public void add(ClientShip ship) {
-            ship.getImage().setColor(getHiliteColor(ship.getOwner()));
-            selectedShips.add(ship);
-            calcWeightedPos(lastWeightedPos);
-        }
-
-        public void remove(ClientShip ship) {
-            selectedShips.removeValue(ship, true);
-            calcWeightedPos(lastWeightedPos);
-        }
-
-        @Override
-        public Iterator<ClientShip> iterator() {
-            return selectedShips.iterator();
-        }
-
-        private void calcWeightedPos(Vector2 tgt) {
-            if (selectedShips.size == 0) {
-                tgt.set(Float.NaN, Float.NaN);
-                return;
-            }
-
-            tgt.set(0, 0);
-            for (ClientShip ship : this) {
-                tgt.add(ship.getX(), ship.getY());
-            }
-            tgt.scl(1f / selectedShips.size);
-        }
-
-        /**
-         * Calculates the change in weighted position compared to last frame
-         * and stores the current position.
-         */
-        public Vector2 getPosDiff() {
-            if (selectedShips.size == 0) {
-                return posDiff.set(0, 0);
-            }
-
-            calcWeightedPos(posDiff);
-            tmp.set(posDiff);
-            posDiff.sub(lastWeightedPos);
-            lastWeightedPos.set(tmp);
-            return posDiff;
-        }
-
-        public boolean contains(ClientShip ship) {
-            return selectedShips.contains(ship, true);
-        }
-
-        public void setDesiredRelativeVelocity(float velocity) {
-            for (ClientShip s : this) {
-                s.setDesiredRelativeVelocity(velocity);
-            }
         }
     }
 

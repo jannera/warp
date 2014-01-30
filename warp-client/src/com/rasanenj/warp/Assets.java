@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.rasanenj.warp.messaging.Player;
 
 /**
  * @author gilead
@@ -32,4 +33,15 @@ public class Assets {
             existingCommandsColor = Color.YELLOW,
             statisticsColor = new Color(30f/255f, 191f/255f, 1, 1) // dodger blue
                     ;
+
+    private static final Color[] playerColors = {new Color(0.5f, 0, 0, 1), new Color(0, 0.5f, 0, 1), new Color(0, 0, 0.5f, 1), new Color(0, 0.5f, 0.5f, 1)};
+    private static final Color[] hiliteColors = {new Color(1f, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0,0,1,1), new Color(0, 1, 1, 1)};
+
+    public static Color getHiliteColor(Player player) {
+        return hiliteColors[player.getColorIndex()];
+    }
+
+    public static Color getBasicColor(Player player) {
+        return playerColors[player.getColorIndex()];
+    }
 }

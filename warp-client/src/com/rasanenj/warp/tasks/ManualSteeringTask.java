@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.rasanenj.warp.BattleHandler;
+import com.rasanenj.warp.ShipSelection;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.screens.BattleScreen;
 
@@ -14,7 +15,7 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ManualSteeringTask implements Task {
-    private final BattleHandler.ShipSelection selection;
+    private final ShipSelection selection;
     private final OrthographicCamera cam;
     private final BattleScreen screen;
     private boolean active = false;
@@ -23,7 +24,7 @@ public class ManualSteeringTask implements Task {
     private final Vector2 start = new Vector2(), end = new Vector2(), tmp2 = new Vector2();
     private final Vector3 tmp3 = new Vector3();
 
-    public ManualSteeringTask(BattleHandler.ShipSelection selection, BattleScreen screen) {
+    public ManualSteeringTask(ShipSelection selection, BattleScreen screen) {
         this.selection = selection;
         this.screen = screen;
         this.cam = screen.getCam();
