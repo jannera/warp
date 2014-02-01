@@ -307,19 +307,19 @@
                             "name" : "Health",
                             "values" : [
                                 {
-                                    "value" : 40,
+                                    "value" : 240,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 50,
+                                    "value" : 300,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 60,
+                                    "value" : 360,
                                     "cost" : 50
                                 },
                                 {
-                                    "value" : 70,
+                                    "value" : 420,
                                     "cost" : 90
                                 }
                             ]
@@ -329,19 +329,19 @@
                             "name" : "Signature",
                             "values" : [
                                 {
-                                    "value" : 40,
+                                    "value" : 160,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 35,
+                                    "value" : 140,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 30,
+                                    "value" : 120,
                                     "cost" : 60
                                 },
                                 {
-                                    "value" : 25,
+                                    "value" : 100,
                                     "cost" : 100
                                 }
                             ]
@@ -441,19 +441,19 @@
                             "name" : "Damage",
                             "values" : [
                                 {
-                                    "value" : 4,
+                                    "value" : 20,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 6,
+                                    "value" : 30,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 8,
+                                    "value" : 40,
                                     "cost" : 60
                                 },
                                 {
-                                    "value" : 10,
+                                    "value" : 50,
                                     "cost" : 100
                                 }
                             ]
@@ -463,19 +463,19 @@
                             "name" : "Cooldown",
                             "values" : [
                                 {
-                                    "value" : 10,
+                                    "value" : 20,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 8,
+                                    "value" : 18,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 6,
+                                    "value" : 16,
                                     "cost" : 60
                                 },
                                 {
-                                    "value" : 4,
+                                    "value" : 14,
                                     "cost" : 100
                                 }
                             ]
@@ -485,24 +485,24 @@
                             "name" : "Tracking",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 0.2,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 1.5,
+                                    "value" : 0.3,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 2,
+                                    "value" : 0.4,
                                     "cost" : 50
                                 },
                                 {
-                                    "value" : 2.5,
+                                    "value" : 0.5,
                                     "cost" : 70
                                 }
                                 ,
                                 {
-                                    "value" : 3,
+                                    "value" : 0.6,
                                     "cost" : 90
                                 }
                             ]
@@ -512,23 +512,23 @@
                             "name" : "Optimal",
                             "values" : [
                                 {
-                                    "value" : 2,
+                                    "value" : 8,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 7,
+                                    "value" : 28,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 12,
+                                    "value" : 48,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 17,
+                                    "value" : 68,
                                     "cost" : 80
                                 },
                                 {
-                                    "value" : 22,
+                                    "value" : 88,
                                     "cost" : 130
                                 }
                             ]
@@ -538,23 +538,23 @@
                             "name" : "Falloff",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 4,
                                     "cost" : 5
                                 },
                                 {
-                                    "value" : 3.5,
+                                    "value" : 14,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 6,
+                                    "value" : 24,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 8.5,
+                                    "value" : 34,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 11,
+                                    "value" : 44,
                                     "cost" : 75
                                 }
                             ]

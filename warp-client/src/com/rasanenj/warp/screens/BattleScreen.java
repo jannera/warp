@@ -493,24 +493,28 @@ public class BattleScreen implements Screen {
     }
 
     private void renderHealthBars() {
+        shapeRenderer.setProjectionMatrix(normalProjection);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (ClientShip ship : battleHandler.getShips()) {
             float health = ship.getHealth();
             float maxHealth = ship.getStats().getMaxHealth();
 
-            float startX = ship.getX();
-            float startY = ship.getY() - 0.4f;
+
+            tmp3.set(ship.getX(), ship.getY(), 0);
+            cam.project(tmp3);
             shapeRenderer.setColor(healthBarBG);
-            shapeRenderer.rect(startX, startY, maxHealth * healthBarScale, healthBarHeight);
+            tmp3.y -= 10f;
+            shapeRenderer.rect(tmp3.x, tmp3.y, maxHealth * healthBarScale / cam.zoom, healthBarHeight);
 
             shapeRenderer.setColor(healthBar);
-            shapeRenderer.rect(startX, startY, health * healthBarScale, healthBarHeight);
+            shapeRenderer.rect(tmp3.x, tmp3.y, health * healthBarScale / cam.zoom, healthBarHeight);
         }
         shapeRenderer.end();
+        shapeRenderer.setProjectionMatrix(cam.combined);
     }
 
     private static final Color healthBarBG = Color.RED, healthBar = Color.GREEN;
-    private static final float healthBarHeight = 0.05f, healthBarScale = 0.18f;
+    private static final float healthBarHeight = 2f, healthBarScale = 1f;
 
     private void renderDamageTexts() {
         if (damageMessages.size == 0) {
