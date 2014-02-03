@@ -49,7 +49,6 @@ public class ShipBuildWindow {
     }
 
     public void updateUI() {
-        log("updated shipbuild UI");
         total.setText("Total: " + getTotalCost());
         window.pack();
     }

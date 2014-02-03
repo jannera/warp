@@ -4,8 +4,10 @@ import com.badlogic.gdx.utils.Array;
 import com.sksamuel.gwt.websockets.Base64Utils;
 import com.sksamuel.gwt.websockets.Websocket;
 import com.sksamuel.gwt.websockets.WebsocketListener;
+import com.sksamuel.gwt.websockets.WebsocketRealBinary;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -18,7 +20,7 @@ public class ServerConnection implements WebsocketListener {
 
         public abstract void onClose();
     }
-    final Websocket socket;
+    final WebsocketRealBinary socket;
     private final MessageDelegator delegator;
 
     private final Array<OpenCloseListener> listeners =
@@ -26,7 +28,7 @@ public class ServerConnection implements WebsocketListener {
 
     public ServerConnection(String host, MessageDelegator delegator) {
         this.delegator = delegator;
-        socket = new Websocket(host);
+        socket = new WebsocketRealBinary(host);
         socket.addListener(this);
     }
 
@@ -57,6 +59,12 @@ public class ServerConnection implements WebsocketListener {
         for(OpenCloseListener l : listeners) {
             l.onOpen();
         }
+    }
+
+    @Override
+    public void onMessage(byte[] arr) {
+        Message message = MessageFactory.decode(ByteBuffer.wrap(arr));
+        delegator.delegate(null, message);
     }
 
     public void open() {

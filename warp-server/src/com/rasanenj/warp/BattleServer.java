@@ -33,6 +33,8 @@ public class BattleServer extends IntervalTask {
         }
     }
 
+    private final ShipPhysicsUpdate physicsUpdate;
+
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
             super(delegator);
@@ -161,6 +163,7 @@ public class BattleServer extends IntervalTask {
         this.wsServer = wsServer;
         this.world = world;
         this.consumer = new BattleMsgConsumer(delegator);
+        this.physicsUpdate = new ShipPhysicsUpdate();
     }
 
     private void sendToAll(Message msg) {
@@ -182,16 +185,30 @@ public class BattleServer extends IntervalTask {
     @Override
     protected void run() {
         consumer.consumeStoredMessages();
-        // log("Sending ship updates");
-        ArrayList<ServerShip> ships = battleLoop.getShips();
-        ArrayList<Message> messages = new ArrayList<Message>(ships.size());
-        final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
-        final float lerp2 = 1f - lerp1;
-        for (ServerShip ship : ships) {
-            ship.getInterpolatedPosition(pos, lerp1, lerp2);
-            float angle = ship.getInterpolatedAngle(lerp1, lerp2);
-            messages.add(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody()));
+        physicsUpdate.update();
+    }
+
+    private class ShipPhysicsUpdate extends IntervalTask {
+        private static final float PHYSICS_UPPDATES_IN_SECOND = 30f;
+
+        public ShipPhysicsUpdate() {
+            super(PHYSICS_UPPDATES_IN_SECOND);
         }
-        sendToAll(messages);
+
+        @Override
+        protected void run() {
+            ArrayList<ServerShip> ships = battleLoop.getShips();
+            ArrayList<Message> messages = new ArrayList<Message>(ships.size());
+            final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
+            final float lerp2 = 1f - lerp1;
+            // TODO: there's no reason to create and populate a list on every update
+            // TODO: we could just as well reuse old messages
+            for (ServerShip ship : ships) {
+                ship.getInterpolatedPosition(pos, lerp1, lerp2);
+                float angle = ship.getInterpolatedAngle(lerp1, lerp2);
+                messages.add(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody()));
+            }
+            sendToAll(messages);
+        }
     }
 }

@@ -126,7 +126,6 @@ public class FleetBuildWindow {
     }
 
     private int getCurrentlySelectedShipType() {
-        log (shipTypeSelect.getSelection());
         return shipTypes.get(shipTypeSelect.getSelection());
     }
 
@@ -233,7 +232,6 @@ public class FleetBuildWindow {
     }
 
     public void updateUI() {
-        log("updated fleet UI");
         totalCost.setText("Fleet total: " + getTotalCost());
         window.pack();
     }
@@ -267,13 +265,11 @@ public class FleetBuildWindow {
         if (rawText == null) {
             return;
         }
-        log(rawText);
         loadFromJson(rawText);
     }
 
     private void saveCurrentBuild() {
         String json = getJson();
-        log(json);
         LocalStorage.store(LocalStorage.CURRENT_BUILD, json);
     }
 

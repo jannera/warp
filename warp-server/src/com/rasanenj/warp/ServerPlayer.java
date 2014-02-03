@@ -21,7 +21,7 @@ public class ServerPlayer extends Player {
 
     public void send(Message msg) {
         try {
-            conn.send(Base64Utils.toBase64(msg.encode()));
+            conn.send(msg.encode());
         }
         catch (WebsocketNotConnectedException e) {
             e.printStackTrace();
