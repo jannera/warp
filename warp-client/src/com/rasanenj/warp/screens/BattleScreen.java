@@ -153,6 +153,7 @@ public class BattleScreen implements Screen {
         updateMessages();
         updateProjectiles();
         stage.act(Gdx.graphics.getDeltaTime());
+        estimateShipPositions();
         stage.draw();
         renderPaths();
         renderVectors();
@@ -177,6 +178,13 @@ public class BattleScreen implements Screen {
         renderPhysicsVertices();
 
         renderTextBelowMouseCursor();
+    }
+
+    private void estimateShipPositions() {
+        final long timeNow = System.currentTimeMillis();
+        for (ClientShip ship : battleHandler.getShips()) {
+            ship.updatePos(timeNow);
+        }
     }
 
     final Array<Float> velocities = new Array<Float>(false, 16);
@@ -660,18 +668,6 @@ public class BattleScreen implements Screen {
         String debugText = Gdx.graphics.getFramesPerSecond() + " fps, " + battleHandler.getShips().size() + " ships";
         font.draw(batch, debugText, 2, 20);
         batch.end();
-        if (!Settings.renderAcceleration) {
-            return;
-        }
-
-        stage.getSpriteBatch().begin();
-        for (ClientShip ship : battleHandler.getShips()) {
-            font.setColor(1f, 1f, 1f, 1);
-            String output = decimalFormatter.format(ship.getAcceleration());
-            // String output = String.format("%f.2", damageText.damage);
-            font.draw(stage.getSpriteBatch(), output, ship.getX(), ship.getY());
-        }
-        stage.getSpriteBatch().end();
     }
 
     @Override

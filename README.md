@@ -46,6 +46,25 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
+* Ammu vain kun se on järkevää
+    * Ampumisen viivästäminen jonkin perusteella
+        * etäisyys
+        * todennäköisyys
+        * mahdollisuus tuhota kohde
+* Useiden ampumakohteiden antaminen aluksille
+    * Ammu sitä mihin tekisit eniten lämää
+    * Ammu sitä mihin tekisit eniten lämää, mutta suosi kohteita jotka ovat jo ottaneet lämää
+        * -> ammu sitä kohdetta, jonka jäljellä olevista hipoista todennäköisesti tuhoaisin suurimman osan?
+    * Ota huomioon ampumiskäskyt joihin ei ole vielä tullut vastausta, ts. vältä overkilliä
+    * Ampuminen on sen verran monimutkainen optimointiongelma, että voisi olla järkevää kirjoittaa
+      AI joka optimoi laukausten "hyvyyttä" esmes seuraavan 30s aikana
+        * Haasteita: alusten sijainti ja nopeus pitäisi jotenkin approksimoida tulevaisuudessa
+            * Tai kenties arvioida kullekin ampuja - kohde -parille esim. neljä kertaa sekunnissa min ja max range
+              perustuen nykyisiin sijainteihin ja nopeuksiin ja ampujalle annettuihin käskyihin
+        * Päätöspuu jossa yksittäinen päätös on "ammun hetkellä t kohdetta x" tai "en ammu vielä"
+          ja hyöty arvioidaan kohteen arvon (käyttäjän antama), lämäennusteen ja jonkinlaisen
+          paikkatiedon luotettavuuden kertoimen (0..1) perusteella
+        * Ampumis-AI voisi optimoida koko fleetin toimintaa, ei pelkästään yksittäisen laivan
 * Maksiminopeuden asettaminen
     * DONE Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
@@ -53,9 +72,15 @@ Steps Before First Catalog-tuning, Nice to have
         * Go To
         * Fly In Direction
     * Rajoituksen näyttäminen aluksen lähellä
+* Kiertonopeus
+    * Maksimikiertonopeuden laskeminen orbit-säteestä
+    * Kuitenkin voisi ajaa "täysiä" ennen saapumista lähelle
 
 MVProto
 ===
+* Idea latenssin korjaamiseen:
+    * DONE kun serveriltä tulee päivitettyä tilatietoa, älä korjaa sijaintia yhdellä askeleella, vaan usean askeleen aikana  -> smoothimpi siirtymä, vähemmän hyppäystä
+    * Pehmeä siirtymä joka perustuu siihen, että aluksella on arvioitu nopeus, ja nopeuteen tehdään korjauksia (kiihtyvyys) jotta virhe projisoidun ja näytetyn sijainnin välillä pienenee
 * Density pitäisi kyetä antamaan katalogissa -> painavammat isommat laivat
 * Lentäminen on yhtä nopeaa sivuittain, taaksepäin kuin eteenkin päin.. ainoastaan maksimivoimilla = kiihtymisellä on
   atm merkitystä suunnan suhteen. Pitäisikö maksiminopeutta rajoittaa vastaavasti suunnan perusteella?

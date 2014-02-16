@@ -15,6 +15,9 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ServerConnection implements WebsocketListener {
+    private long lastSent = MessageStats.UNKNOWN; // the last time we sent a message, in my time
+    private final MessageStats lastReceived = new MessageStats(); // the last received message stats
+
     public interface OpenCloseListener {
         public abstract void onOpen();
 
@@ -37,6 +40,14 @@ public class ServerConnection implements WebsocketListener {
     }
 
     public void send(Message message) {
+        message.getLastMessageSenderReceivedStats().copyFrom(lastReceived);
+        lastSent = message.getThisStats().getSent();
+        if (lastSent == MessageStats.UNKNOWN) {
+            lastSent = System.currentTimeMillis();
+            message.getThisStats().setSent(lastSent);
+            // some messages want to set this by hand, others do not
+        }
+
         socket.send(message.encode());
     }
 
@@ -50,8 +61,7 @@ public class ServerConnection implements WebsocketListener {
     @Override
     public void onMessage(String msg) {
         byte[] bytes = Base64Utils.fromBase64(msg);
-        Message message = MessageFactory.decode(ByteBuffer.wrap(bytes));
-        delegator.delegate(null, message);
+        onMessage(bytes);
     }
 
     @Override
@@ -61,9 +71,20 @@ public class ServerConnection implements WebsocketListener {
         }
     }
 
+    private static final long LATENCY_LOGGING_INTERVAL_MS = 5000;
+    private long lastLatencyPrint = 0;
+
     @Override
     public void onMessage(byte[] arr) {
         Message message = MessageFactory.decode(ByteBuffer.wrap(arr));
+        lastReceived.copyFrom(message.getThisStats());
+
+        long timeNow = System.currentTimeMillis();
+        if (timeNow - lastLatencyPrint > LATENCY_LOGGING_INTERVAL_MS) {
+            lastLatencyPrint = timeNow;
+            log("estimated latency (half or roundtime) was " + message.estimateLatency());
+        }
+
         delegator.delegate(null, message);
     }
 

@@ -1,5 +1,6 @@
 package com.rasanenj.warp.messaging;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.io.UnsupportedEncodingException;
@@ -19,6 +20,12 @@ public abstract class Message {
         SHIP_DESTRUCTION, JOIN_BATTLE, JOIN_CHAT
     }
 
+    // concerning this message
+    private MessageStats thisStats = new MessageStats();
+
+    // concerning the last message the sender received
+    private MessageStats lastMessageSenderReceivedStats = new MessageStats();
+
     public abstract MessageType getType();
 
     private final static String CHARSET = "UTF-8";
@@ -35,7 +42,7 @@ public abstract class Message {
         try {
             return new String(b, CHARSET);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return null;
     }
@@ -43,9 +50,12 @@ public abstract class Message {
     abstract public byte[] encode();
 
     protected ByteBuffer create(int capacity) {
-        ByteBuffer b = ByteBuffer.allocate(capacity + Integer.SIZE/8);
+        ByteBuffer b = ByteBuffer.allocate(capacity + Integer.SIZE/8 + Long.SIZE/8 * 3);
         b.order(ByteOrder.BIG_ENDIAN);
         b.putInt(getType().ordinal());
+        b.putLong(thisStats.getSent());
+        b.putLong(lastMessageSenderReceivedStats.getReceived());
+        b.putLong(lastMessageSenderReceivedStats.getSent());
         return b;
     }
 
@@ -66,6 +76,16 @@ public abstract class Message {
         }
         log(Level.SEVERE, "Unknown type when trying to read type from a message: " + first);
         return null;
+    }
+
+    public static long readTimestamp(ByteBuffer msg) {
+        try {
+            return msg.getLong();
+        }
+        catch (IndexOutOfBoundsException e) {
+            log(Level.SEVERE, "IndexOutOfBoundsException when trying to read type from a message");
+            return -1;
+        }
     }
 
     public static void putFloats(ByteBuffer b, float ... floats) {
@@ -94,5 +114,34 @@ public abstract class Message {
             result[i] = new Vector2(b.getFloat(), b.getFloat());
         }
         return result;
+    }
+
+    public MessageStats getThisStats() {
+        return thisStats;
+    }
+
+    public MessageStats getLastMessageSenderReceivedStats() {
+        return lastMessageSenderReceivedStats;
+    }
+
+    // in milliseconds, rounded up
+    public long estimateLatency() {
+        return MathUtils.ceil(
+                (lastMessageSenderReceivedStats.getReceived()
+                        - lastMessageSenderReceivedStats.getSent()
+                        + thisStats.getReceived()
+                        - thisStats.getSent()) / 2f);
+    }
+
+    public static boolean getBoolean(ByteBuffer b) {
+        return b.getShort() != 0;
+    }
+
+    public static void putBoolean(ByteBuffer b, boolean value) {
+        short s = 0;
+        if (value) {
+            s = 1;
+        }
+        b.putShort (s);
     }
 }

@@ -43,9 +43,7 @@ public class JoinServerMessageTest {
         JoinServerMessage msg = new JoinServerMessage("name", 1);
         byte[] arr = msg.encode();
         ByteBuffer b = ByteBuffer.wrap(arr);
-        Message.MessageType type = Message.readType(b);
-        assertEquals(Message.MessageType.JOIN_SERVER, type);
-        msg = new JoinServerMessage(b);
+        msg = (JoinServerMessage) MessageFactory.decode(b);
         assertEquals("name", msg.playerName);
     }
 }

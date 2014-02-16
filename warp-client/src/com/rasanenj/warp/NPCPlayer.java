@@ -160,7 +160,7 @@ public class NPCPlayer {
                     log("Couldn't find a ship with id " + shipPhysicsMessage.getId());
                 }
                 else {
-                    long updateTime = shipPhysicsMessage.getTimestamp();
+                    long updateTime = shipPhysicsMessage.getThisStats().getReceived() - shipPhysicsMessage.estimateLatency();
                     ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
                     ship.setRotation(shipPhysicsMessage.getAngle());
                     ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY(), shipPhysicsMessage.getAngularVelocity(), updateTime);

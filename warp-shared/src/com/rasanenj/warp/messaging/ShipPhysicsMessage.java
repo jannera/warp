@@ -17,10 +17,10 @@ import static com.rasanenj.warp.Log.log;
  */
 public class ShipPhysicsMessage extends EntityMessage {
     private final float x,y, velX, velY, angle, angularVelocity;
-    private final long timestamp;
     private final Vector2[] vertices;
+    private boolean teleport;
 
-    public ShipPhysicsMessage(long id, Vector2 pos, float angle, Body body) {
+    public ShipPhysicsMessage(long id, Vector2 pos, float angle, Body body, boolean teleport) {
         super(id);
         Vector2 linearVelocity = body.getLinearVelocity();
         this.x = pos.x;
@@ -29,7 +29,7 @@ public class ShipPhysicsMessage extends EntityMessage {
         this.velY = linearVelocity.y;
         this.angle = angle;
         this.angularVelocity = body.getAngularVelocity();
-        this.timestamp = System.currentTimeMillis();
+        this.teleport = teleport;
 
         if (!Settings.renderPhysicsFixtures) {
             vertices = new Vector2[0];
@@ -61,7 +61,7 @@ public class ShipPhysicsMessage extends EntityMessage {
         this.velY = b.getFloat();
         this.angle = b.getFloat();
         this.angularVelocity = b.getFloat();
-        this.timestamp = b.getLong();
+        this.teleport = Message.getBoolean(b);
         this.vertices = Message.getVectors(b);
     }
 
@@ -72,9 +72,11 @@ public class ShipPhysicsMessage extends EntityMessage {
 
     @Override
     public byte[] encode() {
-        ByteBuffer b = create(Float.SIZE/8 * 6 + 2* Long.SIZE/8 + Message.getBytesForVectors(vertices));
+        ByteBuffer b = create(Float.SIZE/8 * 6 + Long.SIZE/8 +
+                Short.SIZE/8 + Message.getBytesForVectors(vertices));
         b.putLong(id).putFloat(x).putFloat(y).putFloat(velX).putFloat(velY).putFloat(angle)
-        .putFloat(angularVelocity).putLong(timestamp);
+        .putFloat(angularVelocity);
+        Message.putBoolean(b, teleport);
         Message.putVectors(b, vertices);
         return b.array();
     }
@@ -103,11 +105,11 @@ public class ShipPhysicsMessage extends EntityMessage {
         return angularVelocity;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     public Vector2[] getVertices() {
         return vertices;
+    }
+
+    public boolean isTeleport() {
+        return teleport;
     }
 }

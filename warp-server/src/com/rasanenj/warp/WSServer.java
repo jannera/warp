@@ -18,7 +18,6 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class WSServer extends WebSocketServer {
-
     private final MessageDelegator delegator;
     private final Collection<ServerPlayer> players;
 
@@ -84,6 +83,12 @@ public class WSServer extends WebSocketServer {
         if (player == null) {
             log("Couldn't find Player for connection " + conn + " msg " + msg.getType());
             return;
+        }
+        else {
+            player.getLastReceived().copyFrom(msg.getThisStats());
+
+            // log("Estimated latency to " + player.getName() + " was " + msg.estimateLatency());
+
         }
 
         delegator.delegate(player, msg);

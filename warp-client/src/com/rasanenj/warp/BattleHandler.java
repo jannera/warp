@@ -100,13 +100,19 @@ public class BattleHandler {
                     log("Couldn't find a ship with id " + shipPhysicsMessage.getId());
                 }
                 else {
-                    long updateTime = shipPhysicsMessage.getTimestamp();
-                    ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
-                    ship.setRotation(shipPhysicsMessage.getAngle());
+                    long updateTime = shipPhysicsMessage.getThisStats().getReceived()
+                            - shipPhysicsMessage.estimateLatency();
+                    ship.setLastServerPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY(), shipPhysicsMessage.getAngle());
+                    if (shipPhysicsMessage.isTeleport()) {
+                        ship.setPosition(shipPhysicsMessage.getX(), shipPhysicsMessage.getY());
+                        ship.setRotation(shipPhysicsMessage.getAngle());
+                        log("teleported");
+                    }
                     ship.setVelocity(shipPhysicsMessage.getVelX(), shipPhysicsMessage.getVelY(), shipPhysicsMessage.getAngularVelocity(), updateTime);
                     ship.setVertices(shipPhysicsMessage.getVertices());
                     ship.setUpdateTime(updateTime);
                     if (!firstPosSet && ship.getOwner().getId() == myId) {
+                        ship.updatePos(updateTime);
                         ship.getCenterPos(tmp);
                         screen.setCameraPos(tmp.x, tmp.y);
                         firstPosSet = true;

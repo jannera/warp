@@ -17,6 +17,7 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class ClientShip extends Group {
+    private final float MAX_DST_CHANGE_PER_FRAME, MIN_TELEPORT_DST;
     private final Player owner;
     private ClientShip firingTarget;
     private long lastFiringTime = 0;
@@ -37,6 +38,7 @@ public class ClientShip extends Group {
     private float orbitDst2;
     private Color circled;
     private float relativeVelocity = 1f;
+    private float lastServerRotation;
 
     public ClientShip(long id, Player owner, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -59,8 +61,6 @@ public class ClientShip extends Group {
         image.setWidth(width);
         image.setHeight(height);
 
-        accRefresh = 0;
-
         // make the hovering and non-hovering ships overlap on the center
         clickRegionImage.setPosition(image.getWidth() / 2f - clickRegionImage.getWidth() / 2f,
                 image.getHeight() / 2f - clickRegionImage.getHeight() / 2f);
@@ -69,6 +69,8 @@ public class ClientShip extends Group {
         this.health = stats.getMaxHealth();
 
         this.clearAllSteering();
+        MAX_DST_CHANGE_PER_FRAME = stats.getMaxLinearVelocity() * 4f / 60f;
+        MIN_TELEPORT_DST = MAX_DST_CHANGE_PER_FRAME * 60f;
     }
 
     private float brakingLeft;
@@ -224,20 +226,14 @@ public class ClientShip extends Group {
     Vector2 targetPos = new Vector2();
     Vector2 velocity = new Vector2();
     Vector2 impulse = new Vector2();
+    Vector2 lastServerPosition = new Vector2();
 
-    Vector2 tmp = new Vector2();
-
-    private static final float ACC_FREQ = 1f /10f;
-    private float oldAngularVelocity = 0;
-    private float oldVelocity = 0;
-    private long accRefresh = 0;
+    private static final Vector2 tmp = new Vector2(), tmp2 = new Vector2();
 
     private final long id;
 
     private float angularVelocity;
     private long updateTime;
-    private float angularAcceleration;
-    private float acceleration;
 
     public void setPosition(float x, float y) {
         if (!isVisible()) {
@@ -271,20 +267,6 @@ public class ClientShip extends Group {
     public void setVelocity(float velX, float velY, float angularVelocity, long timeNow) {
         velocity.set(velX, velY);
 
-        final float delta = (timeNow - accRefresh) / 1000f;
-        if (delta > ACC_FREQ) {
-            if (getId() == lastid) {
-                //log("diff " + (angularVelocity - this.oldAngularVelocity));
-                // log(angularVelocity + " vs " + oldAngularVelocity);
-            }
-            // TODO: these could be taken as a sum of last n updates, stored in an array
-            // TODO: these are for some reason totally wrong. compare to VelocityPrinter
-            this.angularAcceleration =  (angularVelocity - this.oldAngularVelocity) / delta;
-            this.acceleration = (velocity.len() - oldVelocity) / delta;
-            accRefresh = timeNow;
-            oldAngularVelocity = angularVelocity;
-        }
-
         this.angularVelocity = angularVelocity;
     }
 
@@ -307,8 +289,28 @@ public class ClientShip extends Group {
 
     public void updatePos(long timeNow) {
         final float delta = (timeNow - updateTime) / 1000f;
-        log("delta:" + delta);
-        setPosition(getX() + delta * velocity.x, getY() + delta * velocity.y);
+        tmp2.set(lastServerPosition.x + delta * velocity.x,
+                 lastServerPosition.y + delta * velocity.y);
+        tmp.set(getX(), getY());
+        float dst = tmp.dst(tmp2);
+
+        if (dst > MAX_DST_CHANGE_PER_FRAME) {
+            if (dst > MIN_TELEPORT_DST) {
+                // if the dst is too high, i.e. it would take over 1sec to catch up, just teleport
+                tmp.set(tmp2);
+                log("teleported because " + dst + " > " + MIN_TELEPORT_DST);
+            }
+            else {
+                tmp.lerp(tmp2, MAX_DST_CHANGE_PER_FRAME / dst);
+                // log("catching up " + MAX_DST_CHANGE_PER_FRAME / dst);
+            }
+        }
+        else {
+            // log("moved " + dst);
+            tmp.set(tmp2);
+        }
+        setPosition(tmp.x, tmp.y);
+        setRotation(lastServerRotation + delta * angularVelocity);
     }
 
     public void setUpdateTime(long updateTime) {
@@ -321,10 +323,6 @@ public class ClientShip extends Group {
 
     public Vector2 getImpulse() {
         return impulse;
-    }
-
-    public float getAngularAcceleration() {
-        return angularAcceleration;
     }
 
     public TurningState getTurningState() {
@@ -389,10 +387,6 @@ public class ClientShip extends Group {
         return health;
     }
 
-    public float getAcceleration() {
-        return acceleration;
-    }
-
     public ShipStats getStats() {
         return stats;
     }
@@ -423,5 +417,10 @@ public class ClientShip extends Group {
 
     public float getOrbitDst2() {
         return orbitDst2;
+    }
+
+    public void setLastServerPosition(float x, float y, float rotation) {
+        lastServerPosition.set(x, y);
+        lastServerRotation = rotation;
     }
 }

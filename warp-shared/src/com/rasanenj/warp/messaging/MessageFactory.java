@@ -10,35 +10,58 @@ import static com.rasanenj.warp.Log.log;
  */
 public class MessageFactory {
     public static Message decode(ByteBuffer msg) {
+        long received = System.currentTimeMillis();
         Message.MessageType type = Message.readType(msg);
+        long sent = Message.readTimestamp(msg);
+        long sendersLastMessageReceived = Message.readTimestamp(msg);
+        long sendersLastMessageSent = Message.readTimestamp(msg);
+        Message message = null;
         switch (type) {
             case JOIN_SERVER:
-                return new JoinServerMessage(msg);
+                message = new JoinServerMessage(msg);
+                break;
             case CHAT_MSG:
-                return new ChatMessage(msg);
+                message = new ChatMessage(msg);
+                break;
             case DISCONNECT:
-                return new DisconnectMessage(msg);
+                message = new DisconnectMessage(msg);
+                break;
             case UPDATE_SHIP_PHYSICS:
-                return new ShipPhysicsMessage(msg);
+                message = new ShipPhysicsMessage(msg);
+                break;
             case CREATE_SHIP:
-                return new CreateShipMessage(msg);
+                message = new CreateShipMessage(msg);
+                break;
             case SET_ACCELERATION:
-                return new AccelerationMessage(msg);
+                message = new AccelerationMessage(msg);
+                break;
             case SHIP_STATS:
-                return new ShipStatsMessage(msg);
+                message = new ShipStatsMessage(msg);
+                break;
             case SHOOT_REQUEST:
-                return new ShootRequestMessage(msg);
+                message = new ShootRequestMessage(msg);
+                break;
             case SHOOT_DAMAGE:
-                return new ShootDamageMessage(msg);
+                message = new ShootDamageMessage(msg);
+                break;
             case SHIP_DESTRUCTION:
-                return new ShipDestructionMessage(msg);
+                message = new ShipDestructionMessage(msg);
+                break;
             case JOIN_CHAT:
-                return new JoinChatMessage(msg);
+                message = new JoinChatMessage(msg);
+                break;
             case JOIN_BATTLE:
-                return new JoinBattleMessage(msg);
+                message = new JoinBattleMessage(msg);
+                break;
+            default:
+                log(Level.SEVERE, "MessageFactory could not decode type " + type);
         }
-        log(Level.SEVERE, "MessageFactory could not decode type " + type);
-        return null;
+        message.getThisStats().setSent(sent);
+        message.getThisStats().setReceived(received);
+        message.getLastMessageSenderReceivedStats().setReceived(sendersLastMessageReceived);
+        message.getLastMessageSenderReceivedStats().setSent(sendersLastMessageSent);
+
+        return message;
     }
 
 }

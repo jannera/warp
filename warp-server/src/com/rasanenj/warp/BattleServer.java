@@ -64,10 +64,16 @@ public class BattleServer extends IntervalTask {
 
                 battleLoop.addPlayer(player);
 
+                final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
+                final float lerp2 = 1f - lerp1;
+
                 // notify the new player about existing ships
                 for (ServerShip ship : battleLoop.getShips()) {
                     // log ("player id was " + ship.getPlayer().getId());
                     serverPlayer.send(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getStats()));
+                    ship.getInterpolatedPosition(pos, lerp1, lerp2);
+                    float angle = ship.getInterpolatedAngle(lerp1, lerp2);
+                    serverPlayer.send(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody(), true));
                 }
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
@@ -115,6 +121,11 @@ public class BattleServer extends IntervalTask {
                 battleLoop.addShip(ship);
                 // notify everyone about the new ship
                 sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getStats()));
+                final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
+                final float lerp2 = 1f - lerp1;
+                ship.getInterpolatedPosition(pos, lerp1, lerp2);
+                float angle = ship.getInterpolatedAngle(lerp1, lerp2);
+                serverPlayer.send(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody(), true));
             }
             else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {
                 ShootRequestMessage message = (ShootRequestMessage) msg;
@@ -206,7 +217,7 @@ public class BattleServer extends IntervalTask {
             for (ServerShip ship : ships) {
                 ship.getInterpolatedPosition(pos, lerp1, lerp2);
                 float angle = ship.getInterpolatedAngle(lerp1, lerp2);
-                messages.add(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody()));
+                messages.add(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody(), false));
             }
             sendToAll(messages);
         }
