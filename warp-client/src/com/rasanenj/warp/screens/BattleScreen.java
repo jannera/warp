@@ -21,6 +21,7 @@ import com.rasanenj.warp.*;
 import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
+import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.tasks.PathPlotterTask;
 
 
@@ -155,6 +156,9 @@ public class BattleScreen implements Screen {
         stage.act(Gdx.graphics.getDeltaTime());
         estimateShipPositions();
         stage.draw();
+
+        renderPositionProjections();
+
         renderPaths();
         renderVectors();
         renderOffScreenShips();
@@ -178,6 +182,34 @@ public class BattleScreen implements Screen {
         renderPhysicsVertices();
 
         renderTextBelowMouseCursor();
+    }
+
+    private void renderPositionProjections() {
+        if (!Settings.renderPositionProjections) {
+            return;
+        }
+
+        shapeRenderer.setProjectionMatrix(normalProjection);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
+        Color c = new Color();
+
+        for (ClientShip ship : battleHandler.getShips()) {
+            boolean first = true;
+            c.set(ship.getImage().getColor());
+            for (PositionProjection projection : ship.getProjectedPositions()) {
+                if (first) {
+                    first = false;
+                }
+                float scale = 1f - 0.75f * (float) projection.getTimestamp() / (float) ShipShooting.PROJECTION_TIME_MS;
+                shapeRenderer.setColor(scale * c.r, scale * c.g, scale * c.b, 1);
+                tmp3.set(projection.getPosition().x, projection.getPosition().y, 0);
+                cam.project(tmp3);
+                shapeRenderer.circle(tmp3.x, tmp3.y, 3);
+            }
+        }
+        shapeRenderer.end();
+        shapeRenderer.setProjectionMatrix(cam.combined);
     }
 
     private void estimateShipPositions() {

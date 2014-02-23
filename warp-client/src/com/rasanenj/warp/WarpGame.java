@@ -66,5 +66,5 @@ public class WarpGame extends Game implements ResizeHandler {
         }
     }
 
-    public static final ScreenType START_SCREEN = ScreenType.WELCOME;
+    public static final ScreenType START_SCREEN = ScreenType.BATTLE;
 }

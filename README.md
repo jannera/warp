@@ -65,6 +65,14 @@ Steps Before First Catalog-tuning, Nice to have
           ja hyöty arvioidaan kohteen arvon (käyttäjän antama), lämäennusteen ja jonkinlaisen
           paikkatiedon luotettavuuden kertoimen (0..1) perusteella
         * Ampumis-AI voisi optimoida koko fleetin toimintaa, ei pelkästään yksittäisen laivan
+* Ampumis-AI, laivakohtainen
+    * Laivojen sijaintien projisointi
+        * Ampujen sijainnin projisointi Steeringia simuloimalla
+        * DONE Kohteen sijainnin projisointi lineaarisen vauhdin perusteella
+        * DONE Projisoitujen sijaintien visualisointi
+    * Ammu nyt tai odota -pisteytys
+        * Optimoidaan pisteitä per aikayksikkö
+        * Lisäksi tulevaisuuden mahdollisuudet saavat optimistisuus/pessimistisyys -kertoimesta
 * Maksiminopeuden asettaminen
     * DONE Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
@@ -78,6 +86,9 @@ Steps Before First Catalog-tuning, Nice to have
 
 MVProto
 ===
+* Tällä hetkellä aluksen sijainti taidetaan asettaa clientilla vasempaan alanurkkaan,
+  kun käyttäjä todnäk mieltää sijainnin aluksen keskustaan. Tämä pitäisi korjata
+  clienttiin pikimmiten
 * Idea latenssin korjaamiseen:
     * DONE kun serveriltä tulee päivitettyä tilatietoa, älä korjaa sijaintia yhdellä askeleella, vaan usean askeleen aikana  -> smoothimpi siirtymä, vähemmän hyppäystä
     * Pehmeä siirtymä joka perustuu siihen, että aluksella on arvioitu nopeus, ja nopeuteen tehdään korjauksia (kiihtyvyys) jotta virhe projisoidun ja näytetyn sijainnin välillä pienenee

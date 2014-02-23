@@ -7,8 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Assets;
+import com.rasanenj.warp.PositionProjection;
 import com.rasanenj.warp.messaging.Player;
+import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 
 import static com.rasanenj.warp.Log.log;
@@ -39,6 +42,8 @@ public class ClientShip extends Group {
     private Color circled;
     private float relativeVelocity = 1f;
     private float lastServerRotation;
+    private Array<PositionProjection> projectedPositions =
+            new Array<PositionProjection>(true, ShipShooting.PROJECTION_POINTS_AMOUNT);
 
     public ClientShip(long id, Player owner, ShipStats stats) {
         this.image = new Image(Assets.shipTexture);
@@ -71,6 +76,10 @@ public class ClientShip extends Group {
         this.clearAllSteering();
         MAX_DST_CHANGE_PER_FRAME = stats.getMaxLinearVelocity() * 4f / 60f;
         MIN_TELEPORT_DST = MAX_DST_CHANGE_PER_FRAME * 60f;
+
+        for(int i = 0; i < ShipShooting.PROJECTION_POINTS_AMOUNT; i++) {
+            projectedPositions.add(new PositionProjection());
+        }
     }
 
     private float brakingLeft;
@@ -215,6 +224,10 @@ public class ClientShip extends Group {
 
     public float getDesiredVelocity() {
         return stats.getMaxLinearVelocity() * relativeVelocity;
+    }
+
+    public boolean hasSteeringTarget() {
+        return hasDirectionTarget() || hasOrbitTarget() || hasTargetPos();
     }
 
     public enum TurningState {
@@ -422,5 +435,9 @@ public class ClientShip extends Group {
     public void setLastServerPosition(float x, float y, float rotation) {
         lastServerPosition.set(x, y);
         lastServerRotation = rotation;
+    }
+
+    public Array<PositionProjection> getProjectedPositions() {
+        return projectedPositions;
     }
 }

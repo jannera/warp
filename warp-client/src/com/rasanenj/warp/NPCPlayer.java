@@ -23,6 +23,7 @@ public class NPCPlayer {
     private final ShipSteering steering;
     private final ShipShooting shooting;
     private long myId = -1;
+    private final Array<Player> players = new Array<Player>(true, 1);
 
     private final class MyShipInfo {
         public ClientShip targetShip = null;
@@ -31,6 +32,7 @@ public class NPCPlayer {
 
     private final long MIN_SHOOTING_TIME = 2000, MAX_SHOOTING_TIME = 12000; // in ms
 
+    private final ArrayList<ClientShip> allShips = new ArrayList<ClientShip>();
     private final ArrayList<ClientShip> myShips = new ArrayList<ClientShip>();
     private final ArrayList<ClientShip> enemyShips = new ArrayList<ClientShip>();
     private final Random rng = new Random();
@@ -42,7 +44,7 @@ public class NPCPlayer {
         this.consumer = new Consumer(delegator);
         this.conn = new ServerConnection(host, delegator);
         steering = new ShipSteering(myShips, conn);
-        shooting = new ShipShooting(myShips, conn);
+        shooting = new ShipShooting(allShips, conn, "shooting for npcs");
         conn.register(new ConnectionListener());
         conn.open();
     }
@@ -168,14 +170,24 @@ public class NPCPlayer {
                 }
             }
             else if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
+                // we should probably do all the initializing only after receiving JOIN_BATTLE
                 JoinBattleMessage message = (JoinBattleMessage) msg;
-                if (myId == -1) {
-                    myId = message.getPlayerId();
+                if (message.getPlayerId() != -1) {
+                    // terrible hack in order to use JoinServerMessages in both battle and chat
+                    Player p = new Player(message.getPlayerName(), message.getPlayerId(), message.getColorIndex());
+                    log("joined in battle:" + p);
+                    if (myId == -1) {
+                        myId = message.getPlayerId();
+                        shooting.setMyId(myId);
+                    }
+                    players.add(p);
                 }
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
                 CreateShipMessage message = (CreateShipMessage) msg;
-                ClientShip ship = new ClientShip(message.getId(), null, message.getStats());
+                Player owningPlayer = getPlayer(message.getOwnerId());
+
+                ClientShip ship = new ClientShip(message.getId(), owningPlayer, message.getStats());
                 if (message.getOwnerId() == myId) {
                     myShips.add(ship);
                     infos.put(ship.getId(), new MyShipInfo());
@@ -183,6 +195,7 @@ public class NPCPlayer {
                 else {
                     enemyShips.add(ship);
                 }
+                allShips.add(ship);
             }
             else if (msg.getType() == Message.MessageType.SHIP_DESTRUCTION) {
                 ShipDestructionMessage message = (ShipDestructionMessage) msg;
@@ -214,6 +227,7 @@ public class NPCPlayer {
     }
 
     private ClientShip removeShip(long id) {
+        removeShip(allShips, id);
         ClientShip s = removeShip(myShips, id);
         if (s != null) {
             infos.remove(s.getId());
@@ -249,6 +263,15 @@ public class NPCPlayer {
         for (ClientShip ship : ships) {
             if (ship.getId() == id) {
                 return ship;
+            }
+        }
+        return null;
+    }
+
+    public Player getPlayer(long id) {
+        for (Player p : players) {
+            if (p.getId() == id) {
+                return p;
             }
         }
         return null;

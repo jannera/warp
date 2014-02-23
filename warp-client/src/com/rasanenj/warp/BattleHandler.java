@@ -56,7 +56,7 @@ public class BattleHandler {
         this.shipClickListener = new ShipClickListener();
         screen.getStage().addListener(new StageListener());
         shipSteering = new ShipSteering(ships, conn);
-        shipShooting = new ShipShooting(ships, conn);
+        shipShooting = new ShipShooting(ships, conn, "shooting for player");
         this.consumer = new BattleMessageConsumer(conn.getDelegator());
         this.taskHandler = new TaskHandler();
         this.hoverOverShipListener = new ShipHover();
@@ -162,6 +162,7 @@ public class BattleHandler {
                     if (myId == -1) {
                         myId = message.getPlayerId();
                         manualSteeringTask.setMyId(myId);
+                        shipShooting.setMyId(myId);
                     }
                     players.add(p);
                 }
