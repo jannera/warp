@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
+import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
@@ -56,7 +57,8 @@ public class BattleHandler {
         this.shipClickListener = new ShipClickListener();
         screen.getStage().addListener(new StageListener());
         shipSteering = new ShipSteering(ships, conn);
-        shipShooting = new ShipShooting(ships, conn, "shooting for player");
+        ShipShootingAIDecisionTree shootingAI = new ShipShootingAIDecisionTree();
+        shipShooting = new ShipShooting(shootingAI, ships, conn);
         this.consumer = new BattleMessageConsumer(conn.getDelegator());
         this.taskHandler = new TaskHandler();
         this.hoverOverShipListener = new ShipHover();
@@ -218,7 +220,7 @@ public class BattleHandler {
         public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
             ClientShip ship = ClientShip.getShip(event.getTarget());
 
-            log("cursor entered " + ship);
+            // log("cursor entered " + ship);
             if (ship.getOwner().getId() == myId) {
                 return;
             }
@@ -229,7 +231,7 @@ public class BattleHandler {
         @Override
         public void exit (InputEvent event, float x, float y, int pointer, Actor toActor) {
             ClientShip ship = ClientShip.getShip(event.getTarget());
-            log("cursor exited " + ship);
+            // log("cursor exited " + ship);
             screen.setHoveringTarget(null);
         }
     }
@@ -335,7 +337,6 @@ public class BattleHandler {
                 dragState = DragState.STARTING_PANNING;
                 screenCoordinates.set(x, y, 0);
                 cam.project(screenCoordinates);
-                log("at touchdown " + screenCoordinates.x + "," + screenCoordinates.y);
             }
             else if (event.getButton() == LEFT_MOUSE) {
                 dragState = DragState.STARTING_MULTISELECTING;
@@ -379,7 +380,7 @@ public class BattleHandler {
                 Rectangle shipRect = new Rectangle();
                 for (ClientShip s : ships) {
                     s.getBoundingBox(shipRect);
-                    log(shipRect + " vs " + selectRect);
+                    // log(shipRect + " vs " + selectRect);
                     if (!selectRect.overlaps(shipRect)) {
                         continue;
                     }

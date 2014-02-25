@@ -24,15 +24,15 @@ public class ShipShooting extends IntervalTask {
     private static final int UPDATES_IN_SECOND = 1;
     private final ArrayList<ClientShip> ships;
     private final ServerConnection conn;
-    private final String name;
+    private final ShipShootingAI shootingAI;
 
     private long myId = -1;
 
-    public ShipShooting(ArrayList<ClientShip> ships, ServerConnection conn, String name) {
+    public ShipShooting(ShipShootingAI shootingAI, ArrayList<ClientShip> ships, ServerConnection conn) {
         super(UPDATES_IN_SECOND);
+        this.shootingAI = shootingAI;
         this.ships = ships;
         this.conn = conn;
-        this.name = name;
     }
 
     private final Vector2 position = new Vector2(), change = new Vector2();
@@ -61,14 +61,10 @@ public class ShipShooting extends IntervalTask {
                 continue;
             }
 
-            log(name);
-            ClientShip possibleTarget = ShipShootingAI.getFiringTarget(ship);
+            ClientShip possibleTarget = shootingAI.getFiringTarget(ship);
             if (possibleTarget != null) {
                 conn.send(new ShootRequestMessage(ship.getId(), possibleTarget.getId()));
                 ship.setLastFiringTime(System.currentTimeMillis());
-            }
-            else {
-                log("decided to wait");
             }
         }
     }

@@ -26,8 +26,6 @@ public class ChatHandler {
         public void consume(Player player, Message msg) {
             String chatMsg;
 
-            log(msg.getType());
-
             if (msg.getType() == Message.MessageType.JOIN_CHAT) {
                 chatMsg = ((JoinChatMessage) msg).getMsg() + " joined channel";
             }

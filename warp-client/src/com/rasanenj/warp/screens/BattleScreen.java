@@ -811,7 +811,7 @@ public class BattleScreen implements Screen {
             this.damage = damage;
             this.offsetX = offsetX;
             this.offsetY = offsetY;
-            log(offsetX + ", " + offsetY);
+            // log(offsetX + ", " + offsetY);
         }
     }
 

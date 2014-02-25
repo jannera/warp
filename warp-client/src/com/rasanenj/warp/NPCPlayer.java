@@ -2,6 +2,7 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.rasanenj.warp.ai.ShipShootingAISimple;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
@@ -44,7 +45,8 @@ public class NPCPlayer {
         this.consumer = new Consumer(delegator);
         this.conn = new ServerConnection(host, delegator);
         steering = new ShipSteering(myShips, conn);
-        shooting = new ShipShooting(allShips, conn, "shooting for npcs");
+        ShipShootingAISimple shootingAI = new ShipShootingAISimple();
+        shooting = new ShipShooting(shootingAI, allShips, conn);
         conn.register(new ConnectionListener());
         conn.open();
     }

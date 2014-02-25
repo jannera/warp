@@ -1,6 +1,7 @@
 package com.rasanenj.warp.messaging;
 
 import com.badlogic.gdx.utils.Array;
+import com.rasanenj.warp.Settings;
 import com.sksamuel.gwt.websockets.Base64Utils;
 import com.sksamuel.gwt.websockets.Websocket;
 import com.sksamuel.gwt.websockets.WebsocketListener;
@@ -80,9 +81,9 @@ public class ServerConnection implements WebsocketListener {
         lastReceived.copyFrom(message.getThisStats());
 
         long timeNow = System.currentTimeMillis();
-        if (timeNow - lastLatencyPrint > LATENCY_LOGGING_INTERVAL_MS) {
+        if (timeNow - lastLatencyPrint > LATENCY_LOGGING_INTERVAL_MS && Settings.logLatency) {
             lastLatencyPrint = timeNow;
-            log("estimated latency (half or roundtime) was " + message.estimateLatency());
+            log("estimated latency (half of roundtime) was " + message.estimateLatency());
         }
 
         delegator.delegate(null, message);

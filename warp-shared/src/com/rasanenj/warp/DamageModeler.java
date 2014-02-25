@@ -62,6 +62,10 @@ public class DamageModeler {
 
         float hitChance = getChance(shooterPos, targetPos, shooterLinVel,
                 targetLinVel, shooterStats, targetStats);
+        return getExpectedDamage(hitChance, shooterStats);
+    }
+
+    public static float getExpectedDamage(float hitChance, ShipStats shooterStats) {
         return shooterStats.getWeaponDamage() * hitChance;
     }
 }
