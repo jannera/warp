@@ -1,0 +1,7 @@
+*.class
+warp-android/bin/**
+warp-client/bin/**
+warp-desktop/bin/**
+out/**
+warp-html/war/WEB-INF/classes
+.idea/**
