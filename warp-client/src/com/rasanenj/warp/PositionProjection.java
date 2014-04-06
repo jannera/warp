@@ -9,13 +9,14 @@ public class PositionProjection {
     private long timestamp;
     private final Vector2 position = new Vector2();
     private float angle; // in degrees
-    // TODO: add velocity
+    private Vector2 velocity = new Vector2();
 
-    public void set(long timestamp, Vector2 position, float angle)
+    public void set(long timestamp, Vector2 position, float angle, Vector2 velocity)
     {
         this.timestamp = timestamp;
         this.position.set(position);
         this.angle = angle;
+        this.velocity.set(velocity);
     }
 
     public long getTimestamp() {
@@ -28,5 +29,9 @@ public class PositionProjection {
 
     public float getAngle() {
         return angle;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
     }
 }

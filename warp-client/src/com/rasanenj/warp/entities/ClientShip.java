@@ -230,6 +230,21 @@ public class ClientShip extends Group {
         return hasDirectionTarget() || hasOrbitTarget() || hasTargetPos();
     }
 
+    public void copySimulationStats(ClientShip ship) {
+        setPosition(ship.getX(), ship.getY());
+        setRotation(ship.getRotation());
+        getStats().copyPhysicsSimulationStats(ship.getStats());
+        velocity.set(ship.getVelocity());
+        targetPos.set(ship.getTargetPos());
+        targetDirection = ship.getTargetDirection();
+        orbitCW = ship.isOrbitCW();
+        orbitShip = ship.getOrbitShip();
+        orbitDst2 = ship.getOrbitDst2();
+        angularVelocity = ship.getAngularVelocity();
+        setWidth(ship.getWidth());
+        setHeight(ship.getHeight());
+    }
+
     public enum TurningState {
         FULL_SPEED, BRAKING, DONE_BRAKING;
     }
@@ -294,6 +309,10 @@ public class ClientShip extends Group {
 
     public float getAngularVelocity() {
         return angularVelocity;
+    }
+
+    public void setAngularVelocity(float angularVelocity) {
+        this.angularVelocity = angularVelocity;
     }
 
     public boolean hasTargetPos() {

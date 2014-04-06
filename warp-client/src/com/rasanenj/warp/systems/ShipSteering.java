@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.rasanenj.warp.Geometry;
 import com.rasanenj.warp.entities.ClientShip;
-import com.rasanenj.warp.entities.ClientShip.TurningState;
 import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.tasks.IntervalTask;
@@ -20,15 +19,15 @@ public class ShipSteering extends IntervalTask {
     public static final float MESSAGES_IN_SECOND = 8f;
     public static final float STEP_LENGTH = 1f / MESSAGES_IN_SECOND;
 
-    private final Vector2 pos = new Vector2();
-    private final Vector2 tgt = new Vector2();
-    private final Vector2 projectionTemp = new Vector2();
+    private static final Vector2 pos = new Vector2();
+    private static final Vector2 tgt = new Vector2();
+    private static final Vector2 projectionTemp = new Vector2();
 
-    private final Vector2 vecP = new Vector2(), vecR = new Vector2(), vecQ = new Vector2(), vecS = new Vector2();
+    private static final Vector2 vecP = new Vector2(), vecR = new Vector2(), vecQ = new Vector2(), vecS = new Vector2();
 
     private final Collection<ClientShip> ships;
     private final ServerConnection connection;
-    private final Vector2 corners[] = new Vector2[4];
+    private static final Vector2 corners[] = new Vector2[4];
 
     public ShipSteering(Collection<ClientShip> ships, ServerConnection conn) {
         super(MESSAGES_IN_SECOND);
@@ -39,7 +38,7 @@ public class ShipSteering extends IntervalTask {
         }
     }
 
-    private void targetPointSteer(ClientShip ship) {
+    public static void targetPointSteer(ClientShip ship, SteeringResult result) {
         tgt.set(ship.getTargetPos());
 
         // === FIGURE OUT THE LINEAR IMPULSE ===
@@ -54,21 +53,16 @@ public class ShipSteering extends IntervalTask {
         pos.sub(ship.getVelocity());
         pos.scl(ship.getStats().getMass());
 
-        ship.setImpulseIdeal(pos);
+        result.idealImpulse.set(pos);
 
         limitByForceLimits(ship, pos);
 
-        ship.setImpulse(pos);
-
         // === FIGURE OUT THE ANGULAR IMPULSE ===
-        float change = getAngularImpulse(ship, tgt.angle());
-
-        AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);
-
-        connection.send(msg);
+        result.angularImpulse = getAngularImpulse(ship, tgt.angle());
+        result.linearImpulse.set(pos.x, pos.y);
     }
 
-    private float getAngularImpulse(ClientShip ship, float tgtAngle) {
+    private static float getAngularImpulse(ClientShip ship, float tgtAngle) {
         float currAngle = Geometry.ensurePositiveDeg(ship.getRotation() + ship.getAngularVelocity() * STEP_LENGTH);
         tgtAngle = Geometry.ensurePositiveDeg(tgtAngle);
 
@@ -113,7 +107,7 @@ public class ShipSteering extends IntervalTask {
     }
 
     // limit the given force by maximum forces a ship can put out
-    private void limitByForceLimits(ClientShip ship, Vector2 force) {
+    private static void limitByForceLimits(ClientShip ship, Vector2 force) {
         ship.getCenterPos(vecP);
         vecR.set(force);
 
@@ -139,22 +133,34 @@ public class ShipSteering extends IntervalTask {
         }
     }
 
-    @Override
-    protected void run() {
-        for (ClientShip ship : ships) {
-            if (ship.hasDirectionTarget()) {
-                directionSteer(ship);
-            }
-            else if (ship.hasTargetPos()) {
-                targetPointSteer(ship);
-            }
-            else if (ship.hasOrbitTarget()) {
-                orbitSteer(ship);
-            }
+    private final SteeringResult result = new SteeringResult();
+
+    public static void steer(ClientShip ship, SteeringResult result) {
+        if (ship.hasDirectionTarget()) {
+            directionSteer(ship, result);
+        }
+        else if (ship.hasTargetPos()) {
+            targetPointSteer(ship, result);
+        }
+        else if (ship.hasOrbitTarget()) {
+            orbitSteer(ship, result);
         }
     }
 
-    private void orbitSteer(ClientShip ship) {
+    @Override
+    protected void run() {
+        for (ClientShip ship : ships) {
+            steer(ship, result);
+            ship.setImpulse(result.linearImpulse);
+            ship.setImpulseIdeal(result.idealImpulse);
+            AccelerationMessage msg = new AccelerationMessage(ship.getId(), result.angularImpulse,
+                    result.linearImpulse.x, result.linearImpulse.y);
+
+            connection.send(msg);
+        }
+    }
+
+    private static void orbitSteer(ClientShip ship, SteeringResult result) {
         ClientShip orbitTarget = ship.getOrbitShip();
         ship.getCenterPos(pos);
         orbitTarget.getCenterPos(tgt);
@@ -214,30 +220,26 @@ public class ShipSteering extends IntervalTask {
 
         pos.scl(ship.getStats().getMass());
 
-        ship.setImpulseIdeal(pos);
+        result.idealImpulse.set(pos);
         limitByForceLimits(ship, pos);
 
-        ship.setImpulse(pos);
-
-        float change = getAngularImpulse(ship, angle); // turn the ship
-
-        AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, pos.x, pos.y);
-
-        connection.send(msg);
+        result.angularImpulse = getAngularImpulse(ship, angle); // turn the ship
+        result.linearImpulse.set(pos);
     }
 
-    private void directionSteer(ClientShip ship) {
+    public static void directionSteer(ClientShip ship, SteeringResult result) {
         tgt.set(100, 0);
         tgt.rotate(ship.getTargetDirection());
-        ship.setImpulseIdeal(tgt);
+        result.idealImpulse.set(tgt);
         limitByForceLimits(ship, tgt);
 
-        ship.setImpulse(tgt);
+        result.angularImpulse = getAngularImpulse(ship, tgt.angle());
+        result.linearImpulse.set(tgt);
+    }
 
-        float change = getAngularImpulse(ship, tgt.angle());
-
-        AccelerationMessage msg = new AccelerationMessage(ship.getId(), change, tgt.x, tgt.y);
-
-        connection.send(msg);
+    public static class SteeringResult {
+        final Vector2 linearImpulse = new Vector2();
+        final Vector2 idealImpulse = new Vector2();
+        float angularImpulse;
     }
 }

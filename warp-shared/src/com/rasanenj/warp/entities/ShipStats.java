@@ -12,9 +12,9 @@ import static com.rasanenj.warp.Log.log;
 public class ShipStats {
     private final float signatureResolution;
     private final float weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown;
-    private final float maxLinearVelocity;
+    private float maxLinearVelocity;
     private final float maxHealth;
-    private final float maxAcceleration;
+    private float maxAcceleration;
     private final float cost;
     private final float width, height;
 
@@ -134,8 +134,8 @@ public class ShipStats {
         return maxAngularVelocity;
     }
 
-    private final float maxAngularAcceleration;
-    private final float maxAngularVelocity;
+    private float maxAngularAcceleration;
+    private float maxAngularVelocity;
     private float mass, inertia;
 
     private float maxLinearForceRight, maxLinearForceForward, maxLinearForceBackward, maxLinearForceLeft;
@@ -233,5 +233,16 @@ public class ShipStats {
         if (Float.compare(shipStats.width, width) != 0) return false;
 
         return true;
+    }
+
+    public void copyPhysicsSimulationStats(ShipStats stats) {
+        setForceLimits(stats.getMaxLinearForceForward(), stats.getMaxLinearForceBackward(),
+                stats.getMaxLinearForceLeft(), stats.getMaxLinearForceRight());
+        setInertia(stats.getInertia());
+        setMass(stats.getMass());
+        maxAcceleration = stats.getMaxAcceleration();
+        maxLinearVelocity = stats.getMaxLinearVelocity();
+        maxAngularAcceleration = stats.getMaxAngularAcceleration();
+        maxAngularVelocity = stats.getMaxAngularVelocity();
     }
 }

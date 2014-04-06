@@ -195,17 +195,14 @@ public class BattleScreen implements Screen {
         Color c = new Color();
 
         for (ClientShip ship : battleHandler.getShips()) {
-            boolean first = true;
             c.set(ship.getImage().getColor());
             for (PositionProjection projection : ship.getProjectedPositions()) {
-                if (first) {
-                    first = false;
-                }
                 float scale = 1f - 0.75f * (float) projection.getTimestamp() / (float) ShipShooting.PROJECTION_TIME_MS;
                 shapeRenderer.setColor(scale * c.r, scale * c.g, scale * c.b, 1);
                 tmp3.set(projection.getPosition().x, projection.getPosition().y, 0);
                 cam.project(tmp3);
                 shapeRenderer.circle(tmp3.x, tmp3.y, 3);
+                shapeRenderer.line(tmp3.x, tmp3.y, tmp3.x + projection.getVelocity().x * 3f, tmp3.y + projection.getVelocity().y * 3f);
             }
         }
         shapeRenderer.end();

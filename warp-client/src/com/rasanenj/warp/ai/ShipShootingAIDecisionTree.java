@@ -164,8 +164,8 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
             shoot = ShootDecision.createDecision(shooter, target,
                     shooterProjection.getPosition(),
                     targetProjection.getPosition(),
-                    shooter.getVelocity(), // TODO velocities should be taken from the projection
-                    target.getVelocity(),
+                    shooterProjection.getVelocity(),
+                    targetProjection.getVelocity(),
                     (i + 1) * ShipShooting.PROJECTION_INTERVAL_MS);
             current.children.add(shoot);
 
