@@ -74,9 +74,7 @@ Steps Before First Catalog-tuning, Nice to have
 
 MVProto
 ===
-* Pyssyjen syklin visualisointi
-    * Täyttyvä ympyrä
-    * Täysi ympyrä kun valmis, mutta päättää odottaa
+* Pyssyjen sykli pitäisi visualisoida myös vastustajan aluksille
 * Tällä hetkellä aluksen sijainti taidetaan asettaa clientilla vasempaan alanurkkaan,
   kun käyttäjä todnäk mieltää sijainnin aluksen keskustaan. Tämä pitäisi korjata
   clienttiin pikimmiten
@@ -256,3 +254,6 @@ MVProto DONE
     * Ammu nyt tai odota -pisteytys
         * Optimoidaan pisteitä per aikayksikkö
         * Lisäksi tulevaisuuden mahdollisuudet saavat optimistisuus/pessimistisyys -kertoimesta
+* DONE Pyssyjen syklin visualisointi
+    * Täyttyvä ympyrä
+    * Täysi ympyrä kun valmis, mutta päättää odottaa

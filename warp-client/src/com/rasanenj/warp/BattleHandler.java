@@ -48,6 +48,8 @@ public class BattleHandler {
     private final ShipSelection selection = new ActiveShipSelection();
     private MouseState mouseState = MouseState.DEFAULT;
     private final Array<Array<ClientShip>> shipQuickGroups = new Array<Array<ClientShip>>(true, 9);
+    private final Statistics statistics = new Statistics();
+    private final AverageDpsCalculator dpsCalculator;
 
     public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
         conn.register(new ConnectionListener());
@@ -72,6 +74,7 @@ public class BattleHandler {
         for (int i=0; i < 9; i++) {
             shipQuickGroups.add(new Array<ClientShip>(false, 0));
         }
+        dpsCalculator = new AverageDpsCalculator(statistics, 10000);
     }
 
     private enum MouseState {
@@ -165,6 +168,7 @@ public class BattleHandler {
                         myId = message.getPlayerId();
                         manualSteeringTask.setMyId(myId);
                         shipShooting.setMyId(myId);
+                        dpsCalculator.setPlayerId(myId);
                     }
                     players.add(p);
                 }
@@ -180,6 +184,8 @@ public class BattleHandler {
                 else {
                     target.reduceHealth(message.getDamage());
                     screen.addDamageProjectile(target, message.getDamage(), shooter.getX(), shooter.getY());
+                    statistics.storeDamage(shooter.getId(), target.getId(), shooter.getOwner().getId(),
+                            target.getOwner().getId(), System.currentTimeMillis(), message.getDamage());
                 }
             }
 
@@ -553,6 +559,7 @@ public class BattleHandler {
         taskHandler.update(delta);
         updateNPCs();
         updateCamPosition();
+        dpsCalculator.update();
     }
 
     private void updateCamPosition() {

@@ -19,6 +19,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Random;
 import com.rasanenj.warp.*;
 import com.rasanenj.warp.actors.TiledImage;
+import com.rasanenj.warp.chart.Chart;
 import com.rasanenj.warp.entities.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -176,12 +177,39 @@ public class BattleScreen implements Screen {
         renderOrbitCircle();
         renderDamageTexts();
         renderShipTexts();
+
+        renderWeaponCooldowns();
+
         renderManualSteering();
         renderDebugText();
         renderSelectionRectangle();
         renderPhysicsVertices();
 
         renderTextBelowMouseCursor();
+    }
+
+    final static float weaponCoolDownCircleRadius = 10f;
+
+    private void renderWeaponCooldowns() {
+        shapeRenderer.setProjectionMatrix(normalProjection);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (ClientShip ship : battleHandler.getShips()) {
+            float readiness = ship.getFiringReadiness();
+
+            if (readiness < 1f) {
+                readiness *= 360f;
+
+                tmp3.set(ship.getX(), ship.getY() + ship.getHeight(), 0);
+                cam.project(tmp3);
+                tmp3.y += 10 + weaponCoolDownCircleRadius;
+                tmp3.x -= (10 + weaponCoolDownCircleRadius);
+                shapeRenderer.setColor(Color.WHITE);
+                shapeRenderer.arc(tmp3.x, tmp3.y, weaponCoolDownCircleRadius, 360f - readiness + 90f, readiness);
+            }
+        }
+        shapeRenderer.end();
+        shapeRenderer.setProjectionMatrix(cam.combined);
     }
 
     private void renderPositionProjections() {
@@ -707,6 +735,7 @@ public class BattleScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        Chart.init();
     }
 
     @Override

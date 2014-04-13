@@ -145,6 +145,12 @@ public class ClientShip extends Group {
         return false;
     }
 
+    public float getFiringReadiness() {
+        return MathUtils.clamp(
+                (System.currentTimeMillis() - lastFiringTime) /
+                        (stats.getWeaponCooldown() * 1000), 0, 1);
+    }
+
     public void reduceHealth(float damage) {
         health -= damage;
     }
