@@ -504,6 +504,26 @@ public class BattleHandler {
                 selection.set(shipQuickGroups.get(index));
                 return true;
             }
+            else if (event.getKeyCode() == Input.Keys.Y) {
+                ClientShip shooter = ships.get(0);
+                Random rng = new Random();
+                shooter.getCenterPos(tmp);
+                float targetX = tmp.x + (rng.nextFloat() - 0.5f) * 40f;
+                float targetY = tmp.y + (rng.nextFloat() - 0.5f) * 40f;
+
+                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, shooter.getImage().getColor());
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.U) {
+                ClientShip shooter = ships.get(0);
+                Random rng = new Random();
+
+                int tgtIndex = 1 + rng.nextInt(ships.size() - 1);
+                ClientShip target = ships.get(tgtIndex);
+                screen.addLaserBeam(shooter, target);
+
+                return true;
+            }
             else {
                 return false;
             }

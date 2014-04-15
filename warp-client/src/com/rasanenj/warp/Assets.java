@@ -13,6 +13,8 @@ import com.rasanenj.warp.messaging.Player;
 public class Assets {
     public static Texture shipTexture, moveTargetTexture, aimingTargetTexture,
             backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture;
+    public static Texture laserMidBackground, laserMidOverlay, laserStartBackground, laserStartOverlay, laserEndBackground, laserEndOverlay;
+
     public static Skin skin;
 
     public static void load() {
@@ -26,6 +28,12 @@ public class Assets {
         selectionCircleTexture = new Texture(Gdx.files.internal("data/circle.png"));
         orbitCWTexture = new Texture(Gdx.files.internal("data/orbit_cw_cursor.png"));
         orbitCCWTexture= new Texture(Gdx.files.internal("data/orbit_ccw_cursor.png"));
+        laserMidBackground = new Texture(Gdx.files.internal("data/laser_mid_background.png"));
+        laserMidOverlay = new Texture(Gdx.files.internal("data/laser_mid_overlay.png"));
+        laserStartBackground = new Texture(Gdx.files.internal("data/laser_start_background.png"));
+        laserStartOverlay = new Texture(Gdx.files.internal("data/laser_start_overlay.png"));
+        laserEndBackground = new Texture(Gdx.files.internal("data/laser_end_background.png"));
+        laserEndOverlay = new Texture(Gdx.files.internal("data/laser_end_overlay.png"));
     }
 
     public static final Color

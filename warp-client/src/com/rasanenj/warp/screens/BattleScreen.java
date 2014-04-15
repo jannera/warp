@@ -61,6 +61,8 @@ public class BattleScreen implements Screen {
 
     private final Array<DamageProjectile> damageProjectiles = new Array(false, 16);
     private final Array<DamageProjectile> removableProjectiles = new Array(false, 16);
+    private final Array<LaserBeam> laserBeams = new Array(false, 16);
+    private final Array<LaserBeam> removableLaserBeams = new Array(false, 16);
     private final OrthographicCamera cam;
     private boolean selectionRectangleActive = false;
     private final Vector3 selectionRectangleStart = new Vector3(), getSelectionRectangleEnd = new Vector3();
@@ -97,6 +99,13 @@ public class BattleScreen implements Screen {
 
     public void setOrbitUIHandler(OrbitUIHandler orbitUIHandler) {
         this.orbitUIHandler = orbitUIHandler;
+    }
+
+    public void addLaserBeam(ClientShip shooter, ClientShip target) {
+        shooter.getCenterPos(tmp);
+        float startX = tmp.x, startY = tmp.y;
+        target.getCenterPos(tmp);
+        addLaserBeam(startX, startY, tmp.x, tmp.y, Color.GREEN);
     }
 
     public enum OptimalRenderingState {
@@ -154,6 +163,7 @@ public class BattleScreen implements Screen {
         updateBackground();
         updateMessages();
         updateProjectiles();
+        updateLasers();
         stage.act(Gdx.graphics.getDeltaTime());
         estimateShipPositions();
         stage.draw();
@@ -164,6 +174,7 @@ public class BattleScreen implements Screen {
         renderVectors();
         renderOffScreenShips();
         renderProjectiles();
+        renderLasers();
         renderSelectionCircles();
         renderHealthBars();
 
@@ -388,6 +399,60 @@ public class BattleScreen implements Screen {
         batch.end();
     }
 
+    private static final float LASER_WIDTH = 30f;
+    private static final float LASER_MAX_CAP_LENGTH = 50f;
+
+    private static final Color tmpColor = new Color();
+
+    private void renderLasers() {
+        if (laserBeams.size == 0) {
+            return;
+        }
+        long timeNow = System.currentTimeMillis();
+        batch.begin();
+        batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
+
+        for (LaserBeam laser : laserBeams) {
+            tmp3.set(laser.startX, laser.startY, 0);
+            tmp3end.set(laser.endX, laser.endY, 0);
+            cam.project(tmp3);
+            cam.project(tmp3end);
+            tmp3end.sub(tmp3);
+            tmp.set(tmp3end.x, tmp3end.y);
+            float angle = tmp.angle() + 270f;
+            float height = tmp.len();
+
+            float capLength = height / 3f;
+            if (capLength > LASER_MAX_CAP_LENGTH) {
+                capLength = LASER_MAX_CAP_LENGTH;
+            }
+
+            float fade = 1f- (float) Math.pow((timeNow - laser.startTime) / (float) LaserBeam.FADE_OUT_MS, 2);
+
+            renderLaser(Assets.laserStartBackground, tmp3.x, tmp3.y, angle, capLength, laser.baseColor, fade);
+            renderLaser(Assets.laserStartOverlay   , tmp3.x, tmp3.y, angle, capLength, Color.WHITE, fade);
+
+            tmp.clamp(0f, height - capLength);
+            renderLaser(Assets.laserEndBackground, tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, laser.baseColor, fade);
+            renderLaser(Assets.laserEndOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, Color.WHITE, fade);
+
+            tmp.clamp(0f, capLength);
+            renderLaser(Assets.laserMidBackground, tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, laser.baseColor, fade);
+            renderLaser(Assets.laserMidOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, Color.WHITE, fade);
+        }
+        batch.end();
+    }
+
+    private void renderLaser(Texture t, float startX, float startY, float angle, float height, Color baseColor, float fade) {
+        final float originX = Assets.laserMidBackground.getWidth() / 2f;
+        final float originY = Assets.laserMidBackground.getHeight() / 2f;
+
+        tmpColor.set(baseColor.r, baseColor.g, baseColor.b, fade);
+        batch.setColor(tmpColor);
+        batch.draw(t, startX, startY, originX, originY, LASER_WIDTH, height, 1f, 1f, angle,
+                0, 0, t.getWidth(), t.getHeight(), false, false);
+    }
+
     private void updateMessages() {
         removables.clear();
         long timeNow = System.currentTimeMillis();
@@ -413,6 +478,18 @@ public class BattleScreen implements Screen {
         damageProjectiles.removeAll(removableProjectiles, true);
     }
 
+    private void updateLasers() {
+        removableLaserBeams.clear();
+        long timeNow = System.currentTimeMillis();
+        for (LaserBeam laser : laserBeams) {
+            if (timeNow - laser.startTime > LaserBeam.FADE_OUT_MS) {
+                removableLaserBeams.add(laser);
+            }
+        }
+
+        laserBeams.removeAll(removableLaserBeams, true);
+    }
+
     private void renderHoveringTarget() {
         if (hoveringTarget == null) {
             return;
@@ -429,6 +506,7 @@ public class BattleScreen implements Screen {
 
     private void renderNavigationTargets() {
         batch.begin();
+        batch.setColor(Color.WHITE);
         float halfWidth = NAVIGATION_TARGET_SIZE / 2f;
         float halfHeight = NAVIGATION_TARGET_SIZE / 2f;
         for (ClientShip ship : battleHandler.getSelectedShips()) {
@@ -820,6 +898,27 @@ public class BattleScreen implements Screen {
             this.startX = startX;
             this.startY = startY;
             this.timeToLive = timeToLive;
+        }
+    }
+
+    public void addLaserBeam(float startX, float startY, float endX, float endY, Color color) {
+        laserBeams.add(new LaserBeam(startX, startY, endX, endY, color));
+    }
+
+    private class LaserBeam {
+        public static final long FADE_OUT_MS = 500;
+
+        final float startX, startY, endX, endY;
+        final long startTime;
+        final Color baseColor;
+
+        private LaserBeam(float startX, float startY, float endX, float endY, Color color) {
+            this.startX = startX;
+            this.startY = startY;
+            this.endX = endX;
+            this.endY = endY;
+            this.startTime = System.currentTimeMillis();
+            this.baseColor = color;
         }
     }
 
