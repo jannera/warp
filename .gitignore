@@ -5,3 +5,4 @@ warp-desktop/bin/**
 out/**
 warp-html/war/WEB-INF/classes
 .idea/**
+warp-html/src/com/rasanenj/warp/GwtDefinition.gwt.xml
