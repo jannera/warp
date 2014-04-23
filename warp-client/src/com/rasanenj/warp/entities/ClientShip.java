@@ -1,6 +1,7 @@
 package com.rasanenj.warp.entities;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -30,7 +31,7 @@ public class ClientShip extends Group {
 
     private final ShipStats stats;
 
-    private final Image image, clickRegionImage;
+    private final Image baseImage, hiliteImage, clickRegionImage;
 
     private static final float CLICKREGION_MULTIPLIER = 4f; // how many times bigger are should work as clicking area around the ship
     private Vector2[] vertices;
@@ -46,15 +47,17 @@ public class ClientShip extends Group {
             new Array<PositionProjection>(true, ShipShooting.PROJECTION_POINTS_AMOUNT);
 
     public ClientShip(long id, Player owner, ShipStats stats) {
-        this.image = new Image(Assets.shipTexture);
-        this.clickRegionImage = new Image(Assets.shipTexture);
+        this.baseImage = new Image(Assets.getShipBaseTexture(stats.getType()));
+        this.clickRegionImage = new Image(Assets.getShipBaseTexture(stats.getType()));
+        this.hiliteImage = new Image(Assets.getShipHiliteTexture(stats.getType()));
         this.clickRegionImage.setColor(1, 1, 1, 0);
         this.clickRegionImage.setVisible(true);
         float width = stats.getWidth();
         float height = stats.getHeight();
         clickRegionImage.setWidth(width * CLICKREGION_MULTIPLIER);
         clickRegionImage.setHeight(height * CLICKREGION_MULTIPLIER);
-        addActor(image);
+        addActor(baseImage);
+        addActor(hiliteImage);
         addActor(clickRegionImage);
         this.stats = stats;
         lastid = id;
@@ -63,12 +66,14 @@ public class ClientShip extends Group {
         this.setWidth(width);
         this.setHeight(height);
         setVisible(false);
-        image.setWidth(width);
-        image.setHeight(height);
+        baseImage.setWidth(width);
+        baseImage.setHeight(height);
+        hiliteImage.setWidth(width);
+        hiliteImage.setHeight(height);
 
         // make the hovering and non-hovering ships overlap on the center
-        clickRegionImage.setPosition(image.getWidth() / 2f - clickRegionImage.getWidth() / 2f,
-                image.getHeight() / 2f - clickRegionImage.getHeight() / 2f);
+        clickRegionImage.setPosition(baseImage.getWidth() / 2f - clickRegionImage.getWidth() / 2f,
+                baseImage.getHeight() / 2f - clickRegionImage.getHeight() / 2f);
 
         this.stats.scaleForces(ShipSteering.STEP_LENGTH);
         this.health = stats.getMaxHealth();
@@ -429,8 +434,8 @@ public class ClientShip extends Group {
         return stats;
     }
 
-    public Image getImage() {
-        return image;
+    public Image getBaseImage() {
+        return baseImage;
     }
 
     public Image getClickRegionImage() {
@@ -464,5 +469,10 @@ public class ClientShip extends Group {
 
     public Array<PositionProjection> getProjectedPositions() {
         return projectedPositions;
+    }
+
+    public void setSelected(boolean h) {
+        baseImage.setVisible(!h);
+        hiliteImage.setVisible(h);
     }
 }

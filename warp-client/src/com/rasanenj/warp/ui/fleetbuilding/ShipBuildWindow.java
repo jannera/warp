@@ -161,7 +161,7 @@ public class ShipBuildWindow {
         return new ShipStats(mass, inertia, force, force, force, force, maxHealth, maxVelocity,
                 maxAngularVelocity, maxAngularAcceleration, signatureResolution, weaponCooldown,
                 signatureResolution, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown,
-                maxAcceleration, cost, width, height);
+                maxAcceleration, cost, width, height, getType());
     }
 
     private float getValue(HashMap<String, Float> values, String value) {
@@ -298,5 +298,18 @@ public class ShipBuildWindow {
 
     public int getAmount() {
         return amount;
+    }
+
+    private ShipStats.Shiptype getType() {
+        switch (getTypeId()) {
+            case 1:
+                return ShipStats.Shiptype.FRIGATE;
+            case 2:
+                return ShipStats.Shiptype.CRUISER;
+            case 3:
+                return ShipStats.Shiptype.BATTLESHIP;
+            default:
+                return null;
+        }
     }
 }

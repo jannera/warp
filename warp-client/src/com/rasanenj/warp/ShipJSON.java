@@ -30,6 +30,7 @@ public class ShipJSON extends JavaScriptObject {
         return new ShipStats(0, 0, 0, 0, 0, 0, getMaxHealth(), getMaxSpeed(),
                 getTurnSpeed(), getMaxAngularAcceleration(), getSignatureResolution(), getWeaponTracking(),
                 getWeaponSignatureRadius(), getWeaponOptimal(), getWeaponFalloff(), getWeaponDamage(),
-                getWeaponCooldown(), getAcceleration(), getCost(), getWidth(), getHeight());
+                getWeaponCooldown(), getAcceleration(), getCost(), getWidth(), getHeight(), ShipStats.Shiptype.FRIGATE);
+        // TODO: make it possible to have other npcs than just frigates.. or just dump this whole system
     }
 }

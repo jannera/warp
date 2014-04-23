@@ -105,7 +105,7 @@ public class BattleScreen implements Screen {
         shooter.getCenterPos(tmp);
         float startX = tmp.x, startY = tmp.y;
         target.getCenterPos(tmp);
-        addLaserBeam(startX, startY, tmp.x, tmp.y, Color.GREEN);
+        addLaserBeam(startX, startY, tmp.x, tmp.y, Assets.getHiliteColor(shooter.getOwner()));
     }
 
     public enum OptimalRenderingState {
@@ -234,7 +234,7 @@ public class BattleScreen implements Screen {
         Color c = new Color();
 
         for (ClientShip ship : battleHandler.getShips()) {
-            c.set(ship.getImage().getColor());
+            c.set(ship.getBaseImage().getColor());
             for (PositionProjection projection : ship.getProjectedPositions()) {
                 float scale = 1f - 0.75f * (float) projection.getTimestamp() / (float) ShipShooting.PROJECTION_TIME_MS;
                 shapeRenderer.setColor(scale * c.r, scale * c.g, scale * c.b, 1);
@@ -734,7 +734,7 @@ public class BattleScreen implements Screen {
                 corners[1].set(tmp.x + TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
             }
 
-            shapeRenderer.setColor(ship.getImage().getColor());
+            shapeRenderer.setColor(ship.getBaseImage().getColor());
             shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
         }
         shapeRenderer.end();

@@ -141,8 +141,7 @@ public class BattleHandler {
                     log(Level.SEVERE, "Couldn't find player with id: " + message.getOwnerId());
                 }
                 else {
-                    Color c = Assets.getBasicColor(owningPlayer);
-                    ship.getImage().setColor(c);
+                    ship.setSelected(false);
                 }
 
                 // if these are my ships, put ships with the same stats into groups
@@ -183,7 +182,9 @@ public class BattleHandler {
                 }
                 else {
                     target.reduceHealth(message.getDamage());
-                    screen.addDamageProjectile(target, message.getDamage(), shooter.getX(), shooter.getY());
+                    screen.addLaserBeam(shooter, target);
+                    screen.addDamageText(target, message.getDamage());
+                    // screen.addDamageProjectile(target, message.getDamage(), shooter.getX(), shooter.getY());
                     statistics.storeDamage(shooter.getId(), target.getId(), shooter.getOwner().getId(),
                             target.getOwner().getId(), System.currentTimeMillis(), message.getDamage());
                 }
@@ -511,7 +512,7 @@ public class BattleHandler {
                 float targetX = tmp.x + (rng.nextFloat() - 0.5f) * 40f;
                 float targetY = tmp.y + (rng.nextFloat() - 0.5f) * 40f;
 
-                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, shooter.getImage().getColor());
+                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, shooter.getBaseImage().getColor());
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.U) {

@@ -6,7 +6,7 @@
             "icon" : "F",
             "constants" : {
                 "width" : 1.2,
-                "height" : 0.3
+                "height" : 0.73
             },
             "categories" : [
                 {
@@ -296,7 +296,7 @@
             "icon" : "C",
             "constants" : {
                 "width" : 6,
-                "height" : 1.5
+                "height" : 3.651
             },
             "categories" : [
                 {

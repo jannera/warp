@@ -107,7 +107,7 @@ public class ShipShooting extends IntervalTask {
         }
     }
 
-    ShipStats dummyStats = new ShipStats(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+    ShipStats dummyStats = new ShipStats(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, ShipStats.Shiptype.FRIGATE);
     private ClientShip simulationShip = new ClientShip(-1, null, dummyStats);
 
     ShipSteering.SteeringResult steeringResult = new ShipSteering.SteeringResult();

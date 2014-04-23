@@ -8,13 +8,13 @@ import com.rasanenj.warp.entities.ClientShip;
 public class ActiveShipSelection extends ShipSelection {
     public void clear() {
         for (ClientShip s : selectedShips) {
-            s.getImage().setColor(Assets.getBasicColor(s.getOwner()));
+            s.setSelected(false);
         }
         super.clear();
     }
 
     public void add(ClientShip ship) {
-        ship.getImage().setColor(Assets.getHiliteColor(ship.getOwner()));
+        ship.setSelected(true);
         super.add(ship);
     }
 }

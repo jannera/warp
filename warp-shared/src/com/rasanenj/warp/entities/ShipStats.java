@@ -17,6 +17,30 @@ public class ShipStats {
     private float maxAcceleration;
     private final float cost;
     private final float width, height;
+    private final Shiptype type;
+
+    public enum Shiptype {
+        FRIGATE, CRUISER, BATTLESHIP;
+
+        public void encode(ByteBuffer b) {
+            b.putInt(this.ordinal());
+        }
+
+        public static Shiptype decode(ByteBuffer b) {
+            int i = b.getInt();
+
+            if (i==FRIGATE.ordinal()) {
+                return FRIGATE;
+            }
+            if (i==CRUISER.ordinal()) {
+                return CRUISER;
+            }
+            if (i==BATTLESHIP.ordinal()) {
+                return BATTLESHIP;
+            }
+            return null;
+        }
+    }
 
     public ShipStats(float mass, float inertia,
                      float maxLinearForceForward, float maxLinearForceBackward,
@@ -27,7 +51,8 @@ public class ShipStats {
                      float weaponOptimal, float weaponFalloff,
                      float weaponDamage, float weaponCooldown, float maxAcceleration,
                      float cost,
-                     float width, float height) {
+                     float width, float height,
+                     Shiptype type) {
         this.mass = mass;
         this.inertia = inertia;
         this.maxLinearForceForward = maxLinearForceForward;
@@ -49,6 +74,7 @@ public class ShipStats {
         this.cost = cost;
         this.width = width;
         this.height = height;
+        this.type = type;
     }
 
     public ShipStats(ByteBuffer b) {
@@ -73,6 +99,7 @@ public class ShipStats {
         this.cost = b.getFloat();
         this.width = b.getFloat();
         this.height = b.getFloat();
+        this.type = Shiptype.decode(b);
     }
 
     public void encode(ByteBuffer b) {
@@ -81,10 +108,11 @@ public class ShipStats {
                 maxAngularVelocity, maxAngularAcceleration, signatureResolution,
                 weaponTracking, weaponSignatureRadius, weaponOptimal, weaponFalloff,
                 weaponDamage, weaponCooldown, maxAcceleration, cost, width, height);
+        type.encode(b);
     }
 
     public static int getLengthInBytes() {
-        return Float.SIZE/8 * 21;
+        return Float.SIZE/8 * 21 + Integer.SIZE/8;
     }
 
     public float getSignatureResolution() {
@@ -203,6 +231,10 @@ public class ShipStats {
         return height;
     }
 
+    public Shiptype getType() {
+        return type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -231,6 +263,7 @@ public class ShipStats {
         if (Float.compare(shipStats.weaponSignatureRadius, weaponSignatureRadius) != 0) return false;
         if (Float.compare(shipStats.weaponTracking, weaponTracking) != 0) return false;
         if (Float.compare(shipStats.width, width) != 0) return false;
+        if (!type.equals(shipStats.type)) return false;
 
         return true;
     }
