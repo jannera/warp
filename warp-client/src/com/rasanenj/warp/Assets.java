@@ -2,8 +2,12 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.Player;
@@ -12,7 +16,8 @@ import com.rasanenj.warp.messaging.Player;
  * @author gilead
  */
 public class Assets {
-    public static Texture shipTextureCruiser, shipTextureFrigateBase, shipTextureFrigateHilite, shipTextureBattleship;
+    public static Texture shipTextureCruiser, shipTextureBattleship;
+    public static Texture[] shipTextureFrigateBase, shipTextureFrigateHilite;
     public static Texture moveTargetTexture, aimingTargetTexture,
             backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture;
     public static Texture laserMidBackground, laserMidOverlay, laserStartBackground, laserStartOverlay, laserEndBackground, laserEndOverlay;
@@ -36,28 +41,65 @@ public class Assets {
         laserEndBackground = new Texture(Gdx.files.internal("data/laser_end_background.png"));
         laserEndOverlay = new Texture(Gdx.files.internal("data/laser_end_overlay.png"));
 
-        shipTextureFrigateBase = createShipTexture("data/frigate_base.png", "data/frigate_overlay.png", new Color (0.5f, 0.0f, 0.0f, 0.5f));
-        shipTextureFrigateHilite = createShipTexture("data/frigate_base.png", "data/frigate_overlay.png", new Color (0.0f, 0.5f, 0.0f, 0.5f));
+        shipTextureFrigateBase = createShipTextures("data/frigate_base.png", "data/frigate_overlay.png", playerColors);
+        shipTextureFrigateHilite = createShipTextures("data/frigate_base.png", "data/frigate_overlay.png", hiliteColors);
         shipTextureCruiser = new Texture(Gdx.files.internal("data/ship_cruiser.png"));
         shipTextureBattleship = new Texture(Gdx.files.internal("data/ship_battleship.png"));
+    }
+
+    private static Texture[] createShipTextures(String baseFile, String overlayFile, Color[] colors) {
+        Texture[] result = new Texture[colors.length];
+
+        int i = 0;
+        for(Color c : colors) {
+            result[i++] = createShipTexture(baseFile, overlayFile, new Color(c.r, c.g, c.b, 0.5f));
+        }
+        return result;
     }
 
     private static Texture createShipTexture(String baseFile, String overlayFile, Color c) {
         Pixmap base = new Pixmap(Gdx.files.internal(baseFile));
         Pixmap overlay = new Pixmap(Gdx.files.internal(overlayFile));
+
+        tintPixmap(overlay, c);
+
         Pixmap result = new Pixmap(base.getWidth(), base.getHeight(), base.getFormat());
 
         result.drawPixmap(base, 0, 0);
-        result.setColor(c);
-        for (int x=0; x < base.getWidth(); x++) {
-            for (int y=0; y < base.getHeight(); y++) {
-                if (result.getPixel(x, y) > 0) {
-                    result.drawPixel(x, y);
+        result.drawPixmap(overlay, 0,0);
+        return rotate90Degrees(result);
+    }
+
+    private static Texture rotate90Degrees(Pixmap p) {
+        FrameBuffer fbo = new FrameBuffer(p.getFormat(), p.getWidth(), p.getHeight(), false);
+        SpriteBatch batch = new SpriteBatch();
+        Texture t = new Texture(p);
+
+        fbo.begin();
+
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        batch.draw(new TextureRegion(t), 0, 0, t.getWidth()/2f, t.getHeight()/2f, t.getHeight(), t.getWidth(), 1f, 1f, 0, true);
+        batch.end();
+        fbo.end();
+
+        return fbo.getColorBufferTexture();
+    }
+
+    /*
+     * Tints the given Pixmap with the given Color only on pixels that already have content in them
+     */
+    private static void tintPixmap(Pixmap p, Color c) {
+        p.setColor(c);
+        for (int x=0; x < p.getWidth(); x++) {
+            for (int y=0; y < p.getHeight(); y++) {
+                if (p.getPixel(x, y) > 0) {
+                    p.drawPixel(x, y);
                 }
             }
         }
-        result.drawPixmap(overlay, 0,0);
-        return new Texture(result);
     }
 
     public static final Color
@@ -77,10 +119,10 @@ public class Assets {
         return playerColors[player.getColorIndex()];
     }
 
-    public static Texture getShipBaseTexture(ShipStats.Shiptype type) {
+    public static Texture getShipBaseTexture(ShipStats.Shiptype type, Player owner) {
         switch (type) {
             case FRIGATE:
-                return shipTextureFrigateBase;
+                return shipTextureFrigateBase[owner.getColorIndex()];
             case CRUISER:
                 return shipTextureCruiser;
             case BATTLESHIP:
@@ -90,10 +132,10 @@ public class Assets {
         }
     }
 
-    public static Texture getShipHiliteTexture(ShipStats.Shiptype type) {
+    public static Texture getShipHiliteTexture(ShipStats.Shiptype type, Player owner) {
         switch (type) {
             case FRIGATE:
-                return shipTextureFrigateHilite;
+                return shipTextureFrigateHilite[owner.getColorIndex()];
             case CRUISER:
                 return shipTextureCruiser;
             case BATTLESHIP:
@@ -101,5 +143,9 @@ public class Assets {
             default:
                 return null;
         }
+    }
+
+    public static Color getLaserColor(Player shooter) {
+        return hiliteColors[shooter.getColorIndex()];
     }
 }

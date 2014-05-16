@@ -234,7 +234,7 @@ public class BattleScreen implements Screen {
         Color c = new Color();
 
         for (ClientShip ship : battleHandler.getShips()) {
-            c.set(ship.getBaseImage().getColor());
+            c.set(ship.getCurrentColor());
             for (PositionProjection projection : ship.getProjectedPositions()) {
                 float scale = 1f - 0.75f * (float) projection.getTimestamp() / (float) ShipShooting.PROJECTION_TIME_MS;
                 shapeRenderer.setColor(scale * c.r, scale * c.g, scale * c.b, 1);
@@ -734,7 +734,7 @@ public class BattleScreen implements Screen {
                 corners[1].set(tmp.x + TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
             }
 
-            shapeRenderer.setColor(ship.getBaseImage().getColor());
+            shapeRenderer.setColor(ship.getCurrentColor());
             shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
         }
         shapeRenderer.end();

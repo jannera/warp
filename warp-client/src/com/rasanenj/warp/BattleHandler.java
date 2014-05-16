@@ -512,7 +512,7 @@ public class BattleHandler {
                 float targetX = tmp.x + (rng.nextFloat() - 0.5f) * 40f;
                 float targetY = tmp.y + (rng.nextFloat() - 0.5f) * 40f;
 
-                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, shooter.getBaseImage().getColor());
+                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, Assets.getLaserColor(shooter.getOwner()));
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.U) {
