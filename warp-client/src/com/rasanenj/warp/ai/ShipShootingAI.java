@@ -1,6 +1,6 @@
 package com.rasanenj.warp.ai;
 
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 
 /**
  * @author Janne Rasanen

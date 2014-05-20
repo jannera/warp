@@ -3,7 +3,7 @@ package com.rasanenj.warp;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.ai.ShipShootingAISimple;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.systems.ShipShooting;

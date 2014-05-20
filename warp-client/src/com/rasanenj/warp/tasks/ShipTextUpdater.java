@@ -1,12 +1,10 @@
 package com.rasanenj.warp.tasks;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.DamageModeler;
 import com.rasanenj.warp.ShipSelection;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 
 import java.util.ArrayList;
 

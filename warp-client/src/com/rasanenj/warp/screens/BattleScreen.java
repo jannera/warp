@@ -9,10 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -20,7 +17,7 @@ import com.google.gwt.user.client.Random;
 import com.rasanenj.warp.*;
 import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.chart.Chart;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.tasks.PathPlotterTask;
@@ -173,6 +170,7 @@ public class BattleScreen implements Screen {
         renderPaths();
         renderVectors();
         renderOffScreenShips();
+        renderTargetValueCircles();
         renderProjectiles();
         renderLasers();
         renderSelectionCircles();
@@ -197,6 +195,67 @@ public class BattleScreen implements Screen {
         renderPhysicsVertices();
 
         renderTextBelowMouseCursor();
+        renderShipCenters();
+    }
+
+    private void renderShipCenters() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (ClientShip ship : battleHandler.getShips()) {
+            ship.getCenterPos(tmp);
+            shapeRenderer.circle(tmp.x, tmp.y, 0.25f, 16);
+        }
+        shapeRenderer.end();
+    }
+
+    private void renderTargetValueCircles() {
+        batch.begin();
+        long myid = battleHandler.getMyId();
+        for (ClientShip ship: battleHandler.getShips()) {
+            if (ship.getOwner().getId() == myid && false) { // todo false just for testing
+                continue;
+            }
+
+            int markersActive = ship.getTargetValue();
+            Vector2 pos = getTargetValueStartPosPx(ship);
+            for (int i=0; i <= ClientShip.MAX_TARGET_VALUE; i++) {
+                float x = pos.x + i * (TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
+                batch.setColor(getMarkerColor(i, i <= markersActive));
+                batch.draw(Assets.targetValueMarker, x, pos.y, TARGET_VALUE_MARKER_SIZE_PX, TARGET_VALUE_MARKER_SIZE_PX);
+                // todo: handle tinting
+                // valueMarkers[i].setColor(getMarkerColor(i, false));
+            }
+
+        }
+        batch.end();
+    }
+
+    private static final Rectangle rect = new Rectangle();
+
+    private static final float TARGET_VALUE_MARKER_SIZE_PX = 20; // TODO maybe scale this based on resolution?
+    private static final float TARGET_VALUE_MARKER_MARGIN_PX = TARGET_VALUE_MARKER_SIZE_PX / 2f;
+    private static final float TARGET_VALUE_MARKER_BAR_HALF_WIDTH_PX = ((ClientShip.MAX_TARGET_VALUE + 1) * TARGET_VALUE_MARKER_SIZE_PX + ClientShip.MAX_TARGET_VALUE * TARGET_VALUE_MARKER_MARGIN_PX) / 2f;
+    private static final float MARKER_NOT_SELECTED_ALPHA = 0.5f;
+
+    private Vector2 getTargetValueStartPosPx(ClientShip ship) {
+        tmp.set(ship.getWidth() / 2f, ship.getHeight());
+        tmp.rotate(ship.getRotation());
+        tmp.add(ship.getX(), ship.getY());
+        tmp3.set(tmp.x, tmp.y, 0);
+        cam.project(tmp3);
+
+        // now we have window coordinates just above the ship vertically and right in middle of the ship horizontally
+        tmp.set(tmp3.x - TARGET_VALUE_MARKER_BAR_HALF_WIDTH_PX, tmp3.y + TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
+        return tmp;
+    }
+
+    private static final float MARKER_START_GREEN = 0.25f, MARKER_END_GREEN = 0.75f;
+    private static Color getMarkerColor(int i, boolean selected) {
+        float alpha = 1f;
+        if (!selected) {
+            alpha = MARKER_NOT_SELECTED_ALPHA;
+        }
+        // TODO: instead pre-calculate colors in an array
+        return new Color(0, MARKER_START_GREEN + (MARKER_END_GREEN - MARKER_START_GREEN) / ClientShip.MAX_TARGET_VALUE * i, 0, alpha);
     }
 
     final static float weaponCoolDownCircleRadius = 10f;

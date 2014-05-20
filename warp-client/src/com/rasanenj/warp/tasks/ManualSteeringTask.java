@@ -4,9 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.rasanenj.warp.BattleHandler;
 import com.rasanenj.warp.ShipSelection;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.screens.BattleScreen;
 
 import static com.rasanenj.warp.Log.log;

@@ -2,7 +2,6 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -11,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.screens.BattleScreen;
@@ -525,7 +524,14 @@ public class BattleHandler {
 
                 return true;
             }
+            else if (event.getKeyCode() == Input.Keys.COMMA) {
+                for (ClientShip s : selection) {
+                    s.reduceTargetValue();
+                }
+                return true;
+            }
             else {
+                log("Unknown input received: " + event.getKeyCode());
                 return false;
             }
         }

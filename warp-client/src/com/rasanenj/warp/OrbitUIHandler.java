@@ -2,7 +2,7 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.tasks.MousePositionTrackerTask;
 import com.rasanenj.warp.tasks.MouseShipSelector;
 import com.rasanenj.warp.tasks.TaskHandler;

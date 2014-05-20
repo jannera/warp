@@ -3,7 +3,7 @@ package com.rasanenj.warp.systems;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.rasanenj.warp.Geometry;
-import com.rasanenj.warp.entities.ClientShip;
+import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.tasks.IntervalTask;

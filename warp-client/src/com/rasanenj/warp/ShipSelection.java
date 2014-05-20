@@ -1,10 +1,8 @@
 package com.rasanenj.warp;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.rasanenj.warp.entities.ClientShip;
-import com.rasanenj.warp.messaging.Player;
+import com.rasanenj.warp.actors.ClientShip;
 
 import java.util.Iterator;
 

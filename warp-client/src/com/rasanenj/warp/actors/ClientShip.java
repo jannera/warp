@@ -1,4 +1,4 @@
-package com.rasanenj.warp.entities;
+package com.rasanenj.warp.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.PositionProjection;
+import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
@@ -44,6 +45,10 @@ public class ClientShip extends Group {
     private float lastServerRotation;
     private Array<PositionProjection> projectedPositions =
             new Array<PositionProjection>(true, ShipShooting.PROJECTION_POINTS_AMOUNT);
+    private int targetValue;
+    public static final int MAX_TARGET_VALUE = 4;
+
+
 
     public ClientShip(long id, Player owner, ShipStats stats) {
         if (owner != null) {
@@ -68,6 +73,9 @@ public class ClientShip extends Group {
             // make the hovering and non-hovering ships overlap on the center
             clickRegionImage.setPosition(baseImage.getWidth() / 2f - clickRegionImage.getWidth() / 2f,
                     baseImage.getHeight() / 2f - clickRegionImage.getHeight() / 2f);
+
+            // create target value markers
+            targetValue = MathUtils.ceil(MAX_TARGET_VALUE/2f);
         }
         else {
             // TODO: remove this, instead make superclass/interface or something for steering position prediction
@@ -262,6 +270,17 @@ public class ClientShip extends Group {
         angularVelocity = ship.getAngularVelocity();
         setWidth(ship.getWidth());
         setHeight(ship.getHeight());
+    }
+
+    public void reduceTargetValue() {
+        if (this.targetValue > 0) {
+            this.targetValue--;
+
+        }
+    }
+
+    public int getTargetValue() {
+        return targetValue;
     }
 
     public enum TurningState {
