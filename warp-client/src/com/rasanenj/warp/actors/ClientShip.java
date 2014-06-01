@@ -272,11 +272,9 @@ public class ClientShip extends Group {
         setHeight(ship.getHeight());
     }
 
-    public void reduceTargetValue() {
-        if (this.targetValue > 0) {
-            this.targetValue--;
-
-        }
+    public void changeTargetValue(float change) {
+        this.targetValue += change;
+        this.targetValue = MathUtils.clamp(targetValue, 0, MAX_TARGET_VALUE);
     }
 
     public int getTargetValue() {

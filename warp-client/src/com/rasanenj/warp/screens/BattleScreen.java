@@ -195,67 +195,40 @@ public class BattleScreen implements Screen {
         renderPhysicsVertices();
 
         renderTextBelowMouseCursor();
-        renderShipCenters();
-    }
-
-    private void renderShipCenters() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (ClientShip ship : battleHandler.getShips()) {
-            ship.getCenterPos(tmp);
-            shapeRenderer.circle(tmp.x, tmp.y, 0.25f, 16);
-        }
-        shapeRenderer.end();
     }
 
     private void renderTargetValueCircles() {
         batch.begin();
         long myid = battleHandler.getMyId();
+        batch.setColor(new Color(0, 1, 0, 0.75f));
         for (ClientShip ship: battleHandler.getShips()) {
-            if (ship.getOwner().getId() == myid && false) { // todo false just for testing
+            if (ship.getOwner().getId() == myid) {
                 continue;
             }
 
             int markersActive = ship.getTargetValue();
             Vector2 pos = getTargetValueStartPosPx(ship);
-            for (int i=0; i <= ClientShip.MAX_TARGET_VALUE; i++) {
+            for (int i=0; i <= markersActive; i++) {
                 float x = pos.x + i * (TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
-                batch.setColor(getMarkerColor(i, i <= markersActive));
                 batch.draw(Assets.targetValueMarker, x, pos.y, TARGET_VALUE_MARKER_SIZE_PX, TARGET_VALUE_MARKER_SIZE_PX);
-                // todo: handle tinting
-                // valueMarkers[i].setColor(getMarkerColor(i, false));
             }
-
         }
         batch.end();
     }
 
-    private static final Rectangle rect = new Rectangle();
-
-    private static final float TARGET_VALUE_MARKER_SIZE_PX = 20; // TODO maybe scale this based on resolution?
+    private static final float TARGET_VALUE_MARKER_SIZE_PX = 12; // TODO maybe scale this based on resolution?
     private static final float TARGET_VALUE_MARKER_MARGIN_PX = TARGET_VALUE_MARKER_SIZE_PX / 2f;
-    private static final float TARGET_VALUE_MARKER_BAR_HALF_WIDTH_PX = ((ClientShip.MAX_TARGET_VALUE + 1) * TARGET_VALUE_MARKER_SIZE_PX + ClientShip.MAX_TARGET_VALUE * TARGET_VALUE_MARKER_MARGIN_PX) / 2f;
-    private static final float MARKER_NOT_SELECTED_ALPHA = 0.5f;
 
     private Vector2 getTargetValueStartPosPx(ClientShip ship) {
-        tmp.set(ship.getWidth() / 2f, ship.getHeight());
-        tmp.rotate(ship.getRotation());
-        tmp.add(ship.getX(), ship.getY());
+        ship.getCenterPos(tmp);
+        tmp.y += ship.getHeight() / 2f;
         tmp3.set(tmp.x, tmp.y, 0);
         cam.project(tmp3);
 
         // now we have window coordinates just above the ship vertically and right in middle of the ship horizontally
-        tmp.set(tmp3.x - TARGET_VALUE_MARKER_BAR_HALF_WIDTH_PX, tmp3.y + TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
+        float halfWidth = (ship.getTargetValue() * TARGET_VALUE_MARKER_SIZE_PX + (ship.getTargetValue() - 1) * TARGET_VALUE_MARKER_MARGIN_PX) / 2f;
+        tmp.set(tmp3.x - halfWidth, tmp3.y + TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
         return tmp;
-    }
-
-    private static final float MARKER_START_GREEN = 0.25f, MARKER_END_GREEN = 0.75f;
-    private static Color getMarkerColor(int i, boolean selected) {
-        float alpha = 1f;
-        if (!selected) {
-            alpha = MARKER_NOT_SELECTED_ALPHA;
-        }
-        // TODO: instead pre-calculate colors in an array
-        return new Color(0, MARKER_START_GREEN + (MARKER_END_GREEN - MARKER_START_GREEN) / ClientShip.MAX_TARGET_VALUE * i, 0, alpha);
     }
 
     final static float weaponCoolDownCircleRadius = 10f;

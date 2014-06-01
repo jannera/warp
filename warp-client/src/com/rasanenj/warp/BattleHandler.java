@@ -526,7 +526,13 @@ public class BattleHandler {
             }
             else if (event.getKeyCode() == Input.Keys.COMMA) {
                 for (ClientShip s : selection) {
-                    s.reduceTargetValue();
+                    s.changeTargetValue(-1);
+                }
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.PERIOD) {
+                for (ClientShip s : selection) {
+                    s.changeTargetValue(1);
                 }
                 return true;
             }

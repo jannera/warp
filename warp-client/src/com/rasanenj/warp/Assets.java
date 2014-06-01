@@ -46,7 +46,7 @@ public class Assets {
         shipTextureFrigateHilite = createShipTextures("data/frigate_base.png", "data/frigate_overlay.png", hiliteColors);
         shipTextureCruiser = new Texture(Gdx.files.internal("data/ship_cruiser.png"));
         shipTextureBattleship = new Texture(Gdx.files.internal("data/ship_battleship.png"));
-        targetValueMarker = new Texture(Gdx.files.internal("data/grey_block.png"));
+        targetValueMarker = new Texture(Gdx.files.internal("data/gradient_circle.png"));
     }
 
     private static Texture[] createShipTextures(String baseFile, String overlayFile, Color[] colors) {
