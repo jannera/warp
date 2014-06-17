@@ -1,6 +1,6 @@
 package com.rasanenj.warp.messaging;
 
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.Array;
 import java.util.Collection;
 
 /**
@@ -23,7 +23,7 @@ public abstract class MessageConsumer {
         public Message message;
     }
 
-    private ArrayList<MessageAndPlayer> storedMessages = new ArrayList<MessageAndPlayer>();
+    private Array<MessageAndPlayer> storedMessages = new Array<MessageAndPlayer>();
 
     public abstract void consume(Player player, Message msg);
     // TODO: make possible player part of the message, and remove it from here

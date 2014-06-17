@@ -1,7 +1,7 @@
 package com.rasanenj.warp.messaging;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.badlogic.gdx.utils.Array;
+
 import java.util.EnumMap;
 import java.util.logging.Level;
 
@@ -17,9 +17,9 @@ public class MessageDelegator {
      * Registers given MessageConsumer to listen for all messages of the given type
      */
     public void register(MessageConsumer consumer, Message.MessageType type) {
-        Collection<MessageConsumer> consumers = consumerLists.get(type);
+        Array<MessageConsumer> consumers = consumerLists.get(type);
         if (consumers == null) {
-            consumers = new ArrayList<MessageConsumer>(1);
+            consumers = new Array<MessageConsumer>(1);
             consumerLists.put(type, consumers);
         }
         consumers.add(consumer);
@@ -30,12 +30,12 @@ public class MessageDelegator {
      */
     public void delegate(Player player, Message msg) {
         Message.MessageType type = msg.getType();
-        Collection<MessageConsumer> consumers = consumerLists.get(type);
+        Array<MessageConsumer> consumers = consumerLists.get(type);
         if (consumers == null) {
             log(Level.SEVERE, "No consumer list for message of type " + type);
             return;
         }
-        if (consumers.isEmpty()) {
+        if (consumers.size == 0) {
             log(Level.SEVERE, "Empty consumer list for message of type " + type);
             return;
         }
@@ -44,6 +44,6 @@ public class MessageDelegator {
         }
     }
 
-    final EnumMap<Message.MessageType, Collection<MessageConsumer>> consumerLists =
-            new EnumMap<Message.MessageType, Collection<MessageConsumer>>(Message.MessageType.class);
+    final EnumMap<Message.MessageType, Array<MessageConsumer>> consumerLists =
+            new EnumMap<Message.MessageType, Array<MessageConsumer>>(Message.MessageType.class);
 }

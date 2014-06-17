@@ -1,6 +1,6 @@
 package com.rasanenj.warp;
 
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * @author gilead
@@ -24,7 +24,7 @@ public class Statistics {
         return damage / (timeMs / 1000f);
     }
 
-    private ArrayList<DamageStat> damageStats = new ArrayList<DamageStat>();
+    private Array<DamageStat> damageStats = new Array<DamageStat>();
 
     private class DamageStat
     {
