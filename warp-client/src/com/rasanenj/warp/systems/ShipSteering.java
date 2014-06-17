@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Geometry;
+import com.rasanenj.warp.Log;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
@@ -137,6 +138,7 @@ public class ShipSteering extends IntervalTask {
     private final SteeringResult result = new SteeringResult();
 
     public static void steer(ClientShip ship, SteeringResult result) {
+        result.reset();
         if (ship.hasDirectionTarget()) {
             directionSteer(ship, result);
         }
@@ -242,5 +244,11 @@ public class ShipSteering extends IntervalTask {
         final Vector2 linearImpulse = new Vector2();
         final Vector2 idealImpulse = new Vector2();
         float angularImpulse;
+
+        public void reset() {
+            linearImpulse.set(0, 0);
+            idealImpulse.set(0, 0);
+            angularImpulse = 0;
+        }
     }
 }
