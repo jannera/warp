@@ -1,24 +1,23 @@
 package com.rasanenj.warp.tasks;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.rasanenj.warp.DamageModeler;
 import com.rasanenj.warp.ShipSelection;
 import com.rasanenj.warp.actors.ClientShip;
 
-import java.util.ArrayList;
-
 /**
  * @author gilead
  */
 public class ShipTextUpdater implements Task {
-    private final ArrayList<ClientShip> ships;
+    private final Array<ClientShip> ships;
     private final ShipSelection selection;
     private boolean speed;
     private boolean expectedDamage;
     private NumberFormat decimalFormatter = NumberFormat.getFormat("#.#");
 
-    public ShipTextUpdater(ArrayList<ClientShip> ships, ShipSelection selection, boolean speed, boolean expectedDamage){
+    public ShipTextUpdater(Array<ClientShip> ships, ShipSelection selection, boolean speed, boolean expectedDamage){
         this.ships = ships;
         this.speed = speed;
         this.expectedDamage = expectedDamage;

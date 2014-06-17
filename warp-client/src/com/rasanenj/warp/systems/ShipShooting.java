@@ -10,10 +10,6 @@ import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.messaging.ShootRequestMessage;
 import com.rasanenj.warp.tasks.IntervalTask;
 
-import java.util.ArrayList;
-
-import static com.rasanenj.warp.Log.log;
-
 /**
  * @author Janne Rasanen
  */
@@ -24,13 +20,13 @@ public class ShipShooting extends IntervalTask {
             PROJECTION_INTERVAL_MS = (int) (1000f / UPDATES_IN_SECOND),
             PROJECTION_POINTS_AMOUNT = (int) ((float) PROJECTION_TIME_MS / (float) PROJECTION_INTERVAL_MS);
 
-    private final ArrayList<ClientShip> ships;
+    private final Array<ClientShip> ships;
     private final ServerConnection conn;
     private final ShipShootingAI shootingAI;
 
     private long myId = -1;
 
-    public ShipShooting(ShipShootingAI shootingAI, ArrayList<ClientShip> ships, ServerConnection conn) {
+    public ShipShooting(ShipShootingAI shootingAI, Array<ClientShip> ships, ServerConnection conn) {
         super(UPDATES_IN_SECOND);
         this.shootingAI = shootingAI;
         this.ships = ships;

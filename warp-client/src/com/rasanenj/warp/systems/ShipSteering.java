@@ -2,6 +2,7 @@ package com.rasanenj.warp.systems;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Geometry;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.messaging.AccelerationMessage;
@@ -25,11 +26,11 @@ public class ShipSteering extends IntervalTask {
 
     private static final Vector2 vecP = new Vector2(), vecR = new Vector2(), vecQ = new Vector2(), vecS = new Vector2();
 
-    private final Collection<ClientShip> ships;
+    private final Array<ClientShip> ships;
     private final ServerConnection connection;
     private static final Vector2 corners[] = new Vector2[4];
 
-    public ShipSteering(Collection<ClientShip> ships, ServerConnection conn) {
+    public ShipSteering(Array<ClientShip> ships, ServerConnection conn) {
         super(MESSAGES_IN_SECOND);
         this.ships = ships;
         this.connection = conn;

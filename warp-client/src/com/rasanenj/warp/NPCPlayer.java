@@ -33,9 +33,9 @@ public class NPCPlayer {
 
     private final long MIN_SHOOTING_TIME = 2000, MAX_SHOOTING_TIME = 12000; // in ms
 
-    private final ArrayList<ClientShip> allShips = new ArrayList<ClientShip>();
-    private final ArrayList<ClientShip> myShips = new ArrayList<ClientShip>();
-    private final ArrayList<ClientShip> enemyShips = new ArrayList<ClientShip>();
+    private final Array<ClientShip> allShips = new Array<ClientShip>(false, 16);
+    private final Array<ClientShip> myShips = new Array<ClientShip>(false, 16);
+    private final Array<ClientShip> enemyShips = new Array<ClientShip>(false, 16);
     private final Random rng = new Random();
 
     private final Map<Long, MyShipInfo> infos = new HashMap<Long, MyShipInfo>();
@@ -89,7 +89,7 @@ public class NPCPlayer {
     private void chooseTargets() {
         // for every ship that doesn't have a target, picks one randomly
         long timenow = System.currentTimeMillis();
-        if (enemyShips.isEmpty()) {
+        if (enemyShips.size == 0) {
             return;
         }
         for(ClientShip ship : myShips) {
@@ -97,7 +97,7 @@ public class NPCPlayer {
             if (info.timeToSelectNextTarget > timenow && info.targetShip != null) {
                 continue;
             }
-            int i = rng.nextInt(enemyShips.size());
+            int i = rng.nextInt(enemyShips.size);
             ClientShip target = enemyShips.get(i);
             // TODO: perhaps pick the target based on the current hitpoints of the enemy ships?
             // TODO: perhaps pick the same target for all of the ships
@@ -128,7 +128,7 @@ public class NPCPlayer {
             }
 
             // randomly select ships into fleet until all points are spent
-            Array<ShipStats> result = new Array<ShipStats>();
+            Array<ShipStats> result = new Array<ShipStats>(false, 16);
             while(pointsLeft >= minCost) {
                 int i = rng.nextInt(stats.size);
                 ShipStats s = stats.get(i);
@@ -238,7 +238,7 @@ public class NPCPlayer {
         return removeShip(enemyShips, id);
     }
 
-    private static ClientShip removeShip(ArrayList<ClientShip> ships, long id) {
+    private static ClientShip removeShip(Array<ClientShip> ships, long id) {
         ClientShip tgt = null;
         for (ClientShip ship : ships) {
             if (ship.getId() == id) {
@@ -247,7 +247,7 @@ public class NPCPlayer {
             }
         }
         if (tgt != null) {
-            ships.remove(tgt);
+            ships.removeValue(tgt, true);
             return tgt;
         }
         return null;
@@ -261,7 +261,7 @@ public class NPCPlayer {
         return getShip(enemyShips, id);
     }
 
-    private static ClientShip getShip(ArrayList<ClientShip> ships, long id) {
+    private static ClientShip getShip(Array<ClientShip> ships, long id) {
         for (ClientShip ship : ships) {
             if (ship.getId() == id) {
                 return ship;

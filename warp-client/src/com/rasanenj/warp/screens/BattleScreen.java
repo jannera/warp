@@ -34,6 +34,7 @@ public class BattleScreen implements Screen {
 
     private final Matrix4 normalProjection;
     private final TiledImage backgroundImage;
+    private final WarpGame game;
     private Stage stage;
     private BattleHandler battleHandler;
 
@@ -127,7 +128,8 @@ public class BattleScreen implements Screen {
         }
     }
 
-    public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen) {
+    public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
+        this.game = game;
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
         cam = (OrthographicCamera) stage.getCamera();
@@ -832,7 +834,7 @@ public class BattleScreen implements Screen {
     private void renderDebugText() {
         batch.begin();
         font.setColor(1, 1, 1, 1);
-        String debugText = Gdx.graphics.getFramesPerSecond() + " fps, " + battleHandler.getShips().size() + " ships";
+        String debugText = Gdx.graphics.getFramesPerSecond() + " fps, " + battleHandler.getShips().size + " ships";
         font.draw(batch, debugText, 2, 20);
         batch.end();
     }
@@ -997,5 +999,9 @@ public class BattleScreen implements Screen {
 
     public void setHoveringTarget(ClientShip hoveringTarget) {
         this.hoveringTarget = hoveringTarget;
+    }
+
+    public WarpGame getGame() {
+        return game;
     }
 }

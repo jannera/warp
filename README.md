@@ -1,6 +1,6 @@
 Warp
 ===
-Warp is a multiplayer browser game that’s based on GWT, Websockets and libgdx.
+Warp is a multiplayer browser game based on GWT, Websockets and libgdx.
 
 Status
 ===
@@ -39,11 +39,12 @@ Future Ideas
 Steps Before First Catalog-tuning, Need to have
 ===
 * Nykyisen buildin autosave, listenereillä tilan muuttuessa
-* warp.ext.vincit.fi taas kuntoon
+* warp.ext.vincit.fi uusin versio
 * Katalogin modaaminen netin kautta
     * Katalogin hakeminen http://openkeyval.org/
     * http://jsoneditoronline.org/
     * save / load yksinkertaisilla formeilla + JS warp.ext:iin
+* Cruiseri kentällä ei saa sekoittaa frigaattien piirtoa
 
 Steps Before First Catalog-tuning, Nice to have
 ===
@@ -71,6 +72,7 @@ Steps Before First Catalog-tuning, Nice to have
 * Kiertonopeus
     * Maksimikiertonopeuden laskeminen orbit-säteestä
     * Kuitenkin voisi ajaa "täysiä" ennen saapumista lähelle
+* Cruiserin graffan vaihtaminen samaan systeemiin kuin frigaattien
 
 MVProto
 ===
@@ -257,3 +259,4 @@ MVProto DONE
 * DONE Pyssyjen syklin visualisointi
     * Täyttyvä ympyrä
     * Täysi ympyrä kun valmis, mutta päättää odottaa
+* DONE Ctrl + M vaihtaa battlescreenistä lobbyyn

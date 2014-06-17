@@ -2,12 +2,11 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.tasks.MousePositionTrackerTask;
 import com.rasanenj.warp.tasks.MouseShipSelector;
 import com.rasanenj.warp.tasks.TaskHandler;
-
-import java.util.ArrayList;
 
 /**
  * @author gilead
@@ -27,7 +26,7 @@ public class OrbitUIHandler {
         DISABLED, SELECTING_TARGET, SELECTING_RADIUS
     }
 
-    public OrbitUIHandler(TaskHandler taskHandler, Camera cam, ArrayList<ClientShip> ships,
+    public OrbitUIHandler(TaskHandler taskHandler, Camera cam, Array<ClientShip> ships,
                           ShipSelection selection) {
         this.mouseShipSelector = new MouseShipSelector(cam, ships);
         taskHandler.addToTaskList(mouseShipSelector);

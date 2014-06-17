@@ -518,7 +518,7 @@ public class BattleHandler {
                 ClientShip shooter = ships.get(0);
                 Random rng = new Random();
 
-                int tgtIndex = 1 + rng.nextInt(ships.size() - 1);
+                int tgtIndex = 1 + rng.nextInt(ships.size - 1);
                 ClientShip target = ships.get(tgtIndex);
                 screen.addLaserBeam(shooter, target);
 
@@ -534,6 +534,11 @@ public class BattleHandler {
                 for (ClientShip s : selection) {
                     s.changeTargetValue(1);
                 }
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.M && ctrlDown) {
+                leaveGame();
+                screen.getGame().setScreen(WarpGame.ScreenType.LOBBY);
                 return true;
             }
             else {
@@ -554,11 +559,17 @@ public class BattleHandler {
         }
     }
 
+    private void leaveGame() {
+        conn.send(new DisconnectMessage(getPlayer(myId))); // despite the misleading name, DisconnectMessage just actually removes you from the current game
+        screen.getStage().getActors().removeAll(ships, true);
+        ships.clear();
+    }
+
     private final ServerConnection conn;
     private final BattleScreen screen;
     private final ShipSteering shipSteering;
 
-    private final ArrayList<ClientShip> ships = new ArrayList<ClientShip>();
+    private final Array<ClientShip> ships = new Array<ClientShip>(false, 16);
 
     private ClientShip getShip(long id) {
         for (ClientShip ship : ships) {
@@ -578,7 +589,7 @@ public class BattleHandler {
             }
         }
         if (tgt != null) {
-            ships.remove(tgt);
+            ships.removeValue(tgt, true);
             selection.remove(tgt);
             return tgt;
         }
@@ -608,7 +619,7 @@ public class BattleHandler {
 
     final Vector2 tmp = new Vector2(), tmp2 = new Vector2();
 
-    public ArrayList<ClientShip> getShips() {
+    public Array<ClientShip> getShips() {
         return ships;
     }
 
