@@ -1,6 +1,7 @@
 package com.rasanenj.warp.ui.fleetbuilding;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rasanenj.warp.Assets;
+import com.rasanenj.warp.Log;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.ui.PropertySlider;
 
@@ -154,14 +156,20 @@ public class ShipBuildWindow {
         float weaponDamage = getValue(values, "weaponDamage");
         float weaponCooldown = getValue(values, "weaponCooldown");
         float width = getValue(constants, "width");
-        float height = getValue(constants, "height");
         float cost = getTotalCost();
+
+        ShipStats.Shiptype shiptype = getType();
+        // calculate the height dynamically, based on texture's ratio and the width given in the catalog
+        Texture t = Assets.getShipBaseTexture(shiptype);
+        float imageRatio = (float) t.getWidth() / (float) t.getHeight();
+        float height = width / imageRatio;
+        Log.log("image ratio " + imageRatio + " -> " + width + " x " + height);
 
         // TODO: add weapon tracking
         return new ShipStats(mass, inertia, force, force, force, force, maxHealth, maxVelocity,
                 maxAngularVelocity, maxAngularAcceleration, signatureResolution, weaponCooldown,
                 signatureResolution, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown,
-                maxAcceleration, cost, width, height, getType());
+                maxAcceleration, cost, width, height, shiptype);
     }
 
     private float getValue(HashMap<String, Float> values, String value) {

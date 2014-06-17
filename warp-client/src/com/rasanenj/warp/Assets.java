@@ -16,8 +16,9 @@ import com.rasanenj.warp.messaging.Player;
  * @author gilead
  */
 public class Assets {
-    public static Texture shipTextureCruiser, shipTextureBattleship;
-    public static Texture[] shipTextureFrigateBase, shipTextureFrigateHilite;
+    private static Texture shipTextureBattleship;
+    private static Texture[] shipTextureFrigateBase, shipTextureFrigateHilite,
+            shipTextureCruiserHilite, shipTextureCruiserBase;
     public static Texture moveTargetTexture, aimingTargetTexture,
             backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture,
             targetValueMarker;
@@ -42,52 +43,49 @@ public class Assets {
         laserEndBackground = new Texture(Gdx.files.internal("data/laser_end_background.png"));
         laserEndOverlay = new Texture(Gdx.files.internal("data/laser_end_overlay.png"));
 
-        shipTextureFrigateBase = createShipTextures("data/frigate_base.png", "data/frigate_overlay.png", playerColors);
-        shipTextureFrigateHilite = createShipTextures("data/frigate_base.png", "data/frigate_overlay.png", hiliteColors);
-        shipTextureCruiser = new Texture(Gdx.files.internal("data/ship_cruiser.png"));
+        // TODO: handle these dynamically by reading ship types and image file names from the ship catalog
+        Pixmap frigBase = createShipPixmap("data/frigate_base.png");
+        Pixmap frigOverlay = createShipPixmap("data/frigate_overlay.png");
+        shipTextureFrigateBase = createShipTextures(frigBase, frigOverlay, playerColors);
+        shipTextureFrigateHilite = createShipTextures(frigBase, frigOverlay, hiliteColors);
+
+        Pixmap cruiserBase = createShipPixmap("data/cruiser_base.png");
+        Pixmap cruiserOverlay = createShipPixmap("data/cruiser_overlay.png");
+        shipTextureCruiserBase = createShipTextures(cruiserBase, cruiserOverlay, playerColors);
+        shipTextureCruiserHilite = createShipTextures(cruiserBase, cruiserOverlay, hiliteColors);
+
         shipTextureBattleship = new Texture(Gdx.files.internal("data/ship_battleship.png"));
         targetValueMarker = new Texture(Gdx.files.internal("data/gradient_circle.png"));
     }
 
-    private static Texture[] createShipTextures(String baseFile, String overlayFile, Color[] colors) {
+    private static Texture[] createShipTextures(Pixmap base, Pixmap overlay, Color[] colors) {
         Texture[] result = new Texture[colors.length];
 
         int i = 0;
         for(Color c : colors) {
-            result[i++] = createShipTexture(baseFile, overlayFile, new Color(c.r, c.g, c.b, 0.5f));
+            tintPixmap(overlay, new Color(c.r, c.g, c.b, 1f));
+
+            Pixmap amalgam = new Pixmap(base.getWidth(), base.getHeight(), base.getFormat());
+
+            amalgam.drawPixmap(base, 0, 0);
+            amalgam.drawPixmap(overlay, 0,0);
+            result[i++] = new Texture(amalgam);
         }
         return result;
     }
 
-    private static Texture createShipTexture(String baseFile, String overlayFile, Color c) {
-        Pixmap base = new Pixmap(Gdx.files.internal(baseFile));
-        Pixmap overlay = new Pixmap(Gdx.files.internal(overlayFile));
-
-        tintPixmap(overlay, c);
-
-        Pixmap result = new Pixmap(base.getWidth(), base.getHeight(), base.getFormat());
-
-        result.drawPixmap(base, 0, 0);
-        result.drawPixmap(overlay, 0,0);
-        return rotate90Degrees(result);
+    private static Pixmap createShipPixmap(String filename) {
+        return rotate90DegreesP(new Pixmap(Gdx.files.internal(filename)));
     }
 
-    private static Texture rotate90Degrees(Pixmap p) {
-        FrameBuffer fbo = new FrameBuffer(p.getFormat(), p.getWidth(), p.getHeight(), false);
-        SpriteBatch batch = new SpriteBatch();
-        Texture t = new Texture(p);
-
-        fbo.begin();
-
-        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        batch.begin();
-        batch.draw(new TextureRegion(t), 0, 0, t.getWidth()/2f, t.getHeight()/2f, t.getHeight(), t.getWidth(), 1f, 1f, 0, true);
-        batch.end();
-        fbo.end();
-
-        return fbo.getColorBufferTexture();
+    private static Pixmap rotate90DegreesP(Pixmap p) {
+        Pixmap result = new Pixmap(p.getHeight(), p.getWidth(), p.getFormat());
+        for (int x = 0; x < p.getWidth(); x++) {
+            for (int y = 0; y < p.getHeight(); y++) {
+                result.drawPixel(y, x, p.getPixel(x, p.getHeight() - y));
+            }
+        }
+        return result;
     }
 
     /*
@@ -126,7 +124,20 @@ public class Assets {
             case FRIGATE:
                 return shipTextureFrigateBase[owner.getColorIndex()];
             case CRUISER:
-                return shipTextureCruiser;
+                return shipTextureCruiserBase[owner.getColorIndex()];
+            case BATTLESHIP:
+                return shipTextureBattleship;
+            default:
+                return null;
+        }
+    }
+
+    public static Texture getShipBaseTexture(ShipStats.Shiptype type) {
+        switch (type) {
+            case FRIGATE:
+                return shipTextureFrigateBase[0];
+            case CRUISER:
+                return shipTextureCruiserBase[0];
             case BATTLESHIP:
                 return shipTextureBattleship;
             default:
@@ -139,7 +150,7 @@ public class Assets {
             case FRIGATE:
                 return shipTextureFrigateHilite[owner.getColorIndex()];
             case CRUISER:
-                return shipTextureCruiser;
+                return shipTextureCruiserHilite[owner.getColorIndex()];
             case BATTLESHIP:
                 return shipTextureBattleship;
             default:

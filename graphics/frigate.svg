@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="frigate.svg"
-   inkscape:export-filename="C:\Users\gilead\IdeaProjects\warp\warp-android\assets\data\frigate_base.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="C:\Users\jannera.VINCIT\IdeaProjects\warp\warp-android\assets\data\frigate_overlay.png"
+   inkscape:export-xdpi="34.380001"
+   inkscape:export-ydpi="34.380001">
   <defs
      id="defs4">
     <linearGradient
@@ -182,16 +182,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="32.816974"
-     inkscape:cy="421.81543"
+     inkscape:cx="-131.46874"
+     inkscape:cy="627.39966"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
-     inkscape:window-width="853"
-     inkscape:window-height="642"
-     inkscape:window-x="29"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -221,7 +221,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="base"
-     style="display:inline"
+     style="display:none"
      transform="translate(-22.857143,-19.269323)">
     <path
        style="fill:#505050;stroke:none;display:inline"
@@ -294,7 +294,7 @@
        sodipodi:nodetypes="ccccc"
        transform="translate(22.857143,19.269323)" />
     <rect
-       style="display:inline;fill:#6e6e6e;fill-opacity:1;stroke:none"
+       style="fill:#6e6e6e;fill-opacity:1;stroke:none;display:inline"
        id="rect4232"
        width="323.57144"
        height="22.142857"
@@ -302,7 +302,7 @@
        y="354.52142"
        transform="translate(22.857143,19.269323)" />
     <rect
-       style="display:inline;fill:#6e6e6e;fill-opacity:1;stroke:none"
+       style="fill:#6e6e6e;fill-opacity:1;stroke:none;display:inline"
        id="rect4238"
        width="20.203011"
        height="384.73694"
@@ -338,7 +338,7 @@
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="nondirectional shadows"
-     style="display:inline">
+     style="display:none">
     <path
        d="m 471.23616,515.97119 a 118.18785,118.18785 0 1 1 -236.3757,0 118.18785,118.18785 0 1 1 236.3757,0 z"
        sodipodi:ry="118.18785"
@@ -361,7 +361,7 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="directional shadows"
-     style="display:inline">
+     style="display:none">
     <g
        id="g3922"
        style="opacity:0.5;fill:#000000;fill-opacity:1"
@@ -543,7 +543,7 @@
      inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="highest base stuff"
-     style="display:inline">
+     style="display:none">
     <path
        transform="translate(-22.857143,-19.269323)"
        sodipodi:type="arc"
