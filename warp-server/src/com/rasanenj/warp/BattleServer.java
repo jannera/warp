@@ -8,7 +8,6 @@ import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.tasks.IntervalTask;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -78,7 +77,7 @@ public class BattleServer extends IntervalTask {
             }
             else if (msg.getType() == Message.MessageType.DISCONNECT) {
                 battleLoop.removePlayer(player);
-                ArrayList<ServerShip> ships = battleLoop.getShipsOwnedByPlayer(player);
+                Array<ServerShip> ships = battleLoop.getShipsOwnedByPlayer(player);
                 for (ServerShip ship : ships) {
                     // notify all players still left in the game to remove the ships
                     // TODO: maybe in the future we want to do something else than remove players ships when he disconnects..
@@ -184,7 +183,7 @@ public class BattleServer extends IntervalTask {
         }
     }
 
-    private void sendToAll(Collection<Message> messages) {
+    private void sendToAll(Array<Message> messages) {
         for (Player player : battleLoop.getPlayers()) {
             ServerPlayer serverPlayer = (ServerPlayer) player; // TODO get rid of this once messages work better
             for (Message msg : messages) {
@@ -208,8 +207,8 @@ public class BattleServer extends IntervalTask {
 
         @Override
         protected void run() {
-            ArrayList<ServerShip> ships = battleLoop.getShips();
-            ArrayList<Message> messages = new ArrayList<Message>(ships.size());
+            Array<ServerShip> ships = battleLoop.getShips();
+            Array<Message> messages = new Array<Message>(ships.size);
             final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
             final float lerp2 = 1f - lerp1;
             // TODO: there's no reason to create and populate a list on every update

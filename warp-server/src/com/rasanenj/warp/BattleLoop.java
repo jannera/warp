@@ -2,6 +2,7 @@ package com.rasanenj.warp;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.MessageDelegator;
@@ -9,8 +10,6 @@ import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.tasks.RunnableFPS;
 import com.rasanenj.warp.tasks.TaskHandler;
 import com.rasanenj.warp.tasks.VelocityPrinter;
-
-import java.util.ArrayList;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -23,8 +22,8 @@ public class BattleLoop extends RunnableFPS {
     private final BattleServer battleServer;
     private final World world;
     private final TaskHandler taskHandler;
-    private ArrayList<Player> players = new ArrayList<Player>(); // TODO: make it ServerPlayers
-    private ArrayList<ServerShip> ships = new ArrayList<ServerShip>();
+    private Array<Player> players = new Array<Player>(); // TODO: make it ServerPlayers
+    private Array<ServerShip> ships = new Array<ServerShip>();
 
 
     static private final float FPS = 120;
@@ -110,18 +109,18 @@ public class BattleLoop extends RunnableFPS {
         ships.add(ship);
     }
 
-    public ArrayList<Player> getPlayers() {
+    public Array<Player> getPlayers() {
         return players;
     }
 
-    public ArrayList<ServerShip> getShips() {
+    public Array<ServerShip> getShips() {
         return ships;
     }
 
     /**
      * Do NOT store reference to the returned list
      */
-    public ArrayList<ServerShip> getShipsOwnedByPlayer(Player owner) {
+    public Array<ServerShip> getShipsOwnedByPlayer(Player owner) {
         removeList.clear();
 
         for (ServerShip ship : ships) {
@@ -133,21 +132,21 @@ public class BattleLoop extends RunnableFPS {
     }
 
     public void removePlayer(Player player) {
-        players.remove(player);
+        players.removeValue(player, true);
     }
 
     public void removeShip(long id) {
         ServerShip s = getShip(id);
         if (s != null) {
-            ships.remove(s);
+            ships.removeValue(s, true);
         }
     }
 
-    private ArrayList<ServerShip> removeList = new ArrayList<ServerShip> ();
+    private Array<ServerShip> removeList = new Array<ServerShip> ();
 
-    public void removeAllShips(ArrayList<ServerShip> toBeRemoved) {
+    public void removeAllShips(Array<ServerShip> toBeRemoved) {
 
-        ships.removeAll(toBeRemoved);
+        ships.removeAll(toBeRemoved, true);
     }
 
     public ServerShip getShip(long id) {

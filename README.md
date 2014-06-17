@@ -157,7 +157,6 @@ MVProto
     * Pelin aloittaminen
 * Kyky pyörittää useita pelejä samaan aikaan
 * arrival liikkumiseen
-* Korvaa ArrayListit libgdx:n Array:illa
 
 MVProto DONE
 ===
@@ -260,3 +259,4 @@ MVProto DONE
     * Täyttyvä ympyrä
     * Täysi ympyrä kun valmis, mutta päättää odottaa
 * DONE Ctrl + M vaihtaa battlescreenistä lobbyyn
+* DONE Korvaa ArrayListit libgdx:n Array:illa

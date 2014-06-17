@@ -9,8 +9,6 @@ import org.java_websocket.server.WebSocketServer;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -19,23 +17,23 @@ import static com.rasanenj.warp.Log.log;
  */
 public class WSServer extends WebSocketServer {
     private final MessageDelegator delegator;
-    private final Collection<ServerPlayer> players;
+    private final Array<ServerPlayer> players;
 
     public WSServer( int port, MessageDelegator delegator) throws UnknownHostException {
         super( new InetSocketAddress( port ) );
         this.delegator = delegator;
-        players = new ArrayList<ServerPlayer>();
+        players = new Array<ServerPlayer>();
         // WebSocketImpl.DEBUG = true;
     }
 
     public WSServer( InetSocketAddress address, MessageDelegator delegator ) {
         super( address );
         this.delegator = delegator;
-        players = new ArrayList<ServerPlayer>();
+        players = new Array<ServerPlayer>();
         // WebSocketImpl.DEBUG = true;
     }
 
-    public Collection<ServerPlayer> getPlayers() {
+    public Array<ServerPlayer> getPlayers() {
         return players;
     }
 
@@ -46,7 +44,7 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Player player = getPlayer(conn);
+        ServerPlayer player = getPlayer(conn);
         log(player.getName() + " disconnected");
         remove(player);
         DisconnectMessage msg = new DisconnectMessage(player);
@@ -109,8 +107,8 @@ public class WSServer extends WebSocketServer {
         }
     }
 
-    private void remove(Player player) {
-        players.remove(player);
+    private void remove(ServerPlayer player) {
+        players.removeValue(player, true);
         takenColorIndices.removeValue(player.getColorIndex(), false);
     }
 

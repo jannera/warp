@@ -1,9 +1,8 @@
 package com.rasanenj.warp.tasks;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ServerShip;
-
-import java.util.ArrayList;
 
 import static com.rasanenj.warp.Log.log;
 
@@ -11,10 +10,10 @@ import static com.rasanenj.warp.Log.log;
  * @author gilead
  */
 public class VelocityPrinter implements Task {
-    private final ArrayList<ServerShip> ships;
+    private final Array<ServerShip> ships;
     private float oldVel = 0;
 
-    public VelocityPrinter(ArrayList<ServerShip> ships) {
+    public VelocityPrinter(Array<ServerShip> ships) {
         this.ships = ships;
     }
 
