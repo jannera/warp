@@ -122,17 +122,6 @@ public class NPCPlayer {
         }
 
         private void createRandomFleet() {
-            /*
-            uuden systeemin mukaiset, random:
-            - heitä fittien määrä nopalla, 1-4
-            - heitä nopalla maksimihinnat (ensin osuuksina kokonaismaksimista)
-            - kullekin fitille:
-                - luo satunnainen fitti maksimihinnalla
-                    - säätele vipuja satunnaisesti kunnes hintaehdot täyttyvät
-                - osta niin monta laivaa kuin maksimihinnan sisään mahtuu
-                - viimeinen fitti saa maksimirajoitukseksi toteutuneen budjetin mukaan jäljellä olevat pojot
-            - lopussa jotain checkejä / rajoituksia fleetille, ja jos eivät toteudu, uudestaan?
-             */
             float totalCost;
             int fitAmount;
             ShipStats[] stats;

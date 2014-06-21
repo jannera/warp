@@ -5,8 +5,7 @@
             "typeName" : "Frigate",
             "icon" : "F",
             "constants" : {
-                "width" : 1.2,
-                "height" : 0.73
+                "width" : 1.2
             },
             "categories" : [
                 {
@@ -66,25 +65,25 @@
                             "name" : "Max velocity",
                             "values" : [
                                 {
-                                    "value" : 3,
+                                    "value" : 1,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 4.5,
+                                    "value" : 1.5,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 6,
+                                    "value" : 2,
                                     "cost" : 80
                                 }
                                 ,
                                 {
-                                    "value" : 7.5,
+                                    "value" : 2.5,
                                     "cost" : 130
                                 }
                                 ,
                                 {
-                                    "value" : 9,
+                                    "value" : 3,
                                     "cost" : 190
                                 }
                             ]
@@ -94,31 +93,31 @@
                             "name" : "Max acceleration",
                             "values" : [
                                 {
-                                    "value" : 2,
+                                    "value" : 0.25,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 3,
+                                    "value" : 0.6,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 4,
+                                    "value" : 0.95,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 5,
+                                    "value" : 1.3,
                                     "cost" : 70
                                 },
                                 {
-                                    "value" : 6,
+                                    "value" : 1.65,
                                     "cost" : 110
                                 },
                                 {
-                                    "value" : 7,
+                                    "value" : 2,
                                     "cost" : 160
                                 },
                                 {
-                                    "value" : 8,
+                                    "value" : 2.35,
                                     "cost" : 210
                                 }
                             ]
@@ -295,8 +294,7 @@
             "typeName" : "Cruiser",
             "icon" : "C",
             "constants" : {
-                "width" : 6,
-                "height" : 3.651
+                "width" : 6
             },
             "categories" : [
                 {
@@ -568,8 +566,7 @@
             "typeName" : "Battleship",
             "icon" : "B",
             "constants" : {
-                "width" : 24,
-                "height" : 6
+                "width" : 24
             },
             "categories" : [
                 {
