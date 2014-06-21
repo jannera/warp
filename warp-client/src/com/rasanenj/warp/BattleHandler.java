@@ -42,7 +42,6 @@ public class BattleHandler {
     private final OrbitUIHandler orbitUIHandler;
 
     private long myId = -1;
-    private final FleetStatsFetcher statsFetcher;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
     private final ShipSelection selection = new ActiveShipSelection();
     private MouseState mouseState = MouseState.DEFAULT;
@@ -52,7 +51,6 @@ public class BattleHandler {
 
     public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
         conn.register(new ConnectionListener());
-        this.statsFetcher = new FleetStatsFetcher();
         this.screen = screen;
         this.conn = conn;
         this.shipClickListener = new ShipClickListener();
@@ -85,7 +83,7 @@ public class BattleHandler {
     }
 
     public void createNPC() {
-        this.npcPlayers.add(new NPCPlayer(Utility.getHost()));
+        this.npcPlayers.add(new NPCPlayer(Utility.getHost(), BuildStats.totalCost));
     }
 
     private class BattleMessageConsumer extends MessageConsumer {

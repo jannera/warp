@@ -210,6 +210,15 @@ public class ShipBuildWindow {
         return activateButton;
     }
 
+    public static ShipBuildWindow[] createAllTypes() {
+        ShipBuildWindow[] result = new ShipBuildWindow[2]; // only first two types for now
+
+        for (int i=1; i <= 3; i++) {
+            result[i-1] = createShipFromCatalog(i);
+        }
+        return result;
+    }
+
     public static ShipBuildWindow createShipFromCatalog(int shipTypeId) {
         JsonReader reader = new JsonReader();
         JsonValue catalog = reader.parse(Gdx.files.internal("data/shipCatalog.json"));
@@ -318,6 +327,18 @@ public class ShipBuildWindow {
                 return ShipStats.Shiptype.BATTLESHIP;
             default:
                 return null;
+        }
+    }
+
+    public void randomizeSliders() {
+        for (int i=0; i < sliders.size; i++) {
+            sliders.get(i).randomize();
+        }
+    }
+
+    public void resetSliders() {
+        for (PropertySlider slider : sliders) {
+            slider.reset();
         }
     }
 }

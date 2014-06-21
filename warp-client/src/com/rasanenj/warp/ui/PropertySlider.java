@@ -1,11 +1,11 @@
 package com.rasanenj.warp.ui;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.rasanenj.warp.Assets;
+
+import java.util.Random;
 
 /**
  * @author gilead
@@ -65,5 +65,13 @@ public class PropertySlider {
         if (index < values.length && index >= 0) {
             slider.setValue(index);
         }
+    }
+
+    public void randomize() {
+        setIndex(new Random().nextInt(values.length));
+    }
+
+    public void reset() {
+        setIndex(0);
     }
 }

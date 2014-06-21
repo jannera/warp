@@ -71,7 +71,6 @@ Steps Before First Catalog-tuning, Nice to have
 * Kiertonopeus
     * Maksimikiertonopeuden laskeminen orbit-säteestä
     * Kuitenkin voisi ajaa "täysiä" ennen saapumista lähelle
-* NPC:t ostamaan aluksensa katalogin ominaisuuksista. Helpompi testailla muutoksia
 
 MVProto
 ===
@@ -261,3 +260,4 @@ MVProto DONE
 * DONE Korvaa ArrayListit libgdx:n Array:illa
 * DONE Cruiseri kentällä ei saa sekoittaa frigaattien piirtoa
 * DONE Cruiserin graffan vaihtaminen samaan systeemiin kuin frigaattien
+* DONE NPC:t ostavat aluksensa katalogin ominaisuuksista. Helpompi testailla muutoksia

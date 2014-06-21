@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.rasanenj.warp.BuildStats;
 import com.rasanenj.warp.WarpGame;
 import com.rasanenj.warp.chat.ChatHandler;
 import com.rasanenj.warp.entities.ShipStats;
@@ -122,6 +123,7 @@ public class LobbyScreen implements Screen {
         for (ShipStats stats : currentBuild.getStats()) {
             serverConnection.send(new ShipStatsMessage(stats));
         }
+        BuildStats.totalCost = currentBuild.getTotalCost();
     }
 
     private class ConnectionListener implements ServerConnection.OpenCloseListener {

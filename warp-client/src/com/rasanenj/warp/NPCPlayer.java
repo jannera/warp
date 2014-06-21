@@ -8,6 +8,7 @@ import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
+import com.rasanenj.warp.ui.fleetbuilding.ShipBuildWindow;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -40,7 +41,8 @@ public class NPCPlayer {
 
     private final Map<Long, MyShipInfo> infos = new HashMap<Long, MyShipInfo>();
 
-    public NPCPlayer(String host) {
+    public NPCPlayer(String host, float maxCost) {
+        maxFleetCost = maxCost;
         this.delegator = new MessageDelegator();
         this.consumer = new Consumer(delegator);
         this.conn = new ServerConnection(host, delegator);
@@ -107,7 +109,7 @@ public class NPCPlayer {
         }
     }
 
-    private static int maxFleetCost = 80;
+    private final float maxFleetCost;
 
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
 
@@ -115,33 +117,94 @@ public class NPCPlayer {
         public void onOpen() {
             conn.send(new JoinServerMessage("npc", -1));
             conn.send(new JoinBattleMessage("npc", -1, -1));
-            Array<ShipStats> stats = FleetStatsFetcher.parse(Constants.NPC_INVENTORY);
-            float pointsLeft = maxFleetCost;
 
-            // calculate the lowest cost of a ship in the inventory
-            float minCost = Float.MAX_VALUE;
-            for (int i = 0; i < stats.size; i++) {
-                float cost = stats.get(i).getCost();
-                if (cost < minCost) {
-                    minCost = cost;
+            createRandomFleet();
+        }
+
+        private void createRandomFleet() {
+            /*
+            uuden systeemin mukaiset, random:
+            - heitä fittien määrä nopalla, 1-4
+            - heitä nopalla maksimihinnat (ensin osuuksina kokonaismaksimista)
+            - kullekin fitille:
+                - luo satunnainen fitti maksimihinnalla
+                    - säätele vipuja satunnaisesti kunnes hintaehdot täyttyvät
+                - osta niin monta laivaa kuin maksimihinnan sisään mahtuu
+                - viimeinen fitti saa maksimirajoitukseksi toteutuneen budjetin mukaan jäljellä olevat pojot
+            - lopussa jotain checkejä / rajoituksia fleetille, ja jos eivät toteudu, uudestaan?
+             */
+            float totalCost;
+            int fitAmount;
+            ShipStats[] stats;
+            int[] shipAmounts;
+            do {
+                fitAmount = rng.nextInt(4) + 1; // 1 -4 fits
+                float[] maxCosts = new float[fitAmount];
+                float costLeft = maxFleetCost * 1.2f;
+                for(int i=0; i < fitAmount - 1; i++) {
+                    float cost = rng.nextFloat() * costLeft;
+                    maxCosts[i] = cost;
+                    costLeft -= cost;
+                }
+                maxCosts[fitAmount - 1] = costLeft;
+
+                stats = new ShipStats[fitAmount];
+                shipAmounts = new int[fitAmount];
+                ShipBuildWindow[] allTypes = ShipBuildWindow.createAllTypes();
+
+                for(int i=0; i < fitAmount; i++) {
+                    stats[i] = generateRandomFit(maxCosts[i], allTypes);
+                    if (stats[i] != null) {
+                        float cost = stats[i].getCost();
+                        shipAmounts[i] = (int) Math.floor(maxCosts[i] / cost);
+                    }
+                }
+
+                // calculate total cost
+                totalCost = 0;
+                for(int i=0; i < fitAmount; i++) {
+                    if (stats[i] != null) {
+                        totalCost += stats[i].getCost() * shipAmounts[i];
+                    }
                 }
             }
+            while (!(totalCost < maxFleetCost * 1.2f && totalCost > maxFleetCost * 0.8f));
 
-            // randomly select ships into fleet until all points are spent
-            Array<ShipStats> result = new Array<ShipStats>(false, 16);
-            while(pointsLeft >= minCost) {
-                int i = rng.nextInt(stats.size);
-                ShipStats s = stats.get(i);
-                if (s.getCost() <= pointsLeft) {
-                    result.add(s);
-                    pointsLeft -= s.getCost();
+            Log.log("Creating fleet of about " + maxFleetCost + " points");
+            for(int i=0; i < fitAmount; i++) {
+                if (stats[i] != null) {
+                    float singleCost = stats[i].getCost();
+                    Log.log(shipAmounts[i] + " x " + singleCost + " = " + shipAmounts[i] * singleCost);
                 }
             }
+            Log.log("Total cost was " + totalCost);
 
-            // tell server our selection
-            for (ShipStats s : result) {
-                conn.send(new ShipStatsMessage(s));
+            for (int i = 0; i < fitAmount; i++) {
+                ShipStats s = stats[i];
+                if (s != null) {
+                    for (int j=0; j < shipAmounts[i]; j++) {
+                        conn.send(new ShipStatsMessage(s));
+                    }
+                }
             }
+        }
+
+        private ShipStats generateRandomFit(float maxCost, ShipBuildWindow[] allTypes) {
+            allTypes[0].resetSliders();
+            float minCost = allTypes[0].getStats().getCost();
+            if (minCost > maxCost) {
+                return null;
+            }
+
+            float cost = Float.POSITIVE_INFINITY;
+            ShipBuildWindow selection = null;
+            while (cost > maxCost) {
+                int type = rng.nextInt(allTypes.length);
+                selection = allTypes[type];
+                selection.randomizeSliders();
+                cost = selection.getTotalCost();
+            }
+            return selection.getStats();
         }
 
         @Override
