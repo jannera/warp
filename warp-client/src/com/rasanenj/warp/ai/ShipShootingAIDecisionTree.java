@@ -3,6 +3,7 @@ package com.rasanenj.warp.ai;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.DamageModeler;
+import com.rasanenj.warp.Log;
 import com.rasanenj.warp.PositionProjection;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -18,23 +19,30 @@ import static com.rasanenj.warp.Log.log;
  *
  */
 public class ShipShootingAIDecisionTree implements ShipShootingAI {
-    private static final Vector2 shooterPos = new Vector2(),
-            targetPos = new Vector2();
     private static final float MIN_TRY_CHANCE = 0.01f;
 
-    private static class Decision {
-        public Array<Decision> children = new Array<Decision>(false, 2);
+    public static class Decision {
+        public Array<ShootDecision> shootDecisions = new Array<ShootDecision>(false, 2);
+        public WaitDecision waitDecision;
         public float value;
         public float chance;
+        public final int projectionIndex;
+
+        public Decision(int projectionIndex) {
+            this.projectionIndex = projectionIndex;
+        }
 
         public Decision getMostValuableChild() {
             float maxValue = Float.MIN_VALUE;
             Decision mostValuableChild = null;
-            for (Decision d : children) {
+            for (Decision d : shootDecisions) {
                 if (d.value > maxValue) {
                     maxValue = d.value;
                     mostValuableChild = d;
                 }
+            }
+            if (waitDecision.value > maxValue) {
+                mostValuableChild = waitDecision;
             }
             return mostValuableChild;
         }
@@ -43,7 +51,7 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
             log(toString(0));
         }
 
-        private String toString(int level) {
+        protected String toString(int level) {
             String output = "";
             String padding = "--";
             output += new String(new char[level]).replace("\0", padding);
@@ -59,8 +67,11 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
             output += " :";
             output += value;
             output += '\n';
-            for (Decision d : children) {
+            for (Decision d : shootDecisions) {
                 output += d.toString(level + 1);
+            }
+            if (waitDecision != null) {
+                output += waitDecision.toString(level + 1);
             }
             return output;
         }
@@ -68,44 +79,86 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         public ClientShip getTarget() {
             return null;
         }
+
+        // updates the tree that has been built before
+        public void update(ClientShip shooter) {
+            WaitDecision last = null;
+            Decision current = this;
+            while (current != null) {
+                for (ShootDecision shootDecision : current.shootDecisions) {
+                    shootDecision.updateDecision(shooter);
+                }
+                if (current.waitDecision != null) {
+                    last = current.waitDecision;
+                }
+                current = current.waitDecision;
+            }
+
+            // calculate the total values for wait nodes, bottom up
+            while(last != null) {
+                last.calculateValueFromChildren();
+                last = last.parent;
+            }
+        }
     }
 
     private static class WaitDecision extends Decision {
         public WaitDecision parent;
 
+        public WaitDecision(int projectionIndex) {
+            super(projectionIndex);
+        }
+
         public void calculateValueFromChildren() {
             float maxValue = Float.MIN_VALUE;
-            for (Decision d : children) {
+            for (Decision d : shootDecisions) {
                 if (d.value > maxValue) {
                     maxValue = d.value;
                 }
+            }
+            if (waitDecision != null && waitDecision.value > maxValue) {
+                maxValue = waitDecision.value;
             }
             value = maxValue;
         }
     }
 
     private static class ShootDecision extends Decision {
-        private final ClientShip target;
+        private ClientShip target;
 
-        private ShootDecision(ClientShip target, float value, float chance) {
+        public ShootDecision(int projectionIndex, ClientShip target) {
+            super(projectionIndex);
             this.target = target;
-            this.value = value;
-            this.chance = chance;
-            // log("created shoot decision with value " + value);
         }
 
-        public static ShootDecision createDecision(ClientShip shooter, ClientShip target,
-                                                   Vector2 shooterPos, Vector2 targetPos,
-                                                   Vector2 shooterVel, Vector2 targetVel,
-                                                   long extraWaitTime) {
-            float chance = DamageModeler.getChance(shooterPos, targetPos,
+        private static final Vector2 shooterPos = new Vector2();
+        private static final Vector2 targetPos = new Vector2();
+        private static final Vector2 shooterVel = new Vector2();
+        private static final Vector2 targetVel = new Vector2();
+
+        public void updateDecision(ClientShip shooter) {
+            if (projectionIndex == -1) {
+                shooter.getCenterPos(shooterPos);
+                target.getCenterPos(targetPos);
+                shooterVel.set(shooter.getVelocity());
+                targetVel.set(target.getVelocity());
+            }
+            else {
+                PositionProjection shooterProjection = shooter.getProjectedPositions().get(projectionIndex);
+                shooterPos.set(shooterProjection.getPosition());
+                shooterVel.set(shooterProjection.getVelocity());
+                PositionProjection targetProjection = target.getProjectedPositions().get(projectionIndex);
+                targetPos.set(targetProjection.getPosition());
+                targetVel.set(targetProjection.getVelocity());
+            }
+            this.chance = DamageModeler.getChance(shooterPos, targetPos,
                     shooterVel, targetVel, shooter.getStats(), target.getStats());
             float expectedDamage = DamageModeler.getExpectedDamage(chance, shooter.getStats());
             // log("expected damage was " + expectedDamage);
+            float extraWaitTime = ((float) (projectionIndex + 1)) * (float) ShipShooting.PROJECTION_INTERVAL_MS;
             float time = shooter.getStats().getWeaponCooldown() + extraWaitTime / 1000f;
-            float value = expectedDamage / time;
+            this.value = expectedDamage / time;
             // TODO: reduce the value by some kind of optimism/pessimism multiplier
-            return new ShootDecision(target, value, chance);
         }
 
         public ClientShip getTarget() {
@@ -118,11 +171,19 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         if (shooter.getFiringTarget() == null) {
             return null;
         }
-        Decision treeRoot = buildTree(shooter);
 
-        treeRoot.logTree();
+        Decision root = shooter.getDecisionTreeRoot();
+        if (shooter.isDecisionTreeDirty()) {
+            Log.log("building new target tree for ship " + shooter.getId());
+            root = buildTree(shooter);
+            shooter.setDecisionTreeRoot(root);
+            shooter.setDecisionTreeDirty(false);
+        }
 
-        Decision best = treeRoot.getMostValuableChild();
+        root.update(shooter);
+        root.logTree();
+
+        Decision best = root.getMostValuableChild();
         ClientShip target = best.getTarget();
         if (target != null) {
             if (best.chance < MIN_TRY_CHANCE) {
@@ -138,50 +199,29 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
     }
 
     private static Decision buildTree(ClientShip shooter) {
-        Decision root = new Decision();
+        Decision root = new Decision(-1);
 
         ClientShip target = shooter.getFiringTarget();
 
         // first, the "shoot now" option
-        shooter.getCenterPos(shooterPos);
-        target.getCenterPos(targetPos);
-        ShootDecision shoot = ShootDecision.createDecision(shooter, target,
-                shooterPos, targetPos, shooter.getVelocity(), target.getVelocity(), 0);
-        root.children.add(shoot);
+        ShootDecision shoot = new ShootDecision(-1, target);
+        root.shootDecisions.add(shoot);
 
-        WaitDecision wait = new WaitDecision();
-        root.children.add(wait);
-
-        // all the waiting + projections
-        Array<PositionProjection> shooterProjections = shooter.getProjectedPositions();
-        Array<PositionProjection> targetProjections = target.getProjectedPositions();
+        WaitDecision wait = new WaitDecision(-1);
+        root.waitDecision = wait;
 
         WaitDecision current = wait;
         for (int i =0; i < ShipShooting.PROJECTION_POINTS_AMOUNT; i++) {
-            PositionProjection shooterProjection = shooterProjections.get(i);
-            PositionProjection targetProjection = targetProjections.get(i);
-            // log(shooterProjection.getPosition() + " vs " + targetProjection.getPosition());
-            shoot = ShootDecision.createDecision(shooter, target,
-                    shooterProjection.getPosition(),
-                    targetProjection.getPosition(),
-                    shooterProjection.getVelocity(),
-                    targetProjection.getVelocity(),
-                    (i + 1) * ShipShooting.PROJECTION_INTERVAL_MS);
-            current.children.add(shoot);
+            shoot = new ShootDecision(i, target);
+            current.shootDecisions.add(shoot);
 
             if (i < ShipShooting.PROJECTION_POINTS_AMOUNT - 1) {
-                wait = new WaitDecision();
-                current.children.add(wait);
+                wait = new WaitDecision(i);
+                current.waitDecision = wait;
                 wait.parent = current;
                 current = wait;
             }
         }
-
-        // calculate the total values for wait nodes, bottom up
-        do {
-            current.calculateValueFromChildren();
-            current = current.parent;
-        } while(current != null);
 
         return root;
     }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.PositionProjection;
+import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -48,6 +49,8 @@ public class ClientShip extends Group {
     private int targetValue;
     public static final int MAX_TARGET_VALUE = 4;
 
+    private ShipShootingAIDecisionTree.Decision decisionTreeRoot;
+    private boolean decisionTreeDirty = true; // set this true to rebuild whole decision tree before updating it
 
 
     public ClientShip(long id, Player owner, ShipStats stats) {
@@ -504,5 +507,21 @@ public class ClientShip extends Group {
         else {
             return Assets.getBasicColor(owner);
         }
+    }
+
+    public ShipShootingAIDecisionTree.Decision getDecisionTreeRoot() {
+        return decisionTreeRoot;
+    }
+
+    public void setDecisionTreeRoot(ShipShootingAIDecisionTree.Decision decisionTreeRoot) {
+        this.decisionTreeRoot = decisionTreeRoot;
+    }
+
+    public boolean isDecisionTreeDirty() {
+        return decisionTreeDirty;
+    }
+
+    public void setDecisionTreeDirty(boolean decisionTreeDirty) {
+        this.decisionTreeDirty = decisionTreeDirty;
     }
 }

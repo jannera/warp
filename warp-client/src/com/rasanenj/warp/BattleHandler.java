@@ -152,6 +152,8 @@ public class BattleHandler {
                         }
                     }
                 }
+
+                dirtyAllShootingDecisionTrees();
             }
 
             else if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
@@ -206,6 +208,8 @@ public class BattleHandler {
                         ship.setFiringTarget(null);
                     }
                 }
+
+                dirtyAllShootingDecisionTrees();
             }
         }
 
@@ -216,6 +220,12 @@ public class BattleHandler {
                     Message.MessageType.JOIN_BATTLE,
                     Message.MessageType.SHOOT_DAMAGE,
                     Message.MessageType.SHIP_DESTRUCTION);
+        }
+    }
+
+    private void dirtyAllShootingDecisionTrees() {
+        for (ClientShip s : ships) {
+            s.setDecisionTreeDirty(true);
         }
     }
 

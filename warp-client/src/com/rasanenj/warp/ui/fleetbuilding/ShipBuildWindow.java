@@ -213,7 +213,7 @@ public class ShipBuildWindow {
     public static ShipBuildWindow[] createAllTypes() {
         ShipBuildWindow[] result = new ShipBuildWindow[2]; // only first two types for now
 
-        for (int i=1; i <= 3; i++) {
+        for (int i=1; i <= 2; i++) {
             result[i-1] = createShipFromCatalog(i);
         }
         return result;
@@ -337,8 +337,8 @@ public class ShipBuildWindow {
     }
 
     public void resetSliders() {
-        for (PropertySlider slider : sliders) {
-            slider.reset();
+        for (int i=0; i < sliders.size; i++) {
+            sliders.get(i).reset();
         }
     }
 }
