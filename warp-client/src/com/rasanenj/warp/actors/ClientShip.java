@@ -24,7 +24,6 @@ import static com.rasanenj.warp.Log.log;
 public class ClientShip extends Group {
     private final float MAX_DST_CHANGE_PER_FRAME, MIN_TELEPORT_DST;
     private final Player owner;
-    private ClientShip firingTarget;
     private long lastFiringTime = 0;
     private float health;
 
@@ -152,14 +151,6 @@ public class ClientShip extends Group {
             corners[i].rotate(getRotation());
             corners[i].add(tmp);
         }
-    }
-
-    public void setFiringTarget(ClientShip firingTarget) {
-        this.firingTarget = firingTarget;
-    }
-
-    public ClientShip getFiringTarget() {
-        return firingTarget;
     }
 
     public boolean canFire() {

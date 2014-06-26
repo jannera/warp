@@ -181,9 +181,7 @@ public class BattleScreen implements Screen {
         // render active commands for selected ships
         renderOrbitTargets();
         renderNavigationTargets();
-        renderFiringTargets();
 
-        renderHoveringTarget();
         renderOptimals();
         renderOrbitCircle();
         renderDamageTexts();
@@ -346,16 +344,6 @@ public class BattleScreen implements Screen {
         tmp3.set(tmp.x, tmp.y, 0);
         cam.project(tmp3);
         batch.draw(tex, tmp3.x - halfSize, tmp3.y - halfSize, size, size);
-    }
-
-    private void renderFiringTargets() {
-        batch.begin();
-        final float halfSize = ACTIVE_FIRING_TARGET_SIZE / 2f;
-        for (ClientShip ship : battleHandler.getSelectedShips()) {
-            renderAtTarget(ship.getFiringTarget(), Assets.aimingTargetTexture,
-                    ACTIVE_FIRING_TARGET_SIZE, halfSize);
-        }
-        batch.end();
     }
 
     private void renderOrbitCircle() {
@@ -522,20 +510,6 @@ public class BattleScreen implements Screen {
         }
 
         laserBeams.removeAll(removableLaserBeams, true);
-    }
-
-    private void renderHoveringTarget() {
-        if (hoveringTarget == null) {
-            return;
-        }
-        batch.begin();
-        final float width = HOVERING_FIRING_TARGET_SIZE;
-        final float height = width;
-        tmp3.set(hoveringTarget.getX(), hoveringTarget.getY(), 0);
-        cam.project(tmp3);
-        tmp3.sub(width / 2f, height / 2f, 0);
-        batch.draw(Assets.aimingTargetTexture, tmp3.x, tmp3.y, width, height);
-        batch.end();
     }
 
     private void renderNavigationTargets() {

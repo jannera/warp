@@ -47,6 +47,7 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
+* Go to, orbit ja yleensäkin alusten valitseminen klikkaamalla pitää korjata
 * Useiden ampumakohteiden antaminen aluksille
     * Ammu sitä mihin tekisit eniten lämää
     * Ammu sitä mihin tekisit eniten lämää, mutta suosi kohteita jotka ovat jo ottaneet lämää
@@ -61,6 +62,7 @@ Steps Before First Catalog-tuning, Nice to have
           ja hyöty arvioidaan kohteen arvon (käyttäjän antama), lämäennusteen ja jonkinlaisen
           paikkatiedon luotettavuuden kertoimen (0..1) perusteella
         * Ampumis-AI voisi optimoida koko fleetin toimintaa, ei pelkästään yksittäisen laivan
+    * Target valuen antamisen sijaan primary / secondary / tertiary / muut
 * Maksiminopeuden asettaminen
     * DONE Numeroista asettaminen
     * Rajoituksen pakottaminen Steeringissä
@@ -71,6 +73,7 @@ Steps Before First Catalog-tuning, Nice to have
 * Kiertonopeus
     * Maksimikiertonopeuden laskeminen orbit-säteestä
     * Kuitenkin voisi ajaa "täysiä" ennen saapumista lähelle
+* Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 
 MVProto
 ===

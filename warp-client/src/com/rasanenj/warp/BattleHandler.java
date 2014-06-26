@@ -56,7 +56,7 @@ public class BattleHandler {
         this.shipClickListener = new ShipClickListener();
         screen.getStage().addListener(new StageListener());
         shipSteering = new ShipSteering(ships, conn);
-        ShipShootingAIDecisionTree shootingAI = new ShipShootingAIDecisionTree();
+        ShipShootingAIDecisionTree shootingAI = new ShipShootingAIDecisionTree(ships);
         shipShooting = new ShipShooting(shootingAI, ships, conn);
         this.consumer = new BattleMessageConsumer(conn.getDelegator());
         this.taskHandler = new TaskHandler();
@@ -153,6 +153,7 @@ public class BattleHandler {
                     }
                 }
 
+                // instead of calling this, we could just tell ShipShootingAIDecisionTree to add this ship to all relevant trees
                 dirtyAllShootingDecisionTrees();
             }
 
@@ -202,13 +203,7 @@ public class BattleHandler {
                     screen.getStage().getRoot().removeActor(removedShip);
                 }
 
-                // tell all shooting ships to stop shooting
-                for (ClientShip ship : ships) {
-                    if (ship.getFiringTarget() == removedShip) {
-                        ship.setFiringTarget(null);
-                    }
-                }
-
+                // instead of this we could just tell ShipShootingAIDecisionTree to remove the ship from all relevant decision trees
                 dirtyAllShootingDecisionTrees();
             }
         }
@@ -268,14 +263,6 @@ public class BattleHandler {
                 if (mouseState == MouseState.DEFAULT) {
                     selection.clear();
                     selection.add(clientShip);
-                }
-            }
-            else {
-                // clicked non-friendly ship, so set it target for all friendly selected ships
-                for (ClientShip s : selection) {
-                    if (s.getOwner().getId() == myId) {
-                        s.setFiringTarget(clientShip);
-                    }
                 }
             }
             event.handle();

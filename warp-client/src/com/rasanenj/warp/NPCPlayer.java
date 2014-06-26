@@ -27,7 +27,7 @@ public class NPCPlayer {
     private long myId = -1;
     private final Array<Player> players = new Array<Player>(true, 1);
 
-    private final class MyShipInfo {
+    public class MyShipInfo {
         public ClientShip targetShip = null;
         public long timeToSelectNextTarget = 0;
     }
@@ -47,7 +47,7 @@ public class NPCPlayer {
         this.consumer = new Consumer(delegator);
         this.conn = new ServerConnection(host, delegator);
         steering = new ShipSteering(myShips, conn);
-        ShipShootingAISimple shootingAI = new ShipShootingAISimple();
+        ShipShootingAISimple shootingAI = new ShipShootingAISimple(infos);
         shooting = new ShipShooting(shootingAI, allShips, conn);
         conn.register(new ConnectionListener());
         conn.open();
@@ -105,7 +105,6 @@ public class NPCPlayer {
             // TODO: perhaps pick the same target for all of the ships
             info.targetShip = target;
             info.timeToSelectNextTarget = (long) (timenow + MIN_SHOOTING_TIME + rng.nextFloat() * (MAX_SHOOTING_TIME - MIN_SHOOTING_TIME));
-            ship.setFiringTarget(target);
         }
     }
 
@@ -261,10 +260,9 @@ public class NPCPlayer {
                     log(Level.SEVERE, "Couldn't remove ship with id " + id);
                 }
 
-                // tell all shooting ships to stop shooting
-                for (ClientShip ship : myShips) {
-                    if (ship.getFiringTarget() == removedShip) {
-                        ship.setFiringTarget(null);
+                for(Map.Entry<Long, MyShipInfo> e : infos.entrySet()) {
+                    if (e.getValue().targetShip == removedShip) {
+                        e.getValue().targetShip = null;
                     }
                 }
             }

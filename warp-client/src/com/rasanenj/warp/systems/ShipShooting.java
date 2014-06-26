@@ -56,10 +56,6 @@ public class ShipShooting extends IntervalTask {
             if (ship.getOwner().getId() != myId) {
                 continue; // only command owned ships
             }
-            ClientShip target = ship.getFiringTarget();
-            if (target == null) {
-                continue;
-            }
             if (!ship.canFire()) {
                 continue;
             }
@@ -76,10 +72,6 @@ public class ShipShooting extends IntervalTask {
         for (ClientShip ship : ships) {
             if (ship.getOwner().getId() != myId) {
                 continue; // only command owned ships
-            }
-            ClientShip target = ship.getFiringTarget();
-            if (target == null) {
-                continue;
             }
             if (!ship.canFire()) {
                 continue;

@@ -19,7 +19,7 @@ public class Assets {
     private static Texture shipTextureBattleship;
     private static Texture[] shipTextureFrigateBase, shipTextureFrigateHilite,
             shipTextureCruiserHilite, shipTextureCruiserBase;
-    public static Texture moveTargetTexture, aimingTargetTexture,
+    public static Texture moveTargetTexture,
             backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture,
             targetValueMarker;
     public static Texture laserMidBackground, laserMidOverlay, laserStartBackground, laserStartOverlay, laserEndBackground, laserEndOverlay;
@@ -28,7 +28,6 @@ public class Assets {
 
     public static void load() {
         moveTargetTexture = new Texture(Gdx.files.internal("data/target_rectangle.png"));
-        aimingTargetTexture = new Texture(Gdx.files.internal("data/firing_target.png"));
         backgroundTexture = new Texture(Gdx.files.internal("data/background.png"));
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         projectileTexture = new Texture(Gdx.files.internal("data/projectile.png"));

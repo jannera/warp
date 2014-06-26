@@ -19,6 +19,12 @@ import static com.rasanenj.warp.Log.log;
  *
  */
 public class ShipShootingAIDecisionTree implements ShipShootingAI {
+    private final Array<ClientShip> ships;
+
+    public ShipShootingAIDecisionTree(Array<ClientShip> ships) {
+        this.ships = ships;
+    }
+
     private static final float MIN_TRY_CHANCE = 0.01f;
 
     public static class Decision {
@@ -33,16 +39,13 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         }
 
         public Decision getMostValuableChild() {
-            float maxValue = Float.MIN_VALUE;
-            Decision mostValuableChild = null;
+            float maxValue = waitDecision.value;
+            Decision mostValuableChild = waitDecision;
             for (Decision d : shootDecisions) {
                 if (d.value > maxValue) {
                     maxValue = d.value;
                     mostValuableChild = d;
                 }
-            }
-            if (waitDecision.value > maxValue) {
-                mostValuableChild = waitDecision;
             }
             return mostValuableChild;
         }
@@ -110,7 +113,7 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         }
 
         public void calculateValueFromChildren() {
-            float maxValue = Float.MIN_VALUE;
+            float maxValue = 0;
             for (Decision d : shootDecisions) {
                 if (d.value > maxValue) {
                     maxValue = d.value;
@@ -157,7 +160,7 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
             // log("expected damage was " + expectedDamage);
             float extraWaitTime = ((float) (projectionIndex + 1)) * (float) ShipShooting.PROJECTION_INTERVAL_MS;
             float time = shooter.getStats().getWeaponCooldown() + extraWaitTime / 1000f;
-            this.value = expectedDamage / time;
+            this.value = expectedDamage / time * (float) (target.getTargetValue() + 1);
             // TODO: reduce the value by some kind of optimism/pessimism multiplier
         }
 
@@ -168,10 +171,6 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
 
     // null means do not fire yet
     public ClientShip getFiringTarget(ClientShip shooter) {
-        if (shooter.getFiringTarget() == null) {
-            return null;
-        }
-
         Decision root = shooter.getDecisionTreeRoot();
         if (shooter.isDecisionTreeDirty()) {
             Log.log("building new target tree for ship " + shooter.getId());
@@ -181,13 +180,13 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         }
 
         root.update(shooter);
-        root.logTree();
+        // root.logTree();
 
         Decision best = root.getMostValuableChild();
         ClientShip target = best.getTarget();
         if (target != null) {
             if (best.chance < MIN_TRY_CHANCE) {
-                log("decided to wait with chance " + best.chance);
+                // log("decided to wait with chance " + best.chance);
                 return null;
             }
             log("decided to shoot with chance " + best.chance);
@@ -198,22 +197,22 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         return target;
     }
 
-    private static Decision buildTree(ClientShip shooter) {
+    private Decision buildTree(ClientShip shooter) {
         Decision root = new Decision(-1);
 
-        ClientShip target = shooter.getFiringTarget();
-
-        // first, the "shoot now" option
-        ShootDecision shoot = new ShootDecision(-1, target);
-        root.shootDecisions.add(shoot);
+        addShootDecisions(-1, shooter, root.shootDecisions);
 
         WaitDecision wait = new WaitDecision(-1);
         root.waitDecision = wait;
 
+        if (root.shootDecisions.size == 0) {
+            // if there's nothing to shoot, don't build rest of the tree.. wait decision is the only decision
+            return root;
+        }
+
         WaitDecision current = wait;
         for (int i =0; i < ShipShooting.PROJECTION_POINTS_AMOUNT; i++) {
-            shoot = new ShootDecision(i, target);
-            current.shootDecisions.add(shoot);
+            addShootDecisions(i, shooter, current.shootDecisions);
 
             if (i < ShipShooting.PROJECTION_POINTS_AMOUNT - 1) {
                 wait = new WaitDecision(i);
@@ -224,5 +223,15 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
         }
 
         return root;
+    }
+
+    private void addShootDecisions(int projectionIndex, ClientShip shooter, Array<ShootDecision> shootDecisions) {
+        Long ownerId = shooter.getOwner().getId();
+        for (int i=0; i < ships.size; i++) {
+            ClientShip s = ships.get(i);
+            if (s.getOwner().getId() != ownerId) {
+                shootDecisions.add(new ShootDecision(projectionIndex, s));
+            }
+        }
     }
 }
