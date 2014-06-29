@@ -354,21 +354,26 @@
                             "name" : "Max velocity",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 0.5,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 2,
-                                    "cost" : 20
+                                    "value" : 0.75,
+                                    "cost" : 40
                                 },
                                 {
-                                    "value" : 3,
-                                    "cost" : 40
+                                    "value" : 1,
+                                    "cost" : 80
                                 }
                                 ,
                                 {
-                                    "value" : 4,
-                                    "cost" : 70
+                                    "value" : 1.25,
+                                    "cost" : 130
+                                }
+                                ,
+                                {
+                                    "value" : 1.5,
+                                    "cost" : 190
                                 }
                             ]
                         },
@@ -377,20 +382,32 @@
                             "name" : "Max acceleration",
                             "values" : [
                                 {
-                                    "value" : 0.5,
+                                    "value" : 0.05,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 1,
+                                    "value" : 0.12,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 1.5,
+                                    "value" : 0.19,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 2,
-                                    "cost" : 60
+                                    "value" : 0.26,
+                                    "cost" : 70
+                                },
+                                {
+                                    "value" : 0.33,
+                                    "cost" : 110
+                                },
+                                {
+                                    "value" : 0.4,
+                                    "cost" : 160
+                                },
+                                {
+                                    "value" : 0.47,
+                                    "cost" : 210
                                 }
                             ]
                         },
@@ -514,19 +531,19 @@
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 28,
+                                    "value" : 12,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 48,
+                                    "value" : 16,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 68,
+                                    "value" : 20,
                                     "cost" : 80
                                 },
                                 {
-                                    "value" : 88,
+                                    "value" : 24,
                                     "cost" : 130
                                 }
                             ]
@@ -540,19 +557,19 @@
                                     "cost" : 5
                                 },
                                 {
-                                    "value" : 14,
+                                    "value" : 6,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 24,
+                                    "value" : 8,
                                     "cost" : 20
                                 },
                                 {
-                                    "value" : 34,
+                                    "value" : 10,
                                     "cost" : 40
                                 },
                                 {
-                                    "value" : 44,
+                                    "value" : 12,
                                     "cost" : 75
                                 }
                             ]

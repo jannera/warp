@@ -2,15 +2,17 @@ package com.rasanenj.warp.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Random;
@@ -35,7 +37,8 @@ public class BattleScreen implements Screen {
     private final Matrix4 normalProjection;
     private final TiledImage backgroundImage;
     private final WarpGame game;
-    private Stage stage;
+    private final Stage stage, uiStage;
+    private final Label hoveringText;
     private BattleHandler battleHandler;
 
     private static final int CAMERA_SIZE = 20;
@@ -52,7 +55,7 @@ public class BattleScreen implements Screen {
     private static final float PROJECTILE_SIZE = 3f;
 
     final BitmapFont font;
-    private NumberFormat decimalFormatter = NumberFormat.getFormat("#.##");
+    private NumberFormat decimalFormatter = NumberFormat.getFormat("0.00");
 
     private final Array<DamageText> damageMessages = new Array(false, 16);
     private final Array<DamageText> removables = new Array<DamageText>(false, 16);
@@ -77,6 +80,54 @@ public class BattleScreen implements Screen {
 
     private final Array<PathPlotterTask> plotters = new Array<PathPlotterTask>(false, 0);
     private OrbitUIHandler orbitUIHandler;
+
+    final Table hoveringTable;
+
+    public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
+        this.game = game;
+        stage = new Stage();
+        stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
+        cam = (OrthographicCamera) stage.getCamera();
+
+        font = Assets.skin.getFont("default-font");
+
+        battleHandler = new BattleHandler(this, conn, lobbyScreen);
+        for (int i=0; i < 4; i++) {
+            corners[i] = new Vector2();
+        }
+        normalProjection = new Matrix4();
+        normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight());
+        batch.setProjectionMatrix(normalProjection);
+        this.backgroundImage = new TiledImage(Assets.backgroundTexture);
+        stage.addActor(backgroundImage);
+        backgroundImage.setTileSize(GRID_SIZE, GRID_SIZE);
+        backgroundImage.setZIndex(0);
+        cam.zoom = 3.5f;
+
+        // init ui actors that are drawn over the game layer
+        uiStage = new Stage();
+        uiStage.setViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(0.6f, 0.6f, 0.6f, 0.5f);
+        pixmap.fill();
+
+        TextureRegionDrawable textureRegionDrawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+
+        hoveringTable = new Table(Assets.skin);
+        hoveringTable.row().fill().pad(3f);
+        hoveringTable.setBackground(textureRegionDrawable);
+        hoveringTable.setColor(0.6f, 0.6f, 0.6f, 0.75f);
+        uiStage.addActor(hoveringTable);
+
+        hoveringText = new Label(getHoverInfo(0L, 0f), Assets.skin);
+        hoveringText.setColor(Color.WHITE);
+        hoveringTable.add(hoveringText);
+        hoveringTable.pack();
+    }
+
+
 
     public OrthographicCamera getCam() {
         return cam;
@@ -128,29 +179,6 @@ public class BattleScreen implements Screen {
         }
     }
 
-    public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
-        this.game = game;
-        stage = new Stage();
-        stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
-        cam = (OrthographicCamera) stage.getCamera();
-
-        font = Assets.skin.getFont("default-font");
-
-        battleHandler = new BattleHandler(this, conn, lobbyScreen);
-        for (int i=0; i < 4; i++) {
-            corners[i] = new Vector2();
-        }
-        normalProjection = new Matrix4();
-        normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
-                Gdx.graphics.getHeight());
-        batch.setProjectionMatrix(normalProjection);
-        this.backgroundImage = new TiledImage(Assets.backgroundTexture);
-        stage.addActor(backgroundImage);
-        backgroundImage.setTileSize(GRID_SIZE, GRID_SIZE);
-        backgroundImage.setZIndex(0);
-        cam.zoom = 2.5f;
-    }
-
     public Stage getStage() {
         return stage;
     }
@@ -195,6 +223,40 @@ public class BattleScreen implements Screen {
         renderPhysicsVertices();
 
         renderTextBelowMouseCursor();
+
+        updateHoverTable();
+        uiStage.act(Gdx.graphics.getDeltaTime());
+        uiStage.draw();
+    }
+
+    private void updateHoverTable() {
+        hoveringTable.setVisible(hoveringTarget != null);
+        if (hoveringTarget == null) {
+            return;
+        }
+
+        // position the table left of the ship, in the center
+        hoveringText.setText(getHoverInfo(hoveringTarget));
+        hoveringText.setAlignment(Align.left);
+        hoveringTarget.getCenterPos(tmp);
+        tmp3.set(hoveringTarget.getLeftX(), tmp.y, 0);
+        cam.project(tmp3);
+
+        tmp3.x -= hoveringTable.getWidth();
+        tmp3.x -= 5f; // padding
+        tmp3.y -= hoveringTable.getHeight() / 2f;
+        hoveringTable.setPosition(tmp3.x, tmp3.y);
+    }
+
+    private String getHoverInfo(ClientShip s) {
+        return getHoverInfo(s.getId(), s.getStats().getMaxLinearVelocity());
+    }
+
+    private String getHoverInfo(Long id, float maxVel) {
+        String result = "";
+        result += "id " + id;
+        result += "\n" + "maxvel " + decimalFormatter.format(maxVel);
+        return result;
     }
 
     private void renderTargetValueCircles() {
@@ -610,6 +672,11 @@ public class BattleScreen implements Screen {
     }
 
     private void renderOptimals() {
+        if (hoveringTarget != null) {
+            // always render the optimal of the ship under cursor
+            renderOptimals(hoveringTarget);
+        }
+
         if (optimalRenderingState == OptimalRenderingState.NOTHING) {
             return;
         }

@@ -33,7 +33,6 @@ public class ClientShip extends Group {
 
     private final Image baseImage, hiliteImage, clickRegionImage;
 
-    private static final float CLICKREGION_MULTIPLIER = 4f; // how many times bigger are should work as clicking area around the ship
     private Vector2[] vertices;
     private String text = "";
     private float targetDirection = Float.NaN;
@@ -61,8 +60,8 @@ public class ClientShip extends Group {
             this.clickRegionImage.setVisible(true);
             float width = stats.getWidth();
             float height = stats.getHeight();
-            clickRegionImage.setWidth(width * CLICKREGION_MULTIPLIER);
-            clickRegionImage.setHeight(height * CLICKREGION_MULTIPLIER);
+            clickRegionImage.setWidth(width * getClickRegionMultiplier(stats.getType()));
+            clickRegionImage.setHeight(height * getClickRegionMultiplier(stats.getType()));
             addActor(baseImage);
             addActor(hiliteImage);
             addActor(clickRegionImage);
@@ -105,16 +104,20 @@ public class ClientShip extends Group {
         }
     }
 
-    private float brakingLeft;
+    // how many times bigger area should work as clicking area around the ship
+    private float getClickRegionMultiplier(ShipStats.Shiptype type) {
+        switch (type) {
+            case FRIGATE:
+                return 4f;
+            case CRUISER:
+                return 2f;
+            case BATTLESHIP:
+                return 1f;
+        }
+        return 1f;
+    }
+
     private Vector2 impulseIdeal = new Vector2();
-
-    public void setBrakingLeft(float brakingLeft) {
-        this.brakingLeft = brakingLeft;
-    }
-
-    public float getBrakingLeft() {
-        return brakingLeft;
-    }
 
     public void setImpulseIdeal(Vector2 impulseIdeal) {
         this.impulseIdeal.set(impulseIdeal);
@@ -320,6 +323,11 @@ public class ClientShip extends Group {
         pos.set(getWidth() / 2f, getHeight() / 2f);
         pos.rotate(getRotation());
         pos.add(getX(), getY());
+    }
+
+    public float getLeftX() {
+        getCenterPos(tmp);
+        return tmp.x - this.getWidth() / 2f;
     }
 
     public void setVelocity(float velX, float velY, float angularVelocity, long timeNow) {

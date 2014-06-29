@@ -230,10 +230,6 @@ public class BattleHandler {
             ClientShip ship = ClientShip.getShip(event.getTarget());
 
             // log("cursor entered " + ship);
-            if (ship.getOwner().getId() == myId) {
-                return;
-            }
-
             screen.setHoveringTarget(ship);
         }
 

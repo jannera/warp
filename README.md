@@ -47,32 +47,15 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
-* Go to, orbit ja yleensäkin alusten valitseminen klikkaamalla pitää korjata
-* Useiden ampumakohteiden antaminen aluksille
-    * Ammu sitä mihin tekisit eniten lämää
-    * Ammu sitä mihin tekisit eniten lämää, mutta suosi kohteita jotka ovat jo ottaneet lämää
-        * -> ammu sitä kohdetta, jonka jäljellä olevista hipoista todennäköisesti tuhoaisin suurimman osan?
-    * Ota huomioon ampumiskäskyt joihin ei ole vielä tullut vastausta, ts. vältä overkilliä
-    * Ampuminen on sen verran monimutkainen optimointiongelma, että voisi olla järkevää kirjoittaa
-      AI joka optimoi laukausten "hyvyyttä" esmes seuraavan 30s aikana
-        * Haasteita: alusten sijainti ja nopeus pitäisi jotenkin approksimoida tulevaisuudessa
-            * Tai kenties arvioida kullekin ampuja - kohde -parille esim. neljä kertaa sekunnissa min ja max range
-              perustuen nykyisiin sijainteihin ja nopeuksiin ja ampujalle annettuihin käskyihin
-        * Päätöspuu jossa yksittäinen päätös on "ammun hetkellä t kohdetta x" tai "en ammu vielä"
-          ja hyöty arvioidaan kohteen arvon (käyttäjän antama), lämäennusteen ja jonkinlaisen
-          paikkatiedon luotettavuuden kertoimen (0..1) perusteella
-        * Ampumis-AI voisi optimoida koko fleetin toimintaa, ei pelkästään yksittäisen laivan
-    * Target valuen antamisen sijaan primary / secondary / tertiary / muut
-* Maksiminopeuden asettaminen
-    * DONE Numeroista asettaminen
-    * Rajoituksen pakottaminen Steeringissä
-        * Orbitissa pitäisi kyetä lähestymään täysillä, ja hidastamaan vasta kun on lähellä orbitointia
-        * Go To
-        * Fly In Direction
-    * Rajoituksen näyttäminen aluksen lähellä
-* Kiertonopeus
-    * Maksimikiertonopeuden laskeminen orbit-säteestä
-    * Kuitenkin voisi ajaa "täysiä" ennen saapumista lähelle
+* Ongelma: Kun ruudulla on paljon aluksia, on vaikea hahmottaa alusten värejä, erityisesti mikäli optimaalit piirretään.
+    * Mikäli optimaaleja ei piirretä, menettää liikaa infoa..
+    * DONE Ratkaisuidea: näytetään hover-infona mm. optimaali
+    * Value-pallot voidaan hävittää -> vähemmän clutteria
+    * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
+* Alusten valitseminen klikkaamalla pitää korjata
+* Target valuen antamisen sijaan primary / secondary / tertiary / muut
+* Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
+* Maksimikiertonopeuden laskeminen orbit-säteestä
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 
 MVProto
@@ -264,3 +247,17 @@ MVProto DONE
 * DONE Cruiseri kentällä ei saa sekoittaa frigaattien piirtoa
 * DONE Cruiserin graffan vaihtaminen samaan systeemiin kuin frigaattien
 * DONE NPC:t ostavat aluksensa katalogin ominaisuuksista. Helpompi testailla muutoksia
+* DONE Useiden ampumakohteiden antaminen aluksille
+    * Ammu sitä mihin tekisit eniten lämää
+    * Ota huomioon ampumiskäskyt joihin ei ole vielä tullut vastausta, ts. vältä overkilliä
+    * Ampuminen on sen verran monimutkainen optimointiongelma, että voisi olla järkevää kirjoittaa
+      AI joka optimoi laukausten "hyvyyttä" esmes seuraavan 30s aikana
+        * Haasteita: alusten sijainti ja nopeus pitäisi jotenkin approksimoida tulevaisuudessa
+            * Tai kenties arvioida kullekin ampuja - kohde -parille esim. neljä kertaa sekunnissa min ja max range
+              perustuen nykyisiin sijainteihin ja nopeuksiin ja ampujalle annettuihin käskyihin
+        * Päätöspuu jossa yksittäinen päätös on "ammun hetkellä t kohdetta x" tai "en ammu vielä"
+          ja hyöty arvioidaan kohteen arvon (käyttäjän antama), lämäennusteen ja jonkinlaisen
+          paikkatiedon luotettavuuden kertoimen (0..1) perusteella
+        * Ampumis-AI voisi optimoida koko fleetin toimintaa, ei pelkästään yksittäisen laivan
+* DONE Maksiminopeuden asettaminen
+    * DONE Numeroista asettaminen
