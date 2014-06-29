@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.PositionProjection;
+import com.rasanenj.warp.TargetValue;
 import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.Player;
@@ -44,7 +45,7 @@ public class ClientShip extends Group {
     private float lastServerRotation;
     private Array<PositionProjection> projectedPositions =
             new Array<PositionProjection>(true, ShipShooting.PROJECTION_POINTS_AMOUNT);
-    private int targetValue;
+    private TargetValue targetValue;
     public static final int MAX_TARGET_VALUE = 4;
 
     private ShipShootingAIDecisionTree.Decision decisionTreeRoot;
@@ -75,8 +76,7 @@ public class ClientShip extends Group {
             clickRegionImage.setPosition(baseImage.getWidth() / 2f - clickRegionImage.getWidth() / 2f,
                     baseImage.getHeight() / 2f - clickRegionImage.getHeight() / 2f);
 
-            // create target value markers
-            targetValue = MathUtils.ceil(MAX_TARGET_VALUE/2f);
+            targetValue = TargetValue.others;
         }
         else {
             // TODO: remove this, instead make superclass/interface or something for steering position prediction
@@ -269,13 +269,12 @@ public class ClientShip extends Group {
         setHeight(ship.getHeight());
     }
 
-    public void changeTargetValue(float change) {
-        this.targetValue += change;
-        this.targetValue = MathUtils.clamp(targetValue, 0, MAX_TARGET_VALUE);
+    public TargetValue getTargetValue() {
+        return targetValue;
     }
 
-    public int getTargetValue() {
-        return targetValue;
+    public void setTargetValue(TargetValue targetValue) {
+        this.targetValue = targetValue;
     }
 
     public enum TurningState {

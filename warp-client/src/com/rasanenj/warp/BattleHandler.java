@@ -515,23 +515,31 @@ public class BattleHandler {
 
                 return true;
             }
-            else if (event.getKeyCode() == Input.Keys.COMMA) {
-                for (ClientShip s : selection) {
-                    s.changeTargetValue(-1);
-                }
-                return true;
-            }
-            else if (event.getKeyCode() == Input.Keys.PERIOD) {
-                for (ClientShip s : selection) {
-                    s.changeTargetValue(1);
-                }
-                return true;
-            }
             else if (event.getKeyCode() == Input.Keys.M && ctrlDown) {
                 leaveGame();
                 screen.getGame().setScreen(WarpGame.ScreenType.LOBBY);
                 return true;
             }
+            else if (event.getKeyCode() == Input.Keys.M) {
+                for (ClientShip s : ships) {
+                    s.setTargetValue(TargetValue.others);
+                }
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.COMMA) {
+                setTargetValues(TargetValue.primary);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.PERIOD) {
+                setTargetValues(TargetValue.secondary);
+                return true;
+            }
+            else if (event.getKeyCode() == Input.Keys.MINUS) {
+                setTargetValues(TargetValue.tertiary);
+                return true;
+            }
+
+
             else {
                 log("Unknown input received: " + event.getKeyCode());
                 return false;
@@ -546,6 +554,21 @@ public class BattleHandler {
             }
             else {
                 return false;
+            }
+        }
+    }
+
+    private void setTargetValues(TargetValue t) {
+        clearTargetValues(t);
+        for (ClientShip s : selection) {
+            s.setTargetValue(t);
+        }
+    }
+
+    private void clearTargetValues(TargetValue t) {
+        for (ClientShip s : ships) {
+            if (s.getTargetValue() == t) {
+                s.setTargetValue(TargetValue.others);
             }
         }
     }

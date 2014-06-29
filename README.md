@@ -50,16 +50,17 @@ Steps Before First Catalog-tuning, Nice to have
 * Ongelma: Kun ruudulla on paljon aluksia, on vaikea hahmottaa alusten värejä, erityisesti mikäli optimaalit piirretään.
     * Mikäli optimaaleja ei piirretä, menettää liikaa infoa..
     * DONE Ratkaisuidea: näytetään hover-infona mm. optimaali
-    * Value-pallot voidaan hävittää -> vähemmän clutteria
+    * DONE Value-pallot voidaan hävittää -> vähemmän clutteria
     * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
 * Alusten valitseminen klikkaamalla pitää korjata
-* Target valuen antamisen sijaan primary / secondary / tertiary / muut
 * Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
 * Maksimikiertonopeuden laskeminen orbit-säteestä
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 
 MVProto
 ===
+* Ctrl + click: valitse kaikki klikatun aluksen tyyppiset (ShipStats) alukset
+    * Ehkä jopa pelkkä click, ja siirrä nykyinen klikkailu controllin alle
 * Pyssyjen sykli pitäisi visualisoida myös vastustajan aluksille
 * Tällä hetkellä aluksen sijainti taidetaan asettaa clientilla vasempaan alanurkkaan,
   kun käyttäjä todnäk mieltää sijainnin aluksen keskustaan. Tämä pitäisi korjata
@@ -261,3 +262,4 @@ MVProto DONE
         * Ampumis-AI voisi optimoida koko fleetin toimintaa, ei pelkästään yksittäisen laivan
 * DONE Maksiminopeuden asettaminen
     * DONE Numeroista asettaminen
+* DONE Target valuen antamisen sijaan primary / secondary / tertiary / muut

@@ -19,9 +19,7 @@ public class Assets {
     private static Texture shipTextureBattleship;
     private static Texture[] shipTextureFrigateBase, shipTextureFrigateHilite,
             shipTextureCruiserHilite, shipTextureCruiserBase;
-    public static Texture moveTargetTexture,
-            backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture,
-            targetValueMarker;
+    public static Texture moveTargetTexture, backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture;
     public static Texture laserMidBackground, laserMidOverlay, laserStartBackground, laserStartOverlay, laserEndBackground, laserEndOverlay;
 
     public static Skin skin;
@@ -54,7 +52,6 @@ public class Assets {
         shipTextureCruiserHilite = createShipTextures(cruiserBase, cruiserOverlay, hiliteColors);
 
         shipTextureBattleship = new Texture(Gdx.files.internal("data/ship_battleship.png"));
-        targetValueMarker = new Texture(Gdx.files.internal("data/gradient_circle.png"));
     }
 
     private static Texture[] createShipTextures(Pixmap base, Pixmap overlay, Color[] colors) {

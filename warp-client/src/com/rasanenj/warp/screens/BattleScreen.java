@@ -262,34 +262,33 @@ public class BattleScreen implements Screen {
     private void renderTargetValueCircles() {
         batch.begin();
         long myid = battleHandler.getMyId();
-        batch.setColor(new Color(0, 1, 0, 0.75f));
+        font.setColor(Color.YELLOW);
         for (ClientShip ship: battleHandler.getShips()) {
             if (ship.getOwner().getId() == myid) {
                 continue;
             }
 
-            int markersActive = ship.getTargetValue();
-            Vector2 pos = getTargetValueStartPosPx(ship);
-            for (int i=0; i <= markersActive; i++) {
-                float x = pos.x + i * (TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
-                batch.draw(Assets.targetValueMarker, x, pos.y, TARGET_VALUE_MARKER_SIZE_PX, TARGET_VALUE_MARKER_SIZE_PX);
+            String value = ship.getTargetValue().toString();
+            if (value == "") {
+                continue;
             }
+
+            Vector2 pos = getTargetValueStartPosPx(ship, value);
+
+            font.draw(batch, value, pos.x, pos.y);
         }
         batch.end();
     }
 
-    private static final float TARGET_VALUE_MARKER_SIZE_PX = 12; // TODO maybe scale this based on resolution?
-    private static final float TARGET_VALUE_MARKER_MARGIN_PX = TARGET_VALUE_MARKER_SIZE_PX / 2f;
-
-    private Vector2 getTargetValueStartPosPx(ClientShip ship) {
+    private Vector2 getTargetValueStartPosPx(ClientShip ship, String value) {
         ship.getCenterPos(tmp);
-        tmp.y += ship.getHeight() / 2f;
+        tmp.y += ship.getHeight();
         tmp3.set(tmp.x, tmp.y, 0);
         cam.project(tmp3);
 
         // now we have window coordinates just above the ship vertically and right in middle of the ship horizontally
-        float halfWidth = (ship.getTargetValue() * TARGET_VALUE_MARKER_SIZE_PX + (ship.getTargetValue() - 1) * TARGET_VALUE_MARKER_MARGIN_PX) / 2f;
-        tmp.set(tmp3.x - halfWidth, tmp3.y + TARGET_VALUE_MARKER_SIZE_PX + TARGET_VALUE_MARKER_MARGIN_PX);
+        BitmapFont.TextBounds bounds = font.getBounds(value);
+        tmp.set(tmp3.x - bounds.width / 2f, tmp3.y + bounds.height);
         return tmp;
     }
 

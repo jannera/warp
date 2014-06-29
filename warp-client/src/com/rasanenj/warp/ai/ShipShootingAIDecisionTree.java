@@ -160,7 +160,7 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
             // log("expected damage was " + expectedDamage);
             float extraWaitTime = ((float) (projectionIndex + 1)) * (float) ShipShooting.PROJECTION_INTERVAL_MS;
             float time = shooter.getStats().getWeaponCooldown() + extraWaitTime / 1000f;
-            this.value = expectedDamage / time * (float) (target.getTargetValue() + 1);
+            this.value = expectedDamage / time * target.getTargetValue().getValueModifier();
             // TODO: reduce the value by some kind of optimism/pessimism multiplier
         }
 
