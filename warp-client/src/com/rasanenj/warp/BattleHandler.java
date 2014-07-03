@@ -46,6 +46,8 @@ public class BattleHandler {
     private final ShipSelection selection = new ActiveShipSelection();
     private MouseState mouseState = MouseState.DEFAULT;
     private final Array<Array<ClientShip>> shipQuickGroups = new Array<Array<ClientShip>>(true, 9);
+    private final Array<Array<ClientShip>> enemyGroups = new Array<Array<ClientShip>>(true, 9);
+
     private final Statistics statistics = new Statistics();
     private final AverageDpsCalculator dpsCalculator;
 
@@ -152,6 +154,23 @@ public class BattleHandler {
                         }
                     }
                 }
+                else {
+                    boolean foundGroup = false;
+                    for(Array<ClientShip> group : enemyGroups) {
+                        if(group.size == 0 ||
+                           group.get(0).getStats().equals(ship.getStats()) &&
+                           group.get(0).getOwner().getId() == ship.getOwner().getId()) {
+                            group.add(ship);
+                            foundGroup = true;
+                            break;
+                        }
+                    }
+                    if (!foundGroup) {
+                        Array<ClientShip> group = new Array<ClientShip>(false, 1);
+                        group.add(ship);
+                        enemyGroups.add(group);
+                    }
+                }
 
                 // instead of calling this, we could just tell ShipShootingAIDecisionTree to add this ship to all relevant trees
                 dirtyAllShootingDecisionTrees();
@@ -254,14 +273,36 @@ public class BattleHandler {
 
             log("clicked " + clientShip + " @ (" + x + ", " + y + ")");
 
-            if (clientShip.getOwner().getId() == myId) {
-                // clicked friendly ship, so select it.. if mouse state is correct
-                if (mouseState == MouseState.DEFAULT) {
-                    selection.clear();
-                    selection.add(clientShip);
+            // clicked a ship, so select it.. if mouse state is correct
+            if (mouseState != MouseState.DEFAULT) {
+                return;
+            }
+
+            selection.clear();
+
+            if (ctrlDown) {
+                // if the ctrl is down, select the whole group of ships
+                if (clientShip.getOwner().getId() == myId) {
+                    selectWholeGroup(clientShip, shipQuickGroups);
+                }
+                else {
+                    selectWholeGroup(clientShip, enemyGroups);
                 }
             }
+            else {
+                selection.add(clientShip);
+            }
+
             event.handle();
+        }
+
+        private void selectWholeGroup(ClientShip ship, Array<Array<ClientShip>> groups) {
+            for(Array<ClientShip> group : groups) {
+                if (group.contains(ship, true)) {
+                    selection.set(group);
+                    break;
+                }
+            }
         }
     }
 
@@ -271,6 +312,8 @@ public class BattleHandler {
     }
 
     private static final int LEFT_MOUSE = 0, RIGHT_MOUSE = 1;
+
+    private boolean ctrlDown = false;
 
     private class StageListener extends InputListener {
         DragState dragState;
@@ -411,8 +454,6 @@ public class BattleHandler {
             screen.zoom(0.1f * amount, x, y);
             return true;
         }
-
-        private boolean ctrlDown = false;
 
         public boolean keyDown(InputEvent event, int keycode) {
             if (event.getKeyCode() == Input.Keys.CONTROL_LEFT ||

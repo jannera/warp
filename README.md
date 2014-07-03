@@ -52,15 +52,12 @@ Steps Before First Catalog-tuning, Nice to have
     * DONE Ratkaisuidea: näytetään hover-infona mm. optimaali
     * DONE Value-pallot voidaan hävittää -> vähemmän clutteria
     * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
-* Alusten valitseminen klikkaamalla pitää korjata
 * Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
 * Maksimikiertonopeuden laskeminen orbit-säteestä
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 
 MVProto
 ===
-* Ctrl + click: valitse kaikki klikatun aluksen tyyppiset (ShipStats) alukset
-    * Ehkä jopa pelkkä click, ja siirrä nykyinen klikkailu controllin alle
 * Pyssyjen sykli pitäisi visualisoida myös vastustajan aluksille
 * Tällä hetkellä aluksen sijainti taidetaan asettaa clientilla vasempaan alanurkkaan,
   kun käyttäjä todnäk mieltää sijainnin aluksen keskustaan. Tämä pitäisi korjata
@@ -145,6 +142,8 @@ MVProto
 
 MVProto DONE
 ===
+* DONE Ctrl + click: valitse kaikki klikatun aluksen tyyppiset (ShipStats) alukset
+* DONE Alusten valitseminen klikkaamalla pitää korjata
 * DONE voimien rajoittaminen aluksen suunnan perusteella
 * DONE Jokin tapa "nähdä" nykyisen ruudun ulkopuolelle: Jonkinlaisen kartan näyttäminen? Väritettyjä kolmioita ruudun reunaan?
 * DONE Laivojen omistaminen
