@@ -24,4 +24,19 @@ public enum TargetValue {
                 return "Unexpected target value";
         }
     }
+
+    public TargetValue raiseByOne() {
+        switch (this) {
+            case others:
+                return tertiary;
+            case tertiary:
+                return secondary;
+            case secondary:
+                return primary;
+            case primary:
+                return primary;
+            default:
+                throw new RuntimeException("Tried to raise non-existing target value, this should never happen");
+        }
+    }
 }

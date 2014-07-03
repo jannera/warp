@@ -224,6 +224,39 @@ public class BattleHandler {
 
                 // instead of this we could just tell ShipShootingAIDecisionTree to remove the ship from all relevant decision trees
                 dirtyAllShootingDecisionTrees();
+
+                // raise all targeting orders if possible
+                TargetValue removedShipTargetValue = removedShip.getTargetValue();
+                if (!removedShipTargetValue.equals(TargetValue.others) &&
+                    !removedShipTargetValue.equals(TargetValue.tertiary)) {
+                    // check if this was the last enemy ship with this target value
+                    boolean found = false;
+                    for (ClientShip s : ships) {
+                        if (s.getOwner().getId() != myId && s.getTargetValue().equals(removedShipTargetValue)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        // raise all existing lower target values
+                        final float existingValue = removedShipTargetValue.getValueModifier();
+                        for (ClientShip s : ships) {
+                            if (s.getOwner().getId() == myId) {
+                                continue;
+                            }
+                            TargetValue t = s.getTargetValue();
+                            if (t.equals(TargetValue.others)) {
+                                continue;
+                            }
+                            if (t.getValueModifier() > existingValue) {
+                                continue;
+                            }
+
+                            s.setTargetValue(t.raiseByOne());
+                        }
+                    }
+
+                }
             }
         }
 
