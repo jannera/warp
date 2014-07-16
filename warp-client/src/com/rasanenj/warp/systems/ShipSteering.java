@@ -213,7 +213,8 @@ public class ShipSteering extends IntervalTask {
 
         float angle = pos.angle();
 
-        pos.scl(ship.getDesiredVelocity());
+        // todo: here, deduct somehow (from distance?) if we should use max or reduced velocity
+        pos.scl(maxVelocity);
         // now pos contains the desired velocity difference between this ship and the ship that is being orbited
 
         tgt.set(ship.getVelocity());

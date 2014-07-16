@@ -484,6 +484,25 @@ public class ClientShip extends Group {
         return orbitDst2;
     }
 
+    public float getMaxOrbitalVelocityInTheory(float orbitDst) {
+        float maxAcceleration = stats.getMaxLinearForceLeft() / stats.getMass();
+
+
+
+        // todo: figure out if turning and going forward gives better limit on the force
+        float maxVelocity = (float) Math.sqrt(maxAcceleration * Math.sqrt(orbitDst2));
+        maxVelocity = MathUtils.clamp(maxVelocity, 0, stats.getMaxLinearVelocity());
+        return maxVelocity;
+    }
+
+    public float getMaxOrbitalVelocity() {
+        float maxAcceleration = stats.getMaxLinearForceLeft() / stats.getMass();
+        // todo: figure out if turning and going forward gives better limit on the force
+        float maxVelocity = (float) Math.sqrt(maxAcceleration * Math.sqrt(orbitDst2));
+        maxVelocity = MathUtils.clamp(maxVelocity, 0, stats.getMaxLinearVelocity());
+        return maxVelocity;
+    }
+
     public void setLastServerPosition(float x, float y, float rotation) {
         lastServerPosition.set(x, y);
         lastServerRotation = rotation;

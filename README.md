@@ -38,7 +38,6 @@ Future Ideas
 
 Steps Before First Catalog-tuning, Need to have
 ===
-* Nykyisen buildin autosave, listenereillä tilan muuttuessa
 * warp.ext.vincit.fi uusin versio
 * Katalogin modaaminen netin kautta
     * Katalogin hakeminen http://openkeyval.org/
@@ -53,8 +52,8 @@ Steps Before First Catalog-tuning, Nice to have
     * DONE Value-pallot voidaan hävittää -> vähemmän clutteria
     * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
 * Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
-* Maksimikiertonopeuden laskeminen orbit-säteestä
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
+* Maksimikiertonopeuden laskeminen orbit-säteestä
 
 MVProto
 ===
