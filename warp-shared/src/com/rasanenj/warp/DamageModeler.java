@@ -17,11 +17,7 @@ public class DamageModeler {
     }
 
     private static final Vector2 tmp = new Vector2();
-    public float getDamage(Vector2 shooterPos, Vector2 targetPos, Vector2 shooterLinVel,
-                           Vector2 targetLinVel, ShipStats shooterStats, ShipStats targetStats) {
-
-        float hitChance = getChance(shooterPos, targetPos, shooterLinVel,
-                targetLinVel, shooterStats, targetStats);
+    public float getDamage(float hitChance, ShipStats shooterStats) {
         float hit = rng.nextFloat();
         float damage = 0;
         if (hit < hitChance) {
@@ -30,6 +26,7 @@ public class DamageModeler {
         }
         return damage;
     }
+
     public static float getChance(Vector2 shooterPos, Vector2 targetPos, Vector2 shooterLinVel,
                            Vector2 targetLinVel, ShipStats shooterStats, ShipStats targetStats) {
         tmp.set(shooterPos);

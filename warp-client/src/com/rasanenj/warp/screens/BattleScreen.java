@@ -55,7 +55,8 @@ public class BattleScreen implements Screen {
     private static final float PROJECTILE_SIZE = 3f;
 
     final BitmapFont font;
-    private NumberFormat decimalFormatter = NumberFormat.getFormat("0.00");
+    private NumberFormat twoFullDecimals = NumberFormat.getFormat("0.00");
+    private NumberFormat noDecimals = NumberFormat.getFormat("0");
 
     private final Array<DamageText> damageMessages = new Array(false, 16);
     private final Array<DamageText> removables = new Array<DamageText>(false, 16);
@@ -150,11 +151,11 @@ public class BattleScreen implements Screen {
         this.orbitUIHandler = orbitUIHandler;
     }
 
-    public void addLaserBeam(ClientShip shooter, ClientShip target) {
+    public void addLaserBeam(ClientShip shooter, ClientShip target, boolean hit) {
         shooter.getCenterPos(tmp);
         float startX = tmp.x, startY = tmp.y;
         target.getCenterPos(tmp);
-        addLaserBeam(startX, startY, tmp.x, tmp.y, Assets.getHiliteColor(shooter.getOwner()));
+        addLaserBeam(startX, startY, tmp.x, tmp.y, Assets.getHiliteColor(shooter.getOwner()), hit);
     }
 
     public enum OptimalRenderingState {
@@ -255,7 +256,7 @@ public class BattleScreen implements Screen {
     private String getHoverInfo(Long id, float maxVel) {
         String result = "";
         result += "id " + id;
-        result += "\n" + "maxvel " + decimalFormatter.format(maxVel);
+        result += "\n" + "maxvel " + twoFullDecimals.format(maxVel);
         return result;
     }
 
@@ -372,7 +373,7 @@ public class BattleScreen implements Screen {
             if (!textBelowCursor.isEmpty()) {
                 textBelowCursor += ", ";
             }
-            textBelowCursor += decimalFormatter.format(angularSpeed);
+            textBelowCursor += twoFullDecimals.format(angularSpeed);
         }
 
         float x = Gdx.input.getX();
@@ -510,18 +511,25 @@ public class BattleScreen implements Screen {
                 capLength = LASER_MAX_CAP_LENGTH;
             }
 
-            float fade = 1f- (float) Math.pow((timeNow - laser.startTime) / (float) LaserBeam.FADE_OUT_MS, 2);
+            float fade = 1f- (float) Math.pow((timeNow - laser.startTime) / laser.getMaxDuration(), 2);
 
             renderLaser(Assets.laserStartBackground, tmp3.x, tmp3.y, angle, capLength, laser.baseColor, fade);
-            renderLaser(Assets.laserStartOverlay   , tmp3.x, tmp3.y, angle, capLength, Color.WHITE, fade);
+            if (laser.hit) {
+                renderLaser(Assets.laserStartOverlay   , tmp3.x, tmp3.y, angle, capLength, Color.WHITE, fade);
+            }
 
             tmp.clamp(0f, height - capLength);
             renderLaser(Assets.laserEndBackground, tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, laser.baseColor, fade);
-            renderLaser(Assets.laserEndOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, Color.WHITE, fade);
+            if (laser.hit) {
+                renderLaser(Assets.laserEndOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, Color.WHITE, fade);
+            }
+
 
             tmp.clamp(0f, capLength);
             renderLaser(Assets.laserMidBackground, tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, laser.baseColor, fade);
-            renderLaser(Assets.laserMidOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, Color.WHITE, fade);
+            if (laser.hit) {
+                renderLaser(Assets.laserMidOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, Color.WHITE, fade);
+            }
         }
         batch.end();
     }
@@ -554,7 +562,7 @@ public class BattleScreen implements Screen {
         for (DamageProjectile projectile : damageProjectiles) {
             if (timeNow - projectile.startTime > projectile.timeToLive) {
                 removableProjectiles.add(projectile);
-                addDamageText(projectile.target, projectile.damage);
+                addDamageText(projectile.target, projectile.damage, projectile.chance);
             }
         }
 
@@ -565,7 +573,7 @@ public class BattleScreen implements Screen {
         removableLaserBeams.clear();
         long timeNow = System.currentTimeMillis();
         for (LaserBeam laser : laserBeams) {
-            if (timeNow - laser.startTime > LaserBeam.FADE_OUT_MS) {
+            if (timeNow - laser.startTime > laser.getMaxDuration()) {
                 removableLaserBeams.add(laser);
             }
         }
@@ -740,14 +748,25 @@ public class BattleScreen implements Screen {
         long timeNow = System.currentTimeMillis();
         batch.begin();
         for (DamageText damageText : damageMessages) {
+            String output;
+            float offset = 0;
             float fade = 1f - (timeNow - damageText.startTime) / (float) DamageText.FADEOUT_TIME;
-            font.setColor(fade, 0, 0, fade);
-            String output = decimalFormatter.format(damageText.damage);
-            // String output = String.format("%f.2", damageText.damage);
             tmp3.set(damageText.target.getX() + damageText.offsetX, damageText.target.getY()
                     - damageText.target.getHeight() * 1.5f + damageText.offsetY, 0);
             cam.project(tmp3);
-            font.draw(batch, output, tmp3.x, tmp3.y);
+
+            if (damageText.damage > 0 ) {
+                font.setColor(fade, 0, 0, fade);
+                output = twoFullDecimals.format(damageText.damage);
+
+                // String output = String.format("%f.2", damageText.damage);
+                font.draw(batch, output, tmp3.x, tmp3.y);
+                offset = font.getBounds(output).width + 2;
+            }
+
+            output = noDecimals.format(damageText.chance * 100f) + "%";
+            font.setColor(Color.YELLOW.r, Color.YELLOW.g, Color.YELLOW.b, fade);
+            font.draw(batch, output, tmp3.x + offset, tmp3.y);
         }
         batch.end();
     }
@@ -936,13 +955,13 @@ public class BattleScreen implements Screen {
         cam.update();
     }
 
-    public void addDamageProjectile(ClientShip target, float damage, float x, float y) {
+    public void addDamageProjectile(ClientShip target, float damage, float x, float y, float chance) {
         target.getCenterPos(tmp);
         float ttl = tmp.dst2(x, y) / DamageProjectile.AMMO_VELOCITY_SQUARED;
-        damageProjectiles.add(new DamageProjectile(target, damage, x, y, ttl));
+        damageProjectiles.add(new DamageProjectile(target, damage, ttl, x, y, chance));
     }
 
-    public void addDamageText(ClientShip target, float damage) {
+    public void addDamageText(ClientShip target, float damage, float chance) {
         float width = target.getWidth();
         float height = target.getHeight();
 
@@ -954,18 +973,19 @@ public class BattleScreen implements Screen {
         if (Random.nextBoolean()) {
             offsetY *= -1;
         }
-        damageMessages.add(new DamageText(target, damage, offsetX, offsetY));
+        damageMessages.add(new DamageText(target, damage, offsetX, offsetY, chance));
     }
 
     private class DamageProjectile {
         public static final float AMMO_VELOCITY_SQUARED = 1.5f * 1.5f; // in units per second
 
         final ClientShip target;
-        final float damage;
+        final float damage, chance;
         final long startTime;
         final float startX, startY, timeToLive;
 
-        public DamageProjectile(ClientShip target, float damage, float startX, float startY, float timeToLive) {
+        public DamageProjectile(ClientShip target, float damage, float timeToLive, float startX, float startY, float chance) {
+            this.chance = chance;
             startTime = System.currentTimeMillis();
             this.target = target;
             this.damage = damage;
@@ -975,8 +995,8 @@ public class BattleScreen implements Screen {
         }
     }
 
-    public void addLaserBeam(float startX, float startY, float endX, float endY, Color color) {
-        laserBeams.add(new LaserBeam(startX, startY, endX, endY, color));
+    public void addLaserBeam(float startX, float startY, float endX, float endY, Color color, boolean hit) {
+        laserBeams.add(new LaserBeam(startX, startY, endX, endY, color, hit));
     }
 
     private class LaserBeam {
@@ -985,31 +1005,41 @@ public class BattleScreen implements Screen {
         final float startX, startY, endX, endY;
         final long startTime;
         final Color baseColor;
+        final boolean hit;
 
-        private LaserBeam(float startX, float startY, float endX, float endY, Color color) {
+        private LaserBeam(float startX, float startY, float endX, float endY, Color color, boolean hit) {
             this.startX = startX;
             this.startY = startY;
             this.endX = endX;
             this.endY = endY;
             this.startTime = System.currentTimeMillis();
             this.baseColor = color;
+            this.hit = hit;
+        }
+
+        public float getMaxDuration() {
+            if (hit) {
+                return FADE_OUT_MS * 2f;
+            }
+            return FADE_OUT_MS;
         }
     }
 
     private class DamageText {
-        public static final long FADEOUT_TIME = 1000; // in ms
+        public static final long FADEOUT_TIME = 2000; // in ms
         final ClientShip target;
-        final float damage;
+        final float damage, chance;
         final long startTime;
 
         final float offsetX, offsetY;
 
-        public DamageText(ClientShip target, float damage, float offsetX, float offsetY) {
+        public DamageText(ClientShip target, float damage, float offsetX, float offsetY, float chance) {
             startTime = System.currentTimeMillis();
             this.target = target;
             this.damage = damage;
             this.offsetX = offsetX;
             this.offsetY = offsetY;
+            this.chance = chance;
             // log(offsetX + ", " + offsetY);
         }
     }

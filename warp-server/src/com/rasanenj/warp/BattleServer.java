@@ -139,10 +139,11 @@ public class BattleServer extends IntervalTask {
                 if (shooter != null && target != null) {
                     Body shooterBody = shooter.getBody();
                     Body targetBody = target.getBody();
-                    float dmg = damage.getDamage(shooterBody.getWorldCenter(), targetBody.getWorldCenter(),
+                    float chance = DamageModeler.getChance(shooterBody.getWorldCenter(), targetBody.getWorldCenter(),
                             shooterBody.getLinearVelocity(), targetBody.getLinearVelocity(),
                             shooter.getStats(), target.getStats());
-                    sendToAll(new ShootDamageMessage(shooter.getId(), target.getId(), dmg));
+                    float dmg = damage.getDamage(chance, shooter.getStats());
+                    sendToAll(new ShootDamageMessage(shooter.getId(), target.getId(), dmg, chance));
                     target.reduceHealth(dmg);
                     if (target.getHealth() < 0) {
                         sendToAll(new ShipDestructionMessage(target.getId()));

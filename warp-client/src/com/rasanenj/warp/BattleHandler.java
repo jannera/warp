@@ -201,8 +201,8 @@ public class BattleHandler {
                 }
                 else {
                     target.reduceHealth(message.getDamage());
-                    screen.addLaserBeam(shooter, target);
-                    screen.addDamageText(target, message.getDamage());
+                    screen.addLaserBeam(shooter, target, message.getDamage() > 0);
+                    screen.addDamageText(target, message.getDamage(), message.getChance());
                     // screen.addDamageProjectile(target, message.getDamage(), shooter.getX(), shooter.getY());
                     statistics.storeDamage(shooter.getId(), target.getId(), shooter.getOwner().getId(),
                             target.getOwner().getId(), System.currentTimeMillis(), message.getDamage());
@@ -576,7 +576,7 @@ public class BattleHandler {
                 float targetX = tmp.x + (rng.nextFloat() - 0.5f) * 40f;
                 float targetY = tmp.y + (rng.nextFloat() - 0.5f) * 40f;
 
-                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, Assets.getLaserColor(shooter.getOwner()));
+                screen.addLaserBeam(tmp.x, tmp.y, targetX, targetY, Assets.getLaserColor(shooter.getOwner()), rng.nextBoolean());
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.U) {
@@ -585,7 +585,7 @@ public class BattleHandler {
 
                 int tgtIndex = 1 + rng.nextInt(ships.size - 1);
                 ClientShip target = ships.get(tgtIndex);
-                screen.addLaserBeam(shooter, target);
+                screen.addLaserBeam(shooter, target, rng.nextBoolean());
 
                 return true;
             }

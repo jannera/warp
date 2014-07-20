@@ -46,17 +46,15 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
-* Ongelma: Kun ruudulla on paljon aluksia, on vaikea hahmottaa alusten värejä, erityisesti mikäli optimaalit piirretään.
-    * Mikäli optimaaleja ei piirretä, menettää liikaa infoa..
-    * DONE Ratkaisuidea: näytetään hover-infona mm. optimaali
-    * DONE Value-pallot voidaan hävittää -> vähemmän clutteria
-    * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
-* Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
-* Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 * Maksimikiertonopeuden laskeminen orbit-säteestä
+* Pyssyjen trackingin säätö niin, että orbitointi on validi taktiikka
+* Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
+
 
 MVProto
 ===
+* Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
+* Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
 * Pyssyjen sykli pitäisi visualisoida myös vastustajan aluksille
 * Tällä hetkellä aluksen sijainti taidetaan asettaa clientilla vasempaan alanurkkaan,
   kun käyttäjä todnäk mieltää sijainnin aluksen keskustaan. Tämä pitäisi korjata
@@ -261,3 +259,7 @@ MVProto DONE
 * DONE Maksiminopeuden asettaminen
     * DONE Numeroista asettaminen
 * DONE Target valuen antamisen sijaan primary / secondary / tertiary / muut
+* DONE Osumien ja hutien erottaminen: hudeilla ei piirretä laserin kirkasta keskusta, ja häviävät ruudulta tuplavauhtia
+* DONE Näytä osumamahdollisuus lämän vieressä
+* DONE näytetään hover-infona mm. optimaali
+* DONE Value-pallot voidaan hävittää -> vähemmän clutteria
