@@ -129,6 +129,7 @@ public class BattleHandler {
 
                 ShipStats stats = message.getStats();
                 ClientShip ship = new ClientShip(message.getId(), owningPlayer, stats);
+                ship.initProjections(ShipShooting.PROJECTION_POINTS_AMOUNT);
                 ships.add(ship);
                 screen.getStage().addActor(ship);
                 ship.getClickRegionImage().addListener(shipClickListener);

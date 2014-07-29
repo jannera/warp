@@ -1,4 +1,4 @@
-package com.rasanenj.warp;
+package com.rasanenj.warp.projecting;
 
 import com.badlogic.gdx.math.Vector2;
 

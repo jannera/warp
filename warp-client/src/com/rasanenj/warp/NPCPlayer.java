@@ -241,6 +241,7 @@ public class NPCPlayer {
                 Player owningPlayer = getPlayer(message.getOwnerId());
 
                 ClientShip ship = new ClientShip(message.getId(), owningPlayer, message.getStats());
+                ship.initProjections(ShipShooting.PROJECTION_POINTS_AMOUNT);
                 if (message.getOwnerId() == myId) {
                     myShips.add(ship);
                     infos.put(ship.getId(), new MyShipInfo());

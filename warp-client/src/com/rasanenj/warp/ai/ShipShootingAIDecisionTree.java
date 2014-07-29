@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.DamageModeler;
 import com.rasanenj.warp.Log;
-import com.rasanenj.warp.PositionProjection;
+import com.rasanenj.warp.projecting.PositionProjection;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.systems.ShipShooting;
 

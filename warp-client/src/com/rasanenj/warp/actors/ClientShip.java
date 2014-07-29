@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Assets;
-import com.rasanenj.warp.PositionProjection;
+import com.rasanenj.warp.projecting.PositionProjection;
 import com.rasanenj.warp.TargetValue;
 import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.entities.ShipStats;
@@ -43,8 +43,7 @@ public class ClientShip extends Group {
     private Color circled;
     private float relativeVelocity = 1f;
     private float lastServerRotation;
-    private Array<PositionProjection> projectedPositions =
-            new Array<PositionProjection>(true, ShipShooting.PROJECTION_POINTS_AMOUNT);
+    private Array<PositionProjection> projectedPositions;
     private TargetValue targetValue;
     public static final int MAX_TARGET_VALUE = 4;
 
@@ -98,8 +97,11 @@ public class ClientShip extends Group {
         this.clearAllSteering();
         MAX_DST_CHANGE_PER_FRAME = stats.getMaxLinearVelocity() * 4f / 60f;
         MIN_TELEPORT_DST = MAX_DST_CHANGE_PER_FRAME * 60f;
+    }
 
-        for(int i = 0; i < ShipShooting.PROJECTION_POINTS_AMOUNT; i++) {
+    public void initProjections(final int amount) {
+        projectedPositions = new Array<PositionProjection>(true, amount);
+        for(int i = 0; i < amount; i++) {
             projectedPositions.add(new PositionProjection());
         }
     }

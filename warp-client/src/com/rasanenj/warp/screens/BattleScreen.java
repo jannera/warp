@@ -21,6 +21,7 @@ import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.chart.Chart;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.messaging.ServerConnection;
+import com.rasanenj.warp.projecting.PositionProjection;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.tasks.PathPlotterTask;
 

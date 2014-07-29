@@ -4,15 +4,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.Geometry;
-import com.rasanenj.warp.Log;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.tasks.IntervalTask;
 
-import java.util.Collection;
 
-import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -242,9 +239,9 @@ public class ShipSteering extends IntervalTask {
     }
 
     public static class SteeringResult {
-        final Vector2 linearImpulse = new Vector2();
+        public final Vector2 linearImpulse = new Vector2();
         final Vector2 idealImpulse = new Vector2();
-        float angularImpulse;
+        public float angularImpulse;
 
         public void reset() {
             linearImpulse.set(0, 0);
