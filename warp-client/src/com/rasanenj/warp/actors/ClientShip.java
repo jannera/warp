@@ -30,7 +30,7 @@ public class ClientShip extends Group {
 
     private static long lastid = 0;
 
-    private final ShipStats stats;
+    private ShipStats stats;
 
     private final Image baseImage, hiliteImage, clickRegionImage;
 
@@ -259,7 +259,7 @@ public class ClientShip extends Group {
     public void copySimulationStats(ClientShip ship) {
         setPosition(ship.getX(), ship.getY());
         setRotation(ship.getRotation());
-        getStats().copyPhysicsSimulationStats(ship.getStats());
+        stats = ship.stats;
         velocity.set(ship.getVelocity());
         targetPos.set(ship.getTargetPos());
         targetDirection = ship.getTargetDirection();

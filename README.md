@@ -46,13 +46,12 @@ Steps Before First Catalog-tuning, Need to have
 
 Steps Before First Catalog-tuning, Nice to have
 ===
-* Maksimikiertonopeuden laskeminen orbit-säteestä
 * Pyssyjen trackingin säätö niin, että orbitointi on validi taktiikka
 * Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
 
-
 MVProto
 ===
+* Selvitä miksi orbitoivat frigatit tuntuvat välillä "törmäävän tyhjään", ts. yllättäen hidastavat, ajavat jonkin aikaa hitaalla, ja sitten jatkavat
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
 * Pyssyjen sykli pitäisi visualisoida myös vastustajan aluksille
@@ -263,3 +262,4 @@ MVProto DONE
 * DONE Näytä osumamahdollisuus lämän vieressä
 * DONE näytetään hover-infona mm. optimaali
 * DONE Value-pallot voidaan hävittää -> vähemmän clutteria
+* DONE Maksimikiertonopeuden laskeminen orbit-säteestä

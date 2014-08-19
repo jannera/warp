@@ -13,6 +13,7 @@ import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
+import com.rasanenj.warp.projecting.MaxOrbitVelocityCalculator;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.screens.LobbyScreen;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -40,6 +41,7 @@ public class BattleHandler {
     private final ManualSteeringTask manualSteeringTask;
     private final LobbyScreen lobbyScreen;
     private final OrbitUIHandler orbitUIHandler;
+    private final MaxOrbitVelocityCalculator orbitVelocityCalc;
 
     private long myId = -1;
     private Array<NPCPlayer> npcPlayers = new Array<NPCPlayer>(false, 0);
@@ -74,6 +76,7 @@ public class BattleHandler {
             shipQuickGroups.add(new Array<ClientShip>(false, 0));
         }
         dpsCalculator = new AverageDpsCalculator(statistics, 10000);
+        orbitVelocityCalc = new MaxOrbitVelocityCalculator(15000, 16, screen);
     }
 
     private enum MouseState {
@@ -129,6 +132,10 @@ public class BattleHandler {
 
                 ShipStats stats = message.getStats();
                 ClientShip ship = new ClientShip(message.getId(), owningPlayer, stats);
+                // todo: instead of calculating orbit velocities for every ship,
+                // todo: we should only calculate once per unique ship stats
+                orbitVelocityCalc.calcOrbitingVelocities(ship);
+                ship.clearAllSteering();
                 ship.initProjections(ShipShooting.PROJECTION_POINTS_AMOUNT);
                 ships.add(ship);
                 screen.getStage().addActor(ship);
@@ -706,7 +713,7 @@ public class BattleHandler {
         }
     }
 
-    final Vector2 tmp = new Vector2(), tmp2 = new Vector2();
+    private final Vector2 tmp = new Vector2(), tmp2 = new Vector2();
 
     public Array<ClientShip> getShips() {
         return ships;

@@ -12,7 +12,7 @@ import com.rasanenj.warp.systems.ShipSteering;
 public class PositionProjector {
     final int projectionIntervalMs, projectionPointsAmount;
 
-    public PositionProjector(float updatesInSecond, float projectionTimeMs) {
+    public PositionProjector(float updatesInSecond, long projectionTimeMs) {
         projectionIntervalMs = (int) (1000f / updatesInSecond);
         projectionPointsAmount = (int) ((float) projectionTimeMs / (float) projectionIntervalMs);
         this.simulationShip.setVisible(false);
@@ -54,6 +54,7 @@ public class PositionProjector {
         final float PROJECTION_STEP_LENGTH = projectionIntervalMs / 1000f;
         float lastProjection = 0f, lastSteering = 0f;
 
+        // todo: instead of copying, just use the same stats?
         simulationShip.copySimulationStats(ship);
         Array<PositionProjection> projections = ship.getProjectedPositions();
 

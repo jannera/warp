@@ -18,6 +18,34 @@ public class ShipStats {
     private final float cost;
     private final float width, height;
     private final Shiptype type;
+    private final OrbitVelocities orbitVelocities = new OrbitVelocities();
+
+    @Override
+    public int hashCode() {
+        int result = (signatureResolution != +0.0f ? Float.floatToIntBits(signatureResolution) : 0);
+        result = 31 * result + (weaponTracking != +0.0f ? Float.floatToIntBits(weaponTracking) : 0);
+        result = 31 * result + (weaponSignatureRadius != +0.0f ? Float.floatToIntBits(weaponSignatureRadius) : 0);
+        result = 31 * result + (weaponOptimal != +0.0f ? Float.floatToIntBits(weaponOptimal) : 0);
+        result = 31 * result + (weaponFalloff != +0.0f ? Float.floatToIntBits(weaponFalloff) : 0);
+        result = 31 * result + (weaponDamage != +0.0f ? Float.floatToIntBits(weaponDamage) : 0);
+        result = 31 * result + (weaponCooldown != +0.0f ? Float.floatToIntBits(weaponCooldown) : 0);
+        result = 31 * result + (maxLinearVelocity != +0.0f ? Float.floatToIntBits(maxLinearVelocity) : 0);
+        result = 31 * result + (maxHealth != +0.0f ? Float.floatToIntBits(maxHealth) : 0);
+        result = 31 * result + (maxAcceleration != +0.0f ? Float.floatToIntBits(maxAcceleration) : 0);
+        result = 31 * result + (cost != +0.0f ? Float.floatToIntBits(cost) : 0);
+        result = 31 * result + (width != +0.0f ? Float.floatToIntBits(width) : 0);
+        result = 31 * result + (height != +0.0f ? Float.floatToIntBits(height) : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (maxAngularAcceleration != +0.0f ? Float.floatToIntBits(maxAngularAcceleration) : 0);
+        result = 31 * result + (maxAngularVelocity != +0.0f ? Float.floatToIntBits(maxAngularVelocity) : 0);
+        result = 31 * result + (mass != +0.0f ? Float.floatToIntBits(mass) : 0);
+        result = 31 * result + (inertia != +0.0f ? Float.floatToIntBits(inertia) : 0);
+        result = 31 * result + (maxLinearForceRight != +0.0f ? Float.floatToIntBits(maxLinearForceRight) : 0);
+        result = 31 * result + (maxLinearForceForward != +0.0f ? Float.floatToIntBits(maxLinearForceForward) : 0);
+        result = 31 * result + (maxLinearForceBackward != +0.0f ? Float.floatToIntBits(maxLinearForceBackward) : 0);
+        result = 31 * result + (maxLinearForceLeft != +0.0f ? Float.floatToIntBits(maxLinearForceLeft) : 0);
+        return result;
+    }
 
     public enum Shiptype {
         FRIGATE, CRUISER, BATTLESHIP;
@@ -268,14 +296,7 @@ public class ShipStats {
         return true;
     }
 
-    public void copyPhysicsSimulationStats(ShipStats stats) {
-        setForceLimits(stats.getMaxLinearForceForward(), stats.getMaxLinearForceBackward(),
-                stats.getMaxLinearForceLeft(), stats.getMaxLinearForceRight());
-        setInertia(stats.getInertia());
-        setMass(stats.getMass());
-        maxAcceleration = stats.getMaxAcceleration();
-        maxLinearVelocity = stats.getMaxLinearVelocity();
-        maxAngularAcceleration = stats.getMaxAngularAcceleration();
-        maxAngularVelocity = stats.getMaxAngularVelocity();
+    public OrbitVelocities getOrbitVelocities() {
+        return orbitVelocities;
     }
 }

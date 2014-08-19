@@ -9,6 +9,7 @@ import com.rasanenj.warp.messaging.AccelerationMessage;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.tasks.IntervalTask;
 
+import static com.rasanenj.warp.Log.log;
 
 
 /**
@@ -168,7 +169,7 @@ public class ShipSteering extends IntervalTask {
 
         float desiredDst2 = ship.getOrbitDst2();
 
-        final float orbitMargin = 0.5f * desiredDst2;
+        final float orbitMargin = desiredDst2;
         /**
          * if margin is too high, ship starts oscillating.. if too low,
          * orbit doesn't get maintained.
@@ -210,9 +211,13 @@ public class ShipSteering extends IntervalTask {
 
         float angle = pos.angle();
 
-        // todo: here, deduct somehow (from distance?) if we should use max or reduced velocity
-        pos.scl(ship.getDesiredVelocity());
+        // todo: scale the velocity here only
+        // todo: - if the distance to the desired orbit is within breaking distance
+        // todo: outside of breaking distance use max velocity
+        float reducedVel = ship.getStats().getOrbitVelocities().getVelocity(dst2);
+        pos.scl(reducedVel);
         // now pos contains the desired velocity difference between this ship and the ship that is being orbited
+
 
         tgt.set(ship.getVelocity());
         tgt.sub(orbitTarget.getVelocity());

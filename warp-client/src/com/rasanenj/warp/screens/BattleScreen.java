@@ -1,6 +1,7 @@
 package com.rasanenj.warp.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -84,6 +85,7 @@ public class BattleScreen implements Screen {
     private OrbitUIHandler orbitUIHandler;
 
     final Table hoveringTable;
+    final ActorBrowsingWindow debugWindow;
 
     public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
         this.game = game;
@@ -127,6 +129,7 @@ public class BattleScreen implements Screen {
         hoveringText.setColor(Color.WHITE);
         hoveringTable.add(hoveringText);
         hoveringTable.pack();
+        debugWindow = new ActorBrowsingWindow("debug", uiStage);
     }
 
 
@@ -906,7 +909,8 @@ public class BattleScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
+        InputMultiplexer plexer = new InputMultiplexer(uiStage, stage);
+        Gdx.input.setInputProcessor(plexer);
         Chart.init();
     }
 
@@ -1074,5 +1078,9 @@ public class BattleScreen implements Screen {
 
     public WarpGame getGame() {
         return game;
+    }
+
+    public ActorBrowsingWindow getDebugWindow() {
+        return debugWindow;
     }
 }
