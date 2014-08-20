@@ -361,11 +361,12 @@ public class BattleScreen implements Screen {
         }
 
         float orbitCircleRadius = orbitUIHandler.getOrbitRadius();
+        float orbitDst2 = orbitCircleRadius * orbitCircleRadius;
 
 
         velocities.clear();
         for (ClientShip s : battleHandler.getSelectedShips()) {
-            float vel = s.getDesiredVelocity();
+            float vel = s.getStats().getOrbitVelocities().getVelocity(orbitDst2);
             if (!velocities.contains(vel, false)) {
                 velocities.add(vel);
             }

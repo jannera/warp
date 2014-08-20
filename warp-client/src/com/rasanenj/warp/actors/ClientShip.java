@@ -41,7 +41,6 @@ public class ClientShip extends Group {
     private ClientShip orbitShip;
     private float orbitDst2;
     private Color circled;
-    private float relativeVelocity = 1f;
     private float lastServerRotation;
     private Array<PositionProjection> projectedPositions;
     private TargetValue targetValue;
@@ -238,18 +237,6 @@ public class ClientShip extends Group {
 
     public void clearCircle() {
         circled = null;
-    }
-
-    public void setDesiredRelativeVelocity(float relativeVelocity) {
-        this.relativeVelocity = relativeVelocity;
-    }
-
-    public float getRelativeVelocity() {
-        return relativeVelocity;
-    }
-
-    public float getDesiredVelocity() {
-        return stats.getMaxLinearVelocity() * relativeVelocity;
     }
 
     public boolean hasSteeringTarget() {

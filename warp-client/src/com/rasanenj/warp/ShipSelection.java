@@ -66,12 +66,6 @@ public class ShipSelection implements Iterable<ClientShip> {
         return selectedShips.contains(ship, true);
     }
 
-    public void setDesiredRelativeVelocity(float velocity) {
-        for (ClientShip s : this) {
-            s.setDesiredRelativeVelocity(velocity);
-        }
-    }
-
     public void set(Iterable<ClientShip> newSet) {
         clear();
         for (ClientShip s : newSet) {

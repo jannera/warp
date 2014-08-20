@@ -51,6 +51,7 @@ Steps Before First Catalog-tuning, Nice to have
 
 MVProto
 ===
+* Näytä osumien logia ikkunassa
 * Selvitä miksi orbitoivat frigatit tuntuvat välillä "törmäävän tyhjään", ts. yllättäen hidastavat, ajavat jonkin aikaa hitaalla, ja sitten jatkavat
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
