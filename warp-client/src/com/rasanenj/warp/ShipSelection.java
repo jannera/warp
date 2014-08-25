@@ -66,10 +66,23 @@ public class ShipSelection implements Iterable<ClientShip> {
         return selectedShips.contains(ship, true);
     }
 
+    public boolean containsAnyOwnedBy(long ownerId) {
+        for(int i=0; i < selectedShips.size; i++) {
+            if (selectedShips.get(i).getOwner().getId() == ownerId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void set(Iterable<ClientShip> newSet) {
         clear();
         for (ClientShip s : newSet) {
             add(s);
         }
+    }
+
+    public boolean isEmpty() {
+        return selectedShips.size == 0;
     }
 }

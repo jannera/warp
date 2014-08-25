@@ -419,7 +419,7 @@ public class BattleHandler {
                 screenCoordinates.set(x, y, 0);
                 cam.project(screenCoordinates);
             }
-            else if (event.getButton() == LEFT_MOUSE) {
+            else if (event.getButton() == LEFT_MOUSE && mouseState == MouseState.DEFAULT) {
                 dragState = DragState.STARTING_MULTISELECTING;
                 startPoint.set(x, y);
                 screen.setSelectionRectangleStart(x, y);
@@ -521,19 +521,32 @@ public class BattleHandler {
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.D) {
-                flipMouseState(MouseState.DIRECTION);
+                if (selection.containsAnyOwnedBy(myId) || mouseState == MouseState.DIRECTION)
+                {
+                    flipMouseState(MouseState.DIRECTION);
+                }
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.G) {
-                flipMouseState(MouseState.GO_TO);
+                if (selection.containsAnyOwnedBy(myId) || mouseState == MouseState.GO_TO)
+                {
+                    flipMouseState(MouseState.GO_TO);
+                }
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.O) {
-                flipMouseState(MouseState.ORBIT_CW);
+                if (selection.containsAnyOwnedBy(myId) || mouseState == MouseState.ORBIT_CW)
+                {
+                    flipMouseState(MouseState.ORBIT_CW);
+                }
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.P) {
-                flipMouseState(MouseState.ORBIT_CCW);
+                if (selection.containsAnyOwnedBy(myId) || mouseState == MouseState.ORBIT_CCW)
+                {
+                    flipMouseState(MouseState.ORBIT_CCW);
+                }
+
                 return true;
             }
             else if (event.getKeyCode() == Input.Keys.Z) {

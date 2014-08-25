@@ -47,8 +47,6 @@ Steps Before First Catalog-tuning, Need to have
 Steps Before First Catalog-tuning, Nice to have
 ===
 * Pyssyjen trackingin säätö niin, että orbitointi on validi taktiikka
-* Mikäli yhtään alusta ei ole valittuna, ei voi goto/flyindir/orbit
-* Kun ollaan antamassa goto/flyindir/orbit -käskyä, alusten valintaa ei voi vaihtaa klikkaamalla tai selection-rectanglella
 
 MVProto
 ===
@@ -251,3 +249,5 @@ MVProto DONE
 * DONE Maksimikiertonopeuden laskeminen orbit-säteestä
 * DONE korjaa Geometry.getTransverseSpeed
 * DONE Näytä angular speedin sijaan orbit-komennon yhteydessä osumatodennäköisyys
+* DONE Mikäli yhtään alusta ei ole valittuna, ei voi goto/flyindir/orbit
+* DONE Kun ollaan antamassa goto/flyindir/orbit -käskyä, alusten valintaa ei voi vaihtaa klikkaamalla tai selection-rectanglella
