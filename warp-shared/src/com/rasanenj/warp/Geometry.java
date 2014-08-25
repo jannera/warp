@@ -53,19 +53,36 @@ public class Geometry {
     /**
      * Calculates transverse speed of ships in certain positions with certain
      * velocities.
-     * The posA and posB parameters are modified, velocities are not.
      */
     public static float getTransverseSpeed(Vector2 posA, Vector2 posB, Vector2 velA, Vector2 velB) {
-        Vector2 plane = new Vector2();
-        plane.set(posA);
-        plane.sub(posB);
-        posA.set(velA);
-        posB.set(velB);
-        project(posA, plane);
-        project(posB, plane);
-        posA.sub(posB);
-        return posA.len();
+        /**
+         * from http://en.wikipedia.org/wiki/Velocity#Polar_coordinates:
+         *
+         * The magnitude of the transverse velocity is that of the cross product
+         * of the unit vector in the direction of the displacement and the
+         * velocity vector.
+         *
+         * When v = velocity, r = displacement, then
+         *
+         * radial_velocity = len(v x r) / len(r)
+         *
+         * Where x means cross product.
+         */
+        v.set(velA);
+        v.sub(velB);
+
+        r.set(posA);
+        r.sub(posB);
+
+        float rLen = r.len();
+        if (rLen == 0) {
+            return Float.NaN;
+        }
+
+        return Math.abs(v.crs(r)) / r.len();
     }
+
+    static final Vector2 v = new Vector2(), r = new Vector2();
 
     /**
      * Projects a on b, and returns a.

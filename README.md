@@ -47,11 +47,19 @@ Steps Before First Catalog-tuning, Need to have
 Steps Before First Catalog-tuning, Nice to have
 ===
 * Pyssyjen trackingin säätö niin, että orbitointi on validi taktiikka
-* Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
+* Mikäli yhtään alusta ei ole valittuna, ei voi goto/flyindir/orbit
+* Kun ollaan antamassa goto/flyindir/orbit -käskyä, alusten valintaa ei voi vaihtaa klikkaamalla tai selection-rectanglella
 
 MVProto
 ===
 * Näytä osumien logia ikkunassa
+* KOTH -moodi
+* HotDeploy: Alusten ostaminen pelistä + deploy
+* HotDeploy-featureen hiljaa lisääntyvät pojot
+    * Pienempifleettiselle nopeammin pojoja lisää
+* Fitin talletus ja lataaminen
+* Kartta
+* Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
 * Selvitä miksi orbitoivat frigatit tuntuvat välillä "törmäävän tyhjään", ts. yllättäen hidastavat, ajavat jonkin aikaa hitaalla, ja sitten jatkavat
 * Kun NPC:n alukset tuhotaan, NPC-pelaaja voisi disconnectata ja vapauttaa värin
 * Health-barit voisi piirtää fiksumpaan kohtaan ja esmes cruisereille eri paksuudella
@@ -89,29 +97,8 @@ MVProto
     * Alustyyppi ShipStatseihin
     * Eri graffat
     * DONE Eri alustyyppien luominen fleet build windowiin
-* Orbit-käskyä annettaessa voisi näyttää numerona
-    * rangen
-    * DONE kiertonopeuden rad/s
-* Trailin pitäisi toimia aluksen keskikohdasta
-* Isojen alusten hitboxit ovat valtavia, vois pienentää tai jättää kokonaan pois?
 * Kääntymisnopeutta voisi myös rajoittaa serverin päässä
 * Jotenkin pitäisi rajoittaa ettei kääntymisen max kiihtyminen voi olla suurempi kuin max velocity.. tai korjata steering
-* Ampumiskohteen asettaminen helpommaksi:
-    * Fire at -mousemoodi.. valkataan kursoria lähin kohde ampumiskohteeksi. Samanlainen moodi päälle - klikkaus-systeemi
-* Näytä jokin graffa aluksen tuhoutuessa
-* Tällä hetkellä kohti ammusta lentäminen hidastaa ammusta.. ammusten pitää yksinkertaisesti alkaa kulkemaan omaa tasaista vauhtiaan
-* Alusten ja niiden stattien ostaminen kälin kautta
-    * DONE Katalogin parsiminen -> käyttöliittymä
-    * DONE Kokonaishinnan laskeminen ja näyttäminen webbikälissä
-    * Osto-UI
-        * DONE Take a test-flight -nappi
-        * DONE Save/load fleet
-        * Save/load ship
-        * Nykyisten stattien näyttäminen
-        * Yksiköt näkyville
-        * DONE Aluksen tyypin valitseminen lisättäessä
-        * DONE Lukumäärän antaminen aluksille. Voisi näkyä myös UI:ssa
-        * Delete ship
 * Alusten statteja voisi muuttaa lennossa kun on testflight -moodissa?
 * Go To -komentoon useita eri pisteitä (shift pohjassa)
     * Eri pisteiden visualisointi
@@ -119,7 +106,6 @@ MVProto
     * Eri pisteidelle numerointi (?) tai nuolet pisteiden välillä
 * Reunakolmioiden siirtäminen ui-layerille
 * Reunakolmion koko voisi riippua siitä, kuinka lähellä kohde on
-* Ei uusia ammuksia aluksiin jotka on jo ehditty tuhoamaan, mutta ovat vielä ruudulla
 * Ruudulle voisi heittää fadeout-viestejä UI:sta, esim kun vaihdetaan optimaalin piirtotilaa
 * Healthbar ja teksti pitäisi olla aina aluksen alla, riippumatta aluksen rotaatiosta
 * Muuta resoluutiota kun selaimen koko muuttuu (muuttamatta kuvasuhdetta)
@@ -128,7 +114,6 @@ MVProto
 * Serverin pitäisi poistaa laivat siinä vaiheessa mikäli
     * DONE yhteys käyttäjään katkeaa
     * tai tulee virhe tiedonsiirrossa
-* vain valitun kohteen targetpositioiden näyttäminen? tosin näistä ehkä hankkiudutaan eroon eniveis, joten antaa odottaa?
 * Chatissa olevien tyyppien nimien listaaminen
 * Pelin aloittaminen chatista:
     * Haasteen antaminen: /fight <player> <player> <player> ...
@@ -264,3 +249,5 @@ MVProto DONE
 * DONE näytetään hover-infona mm. optimaali
 * DONE Value-pallot voidaan hävittää -> vähemmän clutteria
 * DONE Maksimikiertonopeuden laskeminen orbit-säteestä
+* DONE korjaa Geometry.getTransverseSpeed
+* DONE Näytä angular speedin sijaan orbit-komennon yhteydessä osumatodennäköisyys

@@ -21,6 +21,7 @@ import com.rasanenj.warp.*;
 import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.chart.Chart;
 import com.rasanenj.warp.actors.ClientShip;
+import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.projecting.PositionProjection;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -50,7 +51,8 @@ public class BattleScreen implements Screen {
     private final static float ACTIVE_ORBIT_TARGET_SIZE = 60f;
     private final static float HOVERING_FIRING_TARGET_SIZE = 90f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
-    private final Vector2 tmp = new Vector2(), force = new Vector2();
+    private final Vector2 tmp2_1 = new Vector2(), force = new Vector2(),
+        tmp2_2 = new Vector2(), tmp2_3 = new Vector2(), tmp2_4 = new Vector2();
     private final Vector2 corners[] = new Vector2[4];
     private static final int CIRCLE_SEGMENTS = 64;
 
@@ -58,6 +60,7 @@ public class BattleScreen implements Screen {
 
     final BitmapFont font;
     private NumberFormat twoFullDecimals = NumberFormat.getFormat("0.00");
+    private NumberFormat threeFullDecimals = NumberFormat.getFormat("0.000");
     private NumberFormat noDecimals = NumberFormat.getFormat("0");
 
     private final Array<DamageText> damageMessages = new Array(false, 16);
@@ -125,7 +128,7 @@ public class BattleScreen implements Screen {
         hoveringTable.setColor(0.6f, 0.6f, 0.6f, 0.75f);
         uiStage.addActor(hoveringTable);
 
-        hoveringText = new Label(getHoverInfo(0L, 0f), Assets.skin);
+        hoveringText = new Label(getHoverInfo(0L, 0f, 0f), Assets.skin);
         hoveringText.setColor(Color.WHITE);
         hoveringTable.add(hoveringText);
         hoveringTable.pack();
@@ -156,10 +159,10 @@ public class BattleScreen implements Screen {
     }
 
     public void addLaserBeam(ClientShip shooter, ClientShip target, boolean hit) {
-        shooter.getCenterPos(tmp);
-        float startX = tmp.x, startY = tmp.y;
-        target.getCenterPos(tmp);
-        addLaserBeam(startX, startY, tmp.x, tmp.y, Assets.getHiliteColor(shooter.getOwner()), hit);
+        shooter.getCenterPos(tmp2_1);
+        float startX = tmp2_1.x, startY = tmp2_1.y;
+        target.getCenterPos(tmp2_1);
+        addLaserBeam(startX, startY, tmp2_1.x, tmp2_1.y, Assets.getHiliteColor(shooter.getOwner()), hit);
     }
 
     public enum OptimalRenderingState {
@@ -243,8 +246,8 @@ public class BattleScreen implements Screen {
         // position the table left of the ship, in the center
         hoveringText.setText(getHoverInfo(hoveringTarget));
         hoveringText.setAlignment(Align.left);
-        hoveringTarget.getCenterPos(tmp);
-        tmp3.set(hoveringTarget.getLeftX(), tmp.y, 0);
+        hoveringTarget.getCenterPos(tmp2_1);
+        tmp3.set(hoveringTarget.getLeftX(), tmp2_1.y, 0);
         cam.project(tmp3);
 
         tmp3.x -= hoveringTable.getWidth();
@@ -254,13 +257,16 @@ public class BattleScreen implements Screen {
     }
 
     private String getHoverInfo(ClientShip s) {
-        return getHoverInfo(s.getId(), s.getStats().getMaxLinearVelocity());
+        final ShipStats stats = s.getStats();
+        return getHoverInfo(s.getId(), stats.getMaxLinearVelocity(),
+                stats.getWeaponTracking());
     }
 
-    private String getHoverInfo(Long id, float maxVel) {
+    private String getHoverInfo(Long id, float maxVel, float tracking) {
         String result = "";
         result += "id " + id;
         result += "\n" + "maxvel " + twoFullDecimals.format(maxVel);
+        result += "\n" + "tracking " + threeFullDecimals.format(tracking);
         return result;
     }
 
@@ -286,15 +292,15 @@ public class BattleScreen implements Screen {
     }
 
     private Vector2 getTargetValueStartPosPx(ClientShip ship, String value) {
-        ship.getCenterPos(tmp);
-        tmp.y += ship.getHeight();
-        tmp3.set(tmp.x, tmp.y, 0);
+        ship.getCenterPos(tmp2_1);
+        tmp2_1.y += ship.getHeight();
+        tmp3.set(tmp2_1.x, tmp2_1.y, 0);
         cam.project(tmp3);
 
         // now we have window coordinates just above the ship vertically and right in middle of the ship horizontally
         BitmapFont.TextBounds bounds = font.getBounds(value);
-        tmp.set(tmp3.x - bounds.width / 2f, tmp3.y + bounds.height);
-        return tmp;
+        tmp2_1.set(tmp3.x - bounds.width / 2f, tmp3.y + bounds.height);
+        return tmp2_1;
     }
 
     final static float weaponCoolDownCircleRadius = 10f;
@@ -353,7 +359,7 @@ public class BattleScreen implements Screen {
         }
     }
 
-    final Array<Float> velocities = new Array<Float>(false, 16);
+    final Array<Float> chances = new Array<Float>(false, 16);
 
     private void renderTextBelowMouseCursor() {
         if (orbitUIHandler.getState() != OrbitUIHandler.State.SELECTING_RADIUS) {
@@ -363,23 +369,31 @@ public class BattleScreen implements Screen {
         float orbitCircleRadius = orbitUIHandler.getOrbitRadius();
         float orbitDst2 = orbitCircleRadius * orbitCircleRadius;
 
+        tmp2_1.set(0, 0); // shooter pos
+        tmp2_2.set(orbitCircleRadius, 0); // target pos
+        tmp2_4.set(0, 0); // shooter lin vel
 
-        velocities.clear();
+        chances.clear();
+        ShipStats shooterStats = orbitUIHandler.getOrbitTargetShip().getStats();
         for (ClientShip s : battleHandler.getSelectedShips()) {
             float vel = s.getStats().getOrbitVelocities().getVelocity(orbitDst2);
-            if (!velocities.contains(vel, false)) {
-                velocities.add(vel);
+            tmp2_4.set(0, vel); // target lin vel
+
+            float chance = DamageModeler.getChance(tmp2_1, tmp2_2, tmp2_3, tmp2_4, shooterStats, s.getStats()) * 100f;
+            if (!chances.contains(chance, false)) {
+                chances.add(chance);
             }
         }
 
         String textBelowCursor = "";
-        for (Float f : velocities) {
-            float angularSpeed = Geometry.getAngularSpeed(f, orbitCircleRadius);
+        for (Float f : chances) {
             if (!textBelowCursor.isEmpty()) {
                 textBelowCursor += ", ";
             }
-            textBelowCursor += twoFullDecimals.format(angularSpeed);
+            log(f);
+            textBelowCursor += noDecimals.format(f);
         }
+        textBelowCursor += "%";
 
         float x = Gdx.input.getX();
         float y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30f;
@@ -407,8 +421,8 @@ public class BattleScreen implements Screen {
         if (target == null) {
             return;
         }
-        target.getCenterPos(tmp);
-        tmp3.set(tmp.x, tmp.y, 0);
+        target.getCenterPos(tmp2_1);
+        tmp3.set(tmp2_1.x, tmp2_1.y, 0);
         cam.project(tmp3);
         batch.draw(tex, tmp3.x - halfSize, tmp3.y - halfSize, size, size);
     }
@@ -429,8 +443,8 @@ public class BattleScreen implements Screen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Assets.newCommandsColor);
-        orbitCircleTarget.getCenterPos(tmp);
-        shapeRenderer.circle(tmp.x, tmp.y, orbitCircleRadius);
+        orbitCircleTarget.getCenterPos(tmp2_1);
+        shapeRenderer.circle(tmp2_1.x, tmp2_1.y, orbitCircleRadius);
         shapeRenderer.end();
     }
 
@@ -441,8 +455,8 @@ public class BattleScreen implements Screen {
             if (!ship.isCircled()) {
                 continue;
             }
-            ship.getCenterPos(tmp);
-            tmp3.set(tmp.x, tmp.y, 0);
+            ship.getCenterPos(tmp2_1);
+            tmp3.set(tmp2_1.x, tmp2_1.y, 0);
             cam.project(tmp3);
             batch.setColor(ship.getCircleColor());
             float width = 60, height = width;
@@ -507,9 +521,9 @@ public class BattleScreen implements Screen {
             cam.project(tmp3);
             cam.project(tmp3end);
             tmp3end.sub(tmp3);
-            tmp.set(tmp3end.x, tmp3end.y);
-            float angle = tmp.angle() + 270f;
-            float height = tmp.len();
+            tmp2_1.set(tmp3end.x, tmp3end.y);
+            float angle = tmp2_1.angle() + 270f;
+            float height = tmp2_1.len();
 
             float capLength = height / 3f;
             if (capLength > LASER_MAX_CAP_LENGTH) {
@@ -523,17 +537,17 @@ public class BattleScreen implements Screen {
                 renderLaser(Assets.laserStartOverlay   , tmp3.x, tmp3.y, angle, capLength, Color.WHITE, fade);
             }
 
-            tmp.clamp(0f, height - capLength);
-            renderLaser(Assets.laserEndBackground, tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, laser.baseColor, fade);
+            tmp2_1.clamp(0f, height - capLength);
+            renderLaser(Assets.laserEndBackground, tmp3.x + tmp2_1.x, tmp3.y + tmp2_1.y, angle, capLength, laser.baseColor, fade);
             if (laser.hit) {
-                renderLaser(Assets.laserEndOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, capLength, Color.WHITE, fade);
+                renderLaser(Assets.laserEndOverlay   , tmp3.x + tmp2_1.x, tmp3.y + tmp2_1.y, angle, capLength, Color.WHITE, fade);
             }
 
 
-            tmp.clamp(0f, capLength);
-            renderLaser(Assets.laserMidBackground, tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, laser.baseColor, fade);
+            tmp2_1.clamp(0f, capLength);
+            renderLaser(Assets.laserMidBackground, tmp3.x + tmp2_1.x, tmp3.y + tmp2_1.y, angle, height - 2f*capLength, laser.baseColor, fade);
             if (laser.hit) {
-                renderLaser(Assets.laserMidOverlay   , tmp3.x + tmp.x, tmp3.y + tmp.y, angle, height - 2f*capLength, Color.WHITE, fade);
+                renderLaser(Assets.laserMidOverlay   , tmp3.x + tmp2_1.x, tmp3.y + tmp2_1.y, angle, height - 2f*capLength, Color.WHITE, fade);
             }
         }
         batch.end();
@@ -712,13 +726,13 @@ public class BattleScreen implements Screen {
 
     private void renderOptimals(ClientShip ship) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        ship.getCenterPos(tmp);
+        ship.getCenterPos(tmp2_1);
         float optimal = ship.getStats().getWeaponOptimal();
         float falloff = ship.getStats().getWeaponFalloff();
         shapeRenderer.setColor(Color.ORANGE);
-        shapeRenderer.circle(tmp.x, tmp.y, optimal, CIRCLE_SEGMENTS);
+        shapeRenderer.circle(tmp2_1.x, tmp2_1.y, optimal, CIRCLE_SEGMENTS);
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.circle(tmp.x, tmp.y, optimal + falloff, CIRCLE_SEGMENTS);
+        shapeRenderer.circle(tmp2_1.x, tmp2_1.y, optimal + falloff, CIRCLE_SEGMENTS);
         shapeRenderer.end();
     }
 
@@ -796,44 +810,44 @@ public class BattleScreen implements Screen {
             if (isOnScreen(ship)) {
                 continue;
             }
-            ship.getCenterPos(tmp);
+            ship.getCenterPos(tmp2_1);
 
-            if (tmp.x < cameraLeft) {
+            if (tmp2_1.x < cameraLeft) {
                 left = true;
             }
-            else if (tmp.x > cameraRight) {
+            else if (tmp2_1.x > cameraRight) {
                 right = true;
             }
 
-            if (tmp.y > cameraTop) {
+            if (tmp2_1.y > cameraTop) {
                 top = true;
             }
-            else if (tmp.y < cameraBottom) {
+            else if (tmp2_1.y < cameraBottom) {
                 bottom = true;
             }
 
-            tmp.x = MathUtils.clamp(tmp.x, cameraLeft, cameraRight);
-            tmp.y = MathUtils.clamp(tmp.y, cameraBottom, cameraTop);
+            tmp2_1.x = MathUtils.clamp(tmp2_1.x, cameraLeft, cameraRight);
+            tmp2_1.y = MathUtils.clamp(tmp2_1.y, cameraBottom, cameraTop);
 
             if (top) {
-                corners[0].set(tmp.x - TRIANGLE_SIDE / 2f, tmp.y - TRIANGLE_SIDE);
-                corners[1].set(tmp.x + TRIANGLE_SIDE / 2f, tmp.y - TRIANGLE_SIDE);
+                corners[0].set(tmp2_1.x - TRIANGLE_SIDE / 2f, tmp2_1.y - TRIANGLE_SIDE);
+                corners[1].set(tmp2_1.x + TRIANGLE_SIDE / 2f, tmp2_1.y - TRIANGLE_SIDE);
             }
             else if (bottom) {
-                corners[0].set(tmp.x - TRIANGLE_SIDE / 2f, tmp.y + TRIANGLE_SIDE);
-                corners[1].set(tmp.x + TRIANGLE_SIDE / 2f, tmp.y + TRIANGLE_SIDE);
+                corners[0].set(tmp2_1.x - TRIANGLE_SIDE / 2f, tmp2_1.y + TRIANGLE_SIDE);
+                corners[1].set(tmp2_1.x + TRIANGLE_SIDE / 2f, tmp2_1.y + TRIANGLE_SIDE);
             }
             else if (right) {
-                corners[0].set(tmp.x - TRIANGLE_SIDE, tmp.y + TRIANGLE_SIDE / 2f);
-                corners[1].set(tmp.x - TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
+                corners[0].set(tmp2_1.x - TRIANGLE_SIDE, tmp2_1.y + TRIANGLE_SIDE / 2f);
+                corners[1].set(tmp2_1.x - TRIANGLE_SIDE, tmp2_1.y - TRIANGLE_SIDE / 2f);
             }
             else if (left) {
-                corners[0].set(tmp.x + TRIANGLE_SIDE, tmp.y + TRIANGLE_SIDE / 2f);
-                corners[1].set(tmp.x + TRIANGLE_SIDE, tmp.y - TRIANGLE_SIDE / 2f);
+                corners[0].set(tmp2_1.x + TRIANGLE_SIDE, tmp2_1.y + TRIANGLE_SIDE / 2f);
+                corners[1].set(tmp2_1.x + TRIANGLE_SIDE, tmp2_1.y - TRIANGLE_SIDE / 2f);
             }
 
             shapeRenderer.setColor(ship.getCurrentColor());
-            shapeRenderer.triangle(tmp.x, tmp.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
+            shapeRenderer.triangle(tmp2_1.x, tmp2_1.y, corners[0].x, corners[0].y, corners[1].x, corners[1].y);
         }
         shapeRenderer.end();
     }
@@ -856,12 +870,12 @@ public class BattleScreen implements Screen {
         shapeRenderer.setProjectionMatrix(cam.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (ClientShip ship : battleHandler.getShips()) {
-            ship.getCenterPos(tmp);
+            ship.getCenterPos(tmp2_1);
 
             if (Settings.renderShipVelocity) {
                 shapeRenderer.setColor(Assets.statisticsColor);
-                shapeRenderer.line(tmp.x, tmp.y,
-                        tmp.x + ship.getVelocity().x, tmp.y + ship.getVelocity().y);
+                shapeRenderer.line(tmp2_1.x, tmp2_1.y,
+                        tmp2_1.x + ship.getVelocity().x, tmp2_1.y + ship.getVelocity().y);
             }
 
             if (Settings.renderMaxForceRectangle) {
@@ -881,14 +895,14 @@ public class BattleScreen implements Screen {
 
             if (Settings.renderIdealImpulse) {
                 shapeRenderer.setColor(Color.BLUE);
-                shapeRenderer.line(tmp.x, tmp.y,
-                        tmp.x + ship.getImpulseIdeal().x, tmp.y + ship.getImpulseIdeal().y);
+                shapeRenderer.line(tmp2_1.x, tmp2_1.y,
+                        tmp2_1.x + ship.getImpulseIdeal().x, tmp2_1.y + ship.getImpulseIdeal().y);
             }
 
             if (Settings.renderImpulse) {
                 shapeRenderer.setColor(Assets.statisticsColor);
-                shapeRenderer.line(tmp.x, tmp.y,
-                        tmp.x + ship.getImpulse().x, tmp.y + ship.getImpulse().y);
+                shapeRenderer.line(tmp2_1.x, tmp2_1.y,
+                        tmp2_1.x + ship.getImpulse().x, tmp2_1.y + ship.getImpulse().y);
 
             }
         }
@@ -962,8 +976,8 @@ public class BattleScreen implements Screen {
     }
 
     public void addDamageProjectile(ClientShip target, float damage, float x, float y, float chance) {
-        target.getCenterPos(tmp);
-        float ttl = tmp.dst2(x, y) / DamageProjectile.AMMO_VELOCITY_SQUARED;
+        target.getCenterPos(tmp2_1);
+        float ttl = tmp2_1.dst2(x, y) / DamageProjectile.AMMO_VELOCITY_SQUARED;
         damageProjectiles.add(new DamageProjectile(target, damage, ttl, x, y, chance));
     }
 

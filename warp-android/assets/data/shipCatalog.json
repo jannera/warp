@@ -211,24 +211,24 @@
                             "name" : "Tracking",
                             "values" : [
                                 {
-                                    "value" : 1,
+                                    "value" : 0.10,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 1.5,
+                                    "value" : 0.15,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 2,
+                                    "value" : 0.20,
                                     "cost" : 50
                                 },
                                 {
-                                    "value" : 2.5,
+                                    "value" : 0.25,
                                     "cost" : 70
                                 }
                                 ,
                                 {
-                                    "value" : 3,
+                                    "value" : 0.30,
                                     "cost" : 90
                                 }
                             ]
@@ -500,24 +500,24 @@
                             "name" : "Tracking",
                             "values" : [
                                 {
-                                    "value" : 0.2,
+                                    "value" : 0.20,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 0.3,
+                                    "value" : 0.25,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 0.4,
+                                    "value" : 0.30,
                                     "cost" : 50
                                 },
                                 {
-                                    "value" : 0.5,
+                                    "value" : 0.35,
                                     "cost" : 70
                                 }
                                 ,
                                 {
-                                    "value" : 0.6,
+                                    "value" : 0.40,
                                     "cost" : 90
                                 }
                             ]

@@ -155,6 +155,7 @@ public class ShipBuildWindow {
         float weaponFalloff = getValue(values, "weaponFalloff");
         float weaponDamage = getValue(values, "weaponDamage");
         float weaponCooldown = getValue(values, "weaponCooldown");
+        float weaponTracking = getValue(values, "weaponTracking");
         float width = getValue(constants, "width");
         float cost = getTotalCost();
 
@@ -163,11 +164,10 @@ public class ShipBuildWindow {
         Texture t = Assets.getShipBaseTexture(shiptype);
         float imageRatio = (float) t.getWidth() / (float) t.getHeight();
         float height = width / imageRatio;
-        Log.log("image ratio " + imageRatio + " -> " + width + " x " + height);
+        // Log.log("image ratio " + imageRatio + " -> " + width + " x " + height);
 
-        // TODO: add weapon tracking
         return new ShipStats(mass, inertia, force, force, force, force, maxHealth, maxVelocity,
-                maxAngularVelocity, maxAngularAcceleration, signatureResolution, weaponCooldown,
+                maxAngularVelocity, maxAngularAcceleration, signatureResolution, weaponTracking,
                 signatureResolution, weaponOptimal, weaponFalloff, weaponDamage, weaponCooldown,
                 maxAcceleration, cost, width, height, shiptype);
     }

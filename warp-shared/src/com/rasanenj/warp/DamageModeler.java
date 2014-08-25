@@ -44,7 +44,7 @@ public class DamageModeler {
         // log("sigRes: " + tgtSigRes + " vs " + wpnSigRadius);
         // log("range: " + range + " vs " + optimal + " + " + falloff);
 
-        float a = (transverseSpeed * tgtSigRes) / (tracking * range * wpnSigRadius);
+        float a = (transverseSpeed * wpnSigRadius) / (tracking * range * tgtSigRes);
         a *= a;
         float b = Math.max(0, range - optimal) / falloff;
         b *= b;
