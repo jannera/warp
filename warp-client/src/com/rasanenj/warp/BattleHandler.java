@@ -266,6 +266,14 @@ public class BattleHandler {
 
                 }
             }
+            else if (msg.getType() == Message.MessageType.CREATE_SCORE_GATHERING_POINT) {
+                ScoreGatheringPointMessage message = (ScoreGatheringPointMessage) msg;
+                screen.addScoreGatheringPoint(message.getX(), message.getY());
+            }
+            else if (msg.getType() == Message.MessageType.SCORE_UPDATE) {
+                ScoreUpdateMessage message = (ScoreUpdateMessage) msg;
+                getPlayer(message.getPlayerId()).setScore(message.getScore());
+            }
         }
 
         @Override
@@ -274,7 +282,9 @@ public class BattleHandler {
                     Message.MessageType.CREATE_SHIP,
                     Message.MessageType.JOIN_BATTLE,
                     Message.MessageType.SHOOT_DAMAGE,
-                    Message.MessageType.SHIP_DESTRUCTION);
+                    Message.MessageType.SHIP_DESTRUCTION,
+                    Message.MessageType.CREATE_SCORE_GATHERING_POINT,
+                    Message.MessageType.SCORE_UPDATE);
         }
     }
 
@@ -796,5 +806,9 @@ public class BattleHandler {
         else if (newState == MouseState.DEFAULT) {
             Utility.getCanvas().setClassName("defaultCursor");
         }
+    }
+
+    public Array<Player> getPlayers() {
+        return players;
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -22,6 +23,7 @@ import com.rasanenj.warp.actors.TiledImage;
 import com.rasanenj.warp.chart.Chart;
 import com.rasanenj.warp.actors.ClientShip;
 import com.rasanenj.warp.entities.ShipStats;
+import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.projecting.PositionProjection;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -56,6 +58,8 @@ public class BattleScreen implements Screen {
     private final Vector2 corners[] = new Vector2[4];
     private static final int CIRCLE_SEGMENTS = 64;
 
+    private static final float SCORE_GATHERING_POINT_SIZE = 5f;
+
     private static final float PROJECTILE_SIZE = 3f;
 
     final BitmapFont font;
@@ -77,7 +81,7 @@ public class BattleScreen implements Screen {
     // only for drawing directly on the screen, like rendering text in screen coordinates
     private final SpriteBatch batch = new SpriteBatch();
 
-    private OptimalRenderingState optimalRenderingState = OptimalRenderingState.ALL_SHIPS;
+    private OptimalRenderingState optimalRenderingState = OptimalRenderingState.NOTHING;
     private Vector2 manualSteeringEnd;
     private Vector2 manualSteeringStart;
     private boolean manualSteeringActive = false;
@@ -165,6 +169,13 @@ public class BattleScreen implements Screen {
         addLaserBeam(startX, startY, tmp2_1.x, tmp2_1.y, Assets.getHiliteColor(shooter.getOwner()), hit);
     }
 
+    public void addScoreGatheringPoint(float x, float y) {
+        Image point = new Image(Assets.scoreGatheringPoint);
+        point.setSize(SCORE_GATHERING_POINT_SIZE, SCORE_GATHERING_POINT_SIZE);
+        point.setPosition(x - SCORE_GATHERING_POINT_SIZE/2f, y - SCORE_GATHERING_POINT_SIZE/2f);
+        stage.addActor(point);
+    }
+
     public enum OptimalRenderingState {
         SELECTED_SHIPS, OWN_SHIPS, ENEMY_SHIPS, ALL_SHIPS, NOTHING
     }
@@ -221,7 +232,7 @@ public class BattleScreen implements Screen {
         renderOptimals();
         renderOrbitCircle();
         renderDamageTexts();
-        renderShipTexts();
+        // renderShipTexts();
 
         renderWeaponCooldowns();
 
@@ -230,11 +241,53 @@ public class BattleScreen implements Screen {
         renderSelectionRectangle();
         renderPhysicsVertices();
 
+        renderScore();
+
         renderTextBelowMouseCursor();
 
         updateHoverTable();
         uiStage.act(Gdx.graphics.getDeltaTime());
         uiStage.draw();
+    }
+
+    private void renderScore() {
+        Array<Player> players = battleHandler.getPlayers();
+        if (players.size == 0) {
+            return;
+        }
+
+        String[] scores = new String[players.size];
+        String full = "";
+
+        for (int i=0; i < players.size; i++) {
+            Player p = players.get(i);
+            String name = p.getName();
+            if (name.isEmpty()) {
+                name = Long.toString(p.getId());
+            }
+            scores[i] = name + " : " + noDecimals.format(p.getScore());
+
+            if (!full.isEmpty()) {
+                full += "\n";
+            }
+            full += scores[i];
+        }
+
+        BitmapFont.TextBounds bounds = font.getMultiLineBounds(full);
+        float singleHeight = bounds.height / players.size;
+
+        float x = Gdx.graphics.getWidth() - bounds.width - 5f;
+        float startY = singleHeight + 5f;
+
+        batch.begin();
+        for (int i=0; i < players.size; i++) {
+            Player p = players.get(i);
+            font.setColor(Assets.getBasicColor(p));
+            float y = startY + singleHeight * i;
+            font.draw(batch, scores[i], x, y);
+        }
+        batch.end();
+
     }
 
     private void updateHoverTable() {

@@ -21,6 +21,7 @@ public class Assets {
             shipTextureCruiserHilite, shipTextureCruiserBase;
     public static Texture moveTargetTexture, backgroundTexture, projectileTexture, selectionCircleTexture, orbitCWTexture, orbitCCWTexture;
     public static Texture laserMidBackground, laserMidOverlay, laserStartBackground, laserStartOverlay, laserEndBackground, laserEndOverlay;
+    public static Texture scoreGatheringPoint;
 
     public static Skin skin;
 
@@ -39,6 +40,7 @@ public class Assets {
         laserStartOverlay = new Texture(Gdx.files.internal("data/laser_start_overlay.png"));
         laserEndBackground = new Texture(Gdx.files.internal("data/laser_end_background.png"));
         laserEndOverlay = new Texture(Gdx.files.internal("data/laser_end_overlay.png"));
+        scoreGatheringPoint = new Texture(Gdx.files.internal("data/circle.png"));
 
         // TODO: handle these dynamically by reading ship types and image file names from the ship catalog
         Pixmap frigBase = createShipPixmap("data/frigate_base.png");

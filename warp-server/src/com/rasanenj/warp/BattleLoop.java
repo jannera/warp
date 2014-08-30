@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.rasanenj.warp.entities.ServerShip;
+import com.rasanenj.warp.messaging.Message;
 import com.rasanenj.warp.messaging.MessageDelegator;
 import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.tasks.RunnableFPS;
@@ -160,5 +161,21 @@ public class BattleLoop extends RunnableFPS {
 
     public float getRelativePhysicsTimeLeft() {
         return physicsTimeLeft / TIME_STEP;
+    }
+
+    public void sendToAll(Message msg) {
+        for (Player player : players) {
+            ServerPlayer serverPlayer = (ServerPlayer) player; // TODO get rid of this once messages work better
+            serverPlayer.send(msg);
+        }
+    }
+
+    public void sendToAll(Array<Message> messages) {
+        for (Player player : players) {
+            ServerPlayer serverPlayer = (ServerPlayer) player; // TODO get rid of this once messages work better
+            for (Message msg : messages) {
+                serverPlayer.send(msg);
+            }
+        }
     }
 }

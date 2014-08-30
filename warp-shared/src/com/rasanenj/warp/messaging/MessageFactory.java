@@ -53,6 +53,12 @@ public class MessageFactory {
             case JOIN_BATTLE:
                 message = new JoinBattleMessage(msg);
                 break;
+            case CREATE_SCORE_GATHERING_POINT:
+                message = new ScoreGatheringPointMessage(msg);
+                break;
+            case SCORE_UPDATE:
+                message = new ScoreUpdateMessage(msg);
+                break;
             default:
                 log(Level.SEVERE, "MessageFactory could not decode type " + type);
         }

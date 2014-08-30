@@ -51,10 +51,14 @@ Steps Before First Catalog-tuning, Nice to have
 MVProto
 ===
 * Näytä osumien logia ikkunassa
-* KOTH -moodi
+* KOTH -moodin aloittaminen chatista
+* KOTH -moodiin actit ja pausemoodit actien välille
+* KOTH -moodiin aikarajoitus
+* KOTH -moodiin laivapisteiden lisääminen actien välissä
 * HotDeploy: Alusten ostaminen pelistä + deploy
-* HotDeploy-featureen hiljaa lisääntyvät pojot
-    * Pienempifleettiselle nopeammin pojoja lisää
+* Statteihin pitää lisätä fitin hinta
+* Alusten deployaaminen ympyrän sisälle
+* Fleettipojojen lisääntyminen
 * Fitin talletus ja lataaminen
 * Kartta
 * Targetointi suosimaan kohteita jotka ovat jo ottaneet lämää, ts. optimoimaan alusten tuhoutumista
@@ -251,3 +255,4 @@ MVProto DONE
 * DONE Näytä angular speedin sijaan orbit-komennon yhteydessä osumatodennäköisyys
 * DONE Mikäli yhtään alusta ei ole valittuna, ei voi goto/flyindir/orbit
 * DONE Kun ollaan antamassa goto/flyindir/orbit -käskyä, alusten valintaa ei voi vaihtaa klikkaamalla tai selection-rectanglella
+* DONE KOTH -moodin perusversio

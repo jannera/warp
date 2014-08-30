@@ -8,6 +8,7 @@ import com.rasanenj.warp.entities.Entity;
 public class Player extends Entity {
     protected final String name;
     protected final int colorIndex;
+    protected float score;
 
     public Player(String name, int colorIndex) {
         this.name = name;
@@ -30,5 +31,13 @@ public class Player extends Entity {
 
     public String toString() {
         return name + " (" + getId() + ", " + colorIndex + ")";
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
     }
 }
