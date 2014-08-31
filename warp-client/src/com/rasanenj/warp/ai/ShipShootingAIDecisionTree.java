@@ -189,7 +189,7 @@ public class ShipShootingAIDecisionTree implements ShipShootingAI {
                 // log("decided to wait with chance " + best.chance);
                 return null;
             }
-            log("decided to shoot with chance " + best.chance);
+            // log("decided to shoot with chance " + best.chance);
         }
         else {
             // log("decided to wait because seeing a better chance in future");

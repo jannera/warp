@@ -129,7 +129,7 @@ public class MaxOrbitVelocityCalculator {
             limits.get(i).velocity = results[i];
         }
 
-        log(ship.getId() + ":" + ship.getStats().getOrbitVelocities());
+        // log(ship.getId() + ":" + ship.getStats().getOrbitVelocities());
     }
 
     private void logPositionProjection(String s, Array<PositionProjection> projectedPositions, float width, float height,

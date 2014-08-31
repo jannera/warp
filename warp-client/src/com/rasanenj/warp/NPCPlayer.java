@@ -26,6 +26,7 @@ public class NPCPlayer {
     private final ShipShooting shooting;
     private long myId = -1;
     private final Array<Player> players = new Array<Player>(true, 1);
+    private GameState state = GameState.PAUSED;
 
     public class MyShipInfo {
         public ClientShip targetShip = null;
@@ -55,10 +56,12 @@ public class NPCPlayer {
 
     public void update() {
         consumer.consumeStoredMessages();
-        chooseTargets();
-        updateSteeringTarget();
-        shooting.update();
-        steering.update();
+        if (state == GameState.RUNNING) {
+            chooseTargets();
+            updateSteeringTarget();
+            shooting.update();
+            steering.update();
+        }
     }
 
     private final Vector2 tmp = new Vector2();
@@ -267,6 +270,10 @@ public class NPCPlayer {
                     }
                 }
             }
+            else if (msg.getType() == Message.MessageType.GAME_STATE_CHANGE) {
+                GameStateChangeMessage message = (GameStateChangeMessage) msg;
+                state = message.getNewState();
+            }
         }
 
         @Override
@@ -275,7 +282,10 @@ public class NPCPlayer {
                     Message.MessageType.CREATE_SHIP,
                     Message.MessageType.JOIN_BATTLE,
                     Message.MessageType.SHOOT_DAMAGE,
-                    Message.MessageType.SHIP_DESTRUCTION);
+                    Message.MessageType.SHIP_DESTRUCTION,
+                    Message.MessageType.SCORE_UPDATE,
+                    Message.MessageType.CREATE_SCORE_GATHERING_POINT,
+                    Message.MessageType.GAME_STATE_CHANGE);
         }
     }
 

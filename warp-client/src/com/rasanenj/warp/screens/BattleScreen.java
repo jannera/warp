@@ -93,6 +93,7 @@ public class BattleScreen implements Screen {
 
     final Table hoveringTable;
     final ActorBrowsingWindow debugWindow;
+    private long countDownZero = 0;
 
     public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
         this.game = game;
@@ -171,9 +172,19 @@ public class BattleScreen implements Screen {
 
     public void addScoreGatheringPoint(float x, float y) {
         Image point = new Image(Assets.scoreGatheringPoint);
+        point.setColor(Color.GRAY);
         point.setSize(SCORE_GATHERING_POINT_SIZE, SCORE_GATHERING_POINT_SIZE);
         point.setPosition(x - SCORE_GATHERING_POINT_SIZE/2f, y - SCORE_GATHERING_POINT_SIZE/2f);
         stage.addActor(point);
+    }
+
+    public void setCountdown(int lengthInSec) {
+        if (lengthInSec != 0) {
+            this.countDownZero = System.currentTimeMillis() + 1000 * lengthInSec;
+        }
+        else {
+            countDownZero = 0;
+        }
     }
 
     public enum OptimalRenderingState {
@@ -256,8 +267,20 @@ public class BattleScreen implements Screen {
             return;
         }
 
-        String[] scores = new String[players.size];
+        int lines = players.size + 1;
+        String[] scores = new String[lines];
         String full = "";
+
+        if (countDownZero == 0) {
+            scores[0] = "";
+        }
+        else {
+            int secondsLeft = (int) ((countDownZero - System.currentTimeMillis()) / 1000);
+            secondsLeft = Math.max(0, secondsLeft);
+            scores[0] = Integer.toString(secondsLeft);
+        }
+
+        full = scores[0];
 
         for (int i=0; i < players.size; i++) {
             Player p = players.get(i);
@@ -265,26 +288,24 @@ public class BattleScreen implements Screen {
             if (name.isEmpty()) {
                 name = Long.toString(p.getId());
             }
-            scores[i] = name + " : " + noDecimals.format(p.getScore());
-
-            if (!full.isEmpty()) {
-                full += "\n";
-            }
-            full += scores[i];
+            scores[i+1] = name + " : " + noDecimals.format(p.getScore());
+            full += "\n" + scores[i+1];
         }
 
         BitmapFont.TextBounds bounds = font.getMultiLineBounds(full);
-        float singleHeight = bounds.height / players.size;
+        float singleHeight = bounds.height / lines;
 
         float x = Gdx.graphics.getWidth() - bounds.width - 5f;
-        float startY = singleHeight + 5f;
+        float startY = singleHeight * lines + 5f;
 
         batch.begin();
+        font.setColor(Color.WHITE);
+        font.draw(batch, scores[0], x, startY);
         for (int i=0; i < players.size; i++) {
             Player p = players.get(i);
             font.setColor(Assets.getBasicColor(p));
-            float y = startY + singleHeight * i;
-            font.draw(batch, scores[i], x, y);
+            float y = startY - singleHeight * (i + 1);
+            font.draw(batch, scores[i + 1], x, y);
         }
         batch.end();
 
@@ -406,6 +427,9 @@ public class BattleScreen implements Screen {
     }
 
     private void estimateShipPositions() {
+        if (battleHandler.getState() == GameState.PAUSED) {
+            return;
+        }
         final long timeNow = System.currentTimeMillis();
         for (ClientShip ship : battleHandler.getShips()) {
             ship.updatePos(timeNow);
@@ -443,7 +467,6 @@ public class BattleScreen implements Screen {
             if (!textBelowCursor.isEmpty()) {
                 textBelowCursor += ", ";
             }
-            log(f);
             textBelowCursor += noDecimals.format(f);
         }
         textBelowCursor += "%";

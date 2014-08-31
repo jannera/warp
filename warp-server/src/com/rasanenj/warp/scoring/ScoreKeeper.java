@@ -36,9 +36,17 @@ public class ScoreKeeper extends IntervalTask {
 
     @Override
     protected void run() {
+        if (battleLoop.isPhysicsPaused()) {
+            return;
+        }
+
+        run(1f / UPDATES_IN_SECOND);
+    }
+
+    private void run(float seconds) {
         // update scores
         for (int i=0; i < scoreGatheringPoints.size; i++) {
-            scoreGatheringPoints.get(i).updateScores(battleLoop.getPlayers(), battleLoop.getShips());
+            scoreGatheringPoints.get(i).updateScores(battleLoop.getPlayers(), battleLoop.getShips(), seconds);
         }
 
         Array<Player> players = battleLoop.getPlayers();
@@ -48,5 +56,10 @@ public class ScoreKeeper extends IntervalTask {
             msg.update(p);
             battleLoop.sendToAll(msg);
         }
+    }
+
+    public void roundEnd(int secondsLeft) {
+
+        run(secondsLeft);
     }
 }

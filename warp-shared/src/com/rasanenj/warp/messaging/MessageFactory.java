@@ -59,6 +59,9 @@ public class MessageFactory {
             case SCORE_UPDATE:
                 message = new ScoreUpdateMessage(msg);
                 break;
+            case GAME_STATE_CHANGE:
+                message = new GameStateChangeMessage(msg);
+                break;
             default:
                 log(Level.SEVERE, "MessageFactory could not decode type " + type);
         }

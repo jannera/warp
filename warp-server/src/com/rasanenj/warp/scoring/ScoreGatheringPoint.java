@@ -1,12 +1,13 @@
 package com.rasanenj.warp.scoring;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.Player;
 
 import java.util.HashMap;
+
+import static com.rasanenj.warp.Log.log;
 
 /**
  * @author gilead
@@ -26,7 +27,7 @@ public class ScoreGatheringPoint {
 
     public final float SCORE_PER_TICK = 1f;
 
-    public void updateScores(Array<Player> players, Array<ServerShip> ships) {
+    public void updateScores(Array<Player> players, Array<ServerShip> ships, float scoreMultiplier) {
         for(Player p : players) {
             scores.put(p.getId(), 0f);
         }
@@ -35,9 +36,9 @@ public class ScoreGatheringPoint {
         // first store weights of every ship
         float totalWeight = 0f;
         for (ServerShip ship : ships) {
-            float dst = ship.getBody().getPosition().dst(position);
+            float dst = ship.getBody().getWorldCenter().dst(position);
             dst = Math.max(3, dst);
-            float weight = (float) Math.pow(dst, 0.6f);
+            float weight = 10f / (float) Math.pow(dst, 0.6f);
             // todo multiply with the cost of the ship
             totalWeight += weight;
             long ownerId = ship.getPlayer().getId();
@@ -50,7 +51,7 @@ public class ScoreGatheringPoint {
         }
 
         for (Player p : players) {
-            float score = scores.get(p.getId()) / totalWeight * SCORE_PER_TICK;
+            float score = scores.get(p.getId()) / totalWeight * SCORE_PER_TICK * scoreMultiplier;
             p.setScore(p.getScore() + score);
         }
     }

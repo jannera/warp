@@ -38,6 +38,8 @@ public class BattleServer extends IntervalTask {
 
     private final ScoreKeeper scoreKeeper;
 
+    private IntervalTask gameManager;
+
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
             super(delegator);
@@ -46,6 +48,10 @@ public class BattleServer extends IntervalTask {
         @Override
         public void consume(Player player, Message msg) {
             if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
+                if (gameManager == null) {
+                    gameManager = new KOTHManager(battleLoop, scoreKeeper, 3, 60*4);
+                    // TODO: get these numbers from the user starting the battle
+                }
                 ServerPlayer serverPlayer = (ServerPlayer) player;
 
                 shipOffsets[serverPlayer.getColorIndex()] = 0;
@@ -192,6 +198,9 @@ public class BattleServer extends IntervalTask {
         consumer.consumeStoredMessages();
         physicsUpdate.update();
         scoreKeeper.update();
+        if (gameManager != null) {
+            gameManager.update();
+        }
     }
 
     private class ShipPhysicsUpdate extends IntervalTask {

@@ -48,31 +48,35 @@ public class BattleLoop extends RunnableFPS {
 
     public float physicsTimeLeft = 0f;
 
+    private boolean physicsPaused = false;
+
     @Override
     protected float getFPS() {
         return FPS;
     }
 
     protected void update(float delta) {
+        if (!physicsPaused) {
+            physicsTimeLeft += delta;
+            if (physicsTimeLeft > MAX_TIME_PER_FRAME) {
+                physicsTimeLeft = MAX_TIME_PER_FRAME;
+            }
 
-        physicsTimeLeft += delta;
-        if (physicsTimeLeft > MAX_TIME_PER_FRAME) {
-            physicsTimeLeft = MAX_TIME_PER_FRAME;
-        }
+            while (physicsTimeLeft >= TIME_STEP) {
+                storeOldShipPositions();
+                world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
+                slowDownShips();
+                physicsTimeLeft -= TIME_STEP;
+                taskHandler.update(TIME_STEP);
+            }
 
-        while (physicsTimeLeft >= TIME_STEP) {
-            storeOldShipPositions();
-            world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
-            slowDownShips();
-            physicsTimeLeft -= TIME_STEP;
-            taskHandler.update(TIME_STEP);
-        }
-
-        for (ServerShip ship : ships) {
-            if (ship.getBody().getLinearVelocity().len() > 0) {
-                // log(ship.getId() + " speed " + ship.getBody().getLinearVelocity().len() + " vs " + ship.getMaxVelocity());
+            for (ServerShip ship : ships) {
+                if (ship.getBody().getLinearVelocity().len() > 0) {
+                    // log(ship.getId() + " speed " + ship.getBody().getLinearVelocity().len() + " vs " + ship.getMaxVelocity());
+                }
             }
         }
+
         battleServer.update();
     }
 
@@ -177,5 +181,21 @@ public class BattleLoop extends RunnableFPS {
                 serverPlayer.send(msg);
             }
         }
+    }
+
+    public void setPhysicsPaused(boolean physicsPaused) {
+        this.physicsPaused = physicsPaused;
+    }
+
+    public boolean isPhysicsPaused() {
+        return physicsPaused;
+    }
+
+    public void disconnectEveryone() {
+        for (Player player : players) {
+            ServerPlayer p = (ServerPlayer) player;
+            p.getConn().close();
+        }
+        players.clear();
     }
 }

@@ -52,6 +52,7 @@ public class BattleHandler {
 
     private final Statistics statistics = new Statistics();
     private final AverageDpsCalculator dpsCalculator;
+    private GameState state = GameState.PAUSED;
 
     public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
         conn.register(new ConnectionListener());
@@ -77,6 +78,10 @@ public class BattleHandler {
         }
         dpsCalculator = new AverageDpsCalculator(statistics, 10000);
         orbitVelocityCalc = new MaxOrbitVelocityCalculator(15000, 16, screen);
+    }
+
+    public GameState getState() {
+        return state;
     }
 
     private enum MouseState {
@@ -274,6 +279,12 @@ public class BattleHandler {
                 ScoreUpdateMessage message = (ScoreUpdateMessage) msg;
                 getPlayer(message.getPlayerId()).setScore(message.getScore());
             }
+            else if (msg.getType() == Message.MessageType.GAME_STATE_CHANGE) {
+                GameStateChangeMessage message = (GameStateChangeMessage) msg;
+                GameState newState = message.getNewState();
+                state = newState;
+                screen.setCountdown(message.getLengthInSec());
+            }
         }
 
         @Override
@@ -284,7 +295,8 @@ public class BattleHandler {
                     Message.MessageType.SHOOT_DAMAGE,
                     Message.MessageType.SHIP_DESTRUCTION,
                     Message.MessageType.CREATE_SCORE_GATHERING_POINT,
-                    Message.MessageType.SCORE_UPDATE);
+                    Message.MessageType.SCORE_UPDATE,
+                    Message.MessageType.GAME_STATE_CHANGE);
         }
     }
 
@@ -322,7 +334,7 @@ public class BattleHandler {
         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
             ClientShip clientShip = ClientShip.getShip(event.getTarget());
 
-            log("clicked " + clientShip + " @ (" + x + ", " + y + ")");
+            // log("clicked " + clientShip + " @ (" + x + ", " + y + ")");
 
             // clicked a ship, so select it.. if mouse state is correct
             if (mouseState != MouseState.DEFAULT) {
@@ -701,10 +713,12 @@ public class BattleHandler {
 
     public void update(float delta) {
         consumer.consumeStoredMessages();
-        shipSteering.update();
-        shipShooting.update();
-        taskHandler.update(delta);
-        updateNPCs();
+        if (state == GameState.RUNNING) {
+            shipSteering.update();
+            shipShooting.update();
+            taskHandler.update(delta);
+            updateNPCs();
+        }
         updateCamPosition();
         dpsCalculator.update();
     }

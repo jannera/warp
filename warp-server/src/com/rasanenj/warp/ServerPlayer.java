@@ -30,7 +30,9 @@ public class ServerPlayer extends Player {
         msg.getLastMessageSenderReceivedStats().copyFrom(lastReceived);
 
         try {
-            conn.send(msg.encode());
+            if (!conn.isClosing()) {
+                conn.send(msg.encode());
+            }
         }
         catch (WebsocketNotConnectedException e) {
             e.printStackTrace();
