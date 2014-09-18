@@ -2,6 +2,7 @@ package com.rasanenj.warp;
 
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.GameStateChangeMessage;
+import com.rasanenj.warp.messaging.ShipStatsMessage;
 import com.rasanenj.warp.scoring.ScoreKeeper;
 import com.rasanenj.warp.tasks.IntervalTask;
 
@@ -15,20 +16,37 @@ public class KOTHManager extends IntervalTask {
     private final int matchLength;
     private final int rounds;
     private final ScoreKeeper scoreKeeper;
+    private final DeployHandler deployHandler;
     private KOTHState state;
 
     private int currentRound = 0;
     private long nextStateChange;
 
-    private static final int PAUSE_LENGTH_SECONDS = 5;
+    private static final int PAUSE_LENGTH_SECONDS = 15;
 
-    public KOTHManager(BattleLoop battleLoop, ScoreKeeper scoreKeeper, int rounds, int matchLength) {
+    public KOTHManager(BattleLoop battleLoop, ScoreKeeper scoreKeeper, DeployHandler deployHandler, int rounds, int matchLength) {
         super(UPDATES_IN_SECOND);
         this.battleLoop = battleLoop;
         this.rounds = rounds;
         this.matchLength = matchLength;
         this.state = KOTHState.JUST_STARTED;
         this.scoreKeeper = scoreKeeper;
+        this.deployHandler = deployHandler;
+    }
+
+    public void newShip(ShipStatsMessage message) {
+        long timeout;
+        if (state == KOTHState.RUNNING_ROUND) {
+            timeout = (long) (1000 * Constants.DEPLOY_TIME_SECONDS);
+        }
+        else if (state == KOTHState.JUST_STARTED ||
+                state == KOTHState.WAITING_FOR_PLAYERS) {
+            timeout = Long.MAX_VALUE/2;
+        }
+        else {
+            timeout = nextStateChange - System.currentTimeMillis();
+        }
+        deployHandler.add(message, timeout);
     }
 
     private enum KOTHState {
@@ -42,15 +60,24 @@ public class KOTHManager extends IntervalTask {
     protected void run() {
         long timeNow = System.currentTimeMillis();
 
+        int playerAmount = battleLoop.getPlayers().size;
+
         if (state == KOTHState.JUST_STARTED) {
             state = KOTHState.WAITING_FOR_PLAYERS;
             pauseGame(0);
             System.out.println("KOTH: Waiting for players to join");
         }
+        else if (state != KOTHState.WAITING_FOR_PLAYERS
+                && playerAmount == 0) {
+            // game was running but we ran out of players
+            resetGame();
+            state = KOTHState.JUST_STARTED;
+        }
         else if (state == KOTHState.WAITING_FOR_PLAYERS) {
-            if (battleLoop.getPlayers().size >= 2) {
+            if (playerAmount >= 2) {
                 state = KOTHState.BETWEEN_ROUNDS;
                 nextStateChange = System.currentTimeMillis() + PAUSE_LENGTH_SECONDS * 1000;
+                deployHandler.flushAllAt(nextStateChange);
                 pauseGame(PAUSE_LENGTH_SECONDS);
                 System.out.println("KOTH: Started " + PAUSE_LENGTH_SECONDS + " sec countdown to begin the game");
             }
@@ -79,10 +106,12 @@ public class KOTHManager extends IntervalTask {
                 }
             }
             if (onlyOneOwner) {
-                int secondsLeft = (int) ((nextStateChange - timeNow) / 1000);
-                System.out.println("KOTH: Ending round because only one player left with " + secondsLeft + " seconds on the clock");
-                scoreKeeper.roundEnd(secondsLeft);
-                roundEnded(timeNow);
+                if (!deployHandler.anyShipsWaitingDeployment()) {
+                    int secondsLeft = (int) ((nextStateChange - timeNow) / 1000);
+                    System.out.println("KOTH: Ending round because only one player left with " + secondsLeft + " seconds on the clock");
+                    scoreKeeper.roundEnd(secondsLeft);
+                    roundEnded(timeNow);
+                }
             }
         }
     }
@@ -91,11 +120,8 @@ public class KOTHManager extends IntervalTask {
         System.out.println("KOTH: Ended round " + currentRound);
         if (currentRound >= rounds) {
             // tell all players to end the match
-            pauseGame(0);
-            System.out.println("KOTH: Ended the game");
             battleLoop.disconnectEveryone();
-            state = KOTHState.JUST_STARTED;
-            currentRound = 0;
+            resetGame();
         }
         else {
             state = KOTHState.BETWEEN_ROUNDS;
@@ -104,6 +130,13 @@ public class KOTHManager extends IntervalTask {
             pauseGame(PAUSE_LENGTH_SECONDS);
             System.out.println("KOTH: Paused for " + PAUSE_LENGTH_SECONDS + " secs between rounds");
         }
+    }
+
+    private void resetGame() {
+        System.out.println("KOTH: Ended the game");
+        pauseGame(0);
+        state = KOTHState.JUST_STARTED;
+        currentRound = 0;
     }
 
     private void pauseGame(int length) {

@@ -120,9 +120,7 @@ public class LobbyScreen implements Screen {
     public void startTestFlight() {
         serverConnection.send(new JoinBattleMessage("gilead", -1, -1)); // TODO: fetch this elsewhere
 
-        for (ShipStats stats : currentBuild.getStats()) {
-            serverConnection.send(new ShipStatsMessage(stats));
-        }
+        // currentBuild.deploy(serverConnection, -1, 400, 400); // TODO handle the location
         BuildStats.totalCost = currentBuild.getTotalCost();
     }
 

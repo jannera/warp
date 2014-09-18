@@ -5,12 +5,14 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ServerShip;
+import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.scoring.ScoreKeeper;
 import com.rasanenj.warp.tasks.IntervalTask;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Random;
 import java.util.logging.Level;
 
 import static com.rasanenj.warp.Log.log;
@@ -24,21 +26,13 @@ public class BattleServer extends IntervalTask {
     private final DamageModeler damage = new DamageModeler();
 
     private final Vector2 scorePointPos = new Vector2(410, 410);
-    private final Vector2[] startingPositions = {new Vector2(400, 400), new Vector2(420, 400),
-       new Vector2(400, 420), new Vector2(420, 420), new Vector2(440, 400), new Vector2(400, 440)};
-    private static final float[] shipOffsets = new float[8];
-
-    static {
-        for (int i=0; i < shipOffsets.length; i++) {
-            shipOffsets[i] = 0;
-        }
-    }
 
     private final ShipPhysicsUpdate physicsUpdate;
 
     private final ScoreKeeper scoreKeeper;
+    private final DeployHandler deployHandler;
 
-    private IntervalTask gameManager;
+    private KOTHManager gameManager;
 
     private class BattleMsgConsumer extends MessageConsumer {
         public BattleMsgConsumer(MessageDelegator delegator) {
@@ -48,13 +42,7 @@ public class BattleServer extends IntervalTask {
         @Override
         public void consume(Player player, Message msg) {
             if (msg.getType() == Message.MessageType.JOIN_BATTLE) {
-                if (gameManager == null) {
-                    gameManager = new KOTHManager(battleLoop, scoreKeeper, 3, 60*4);
-                    // TODO: get these numbers from the user starting the battle
-                }
                 ServerPlayer serverPlayer = (ServerPlayer) player;
-
-                shipOffsets[serverPlayer.getColorIndex()] = 0;
 
                 // notify the player about himself
                 serverPlayer.send(new JoinBattleMessage(serverPlayer.getName(), serverPlayer.getId(), serverPlayer.getColorIndex()));
@@ -117,26 +105,7 @@ public class BattleServer extends IntervalTask {
             else if (msg.getType() == Message.MessageType.SHIP_STATS) {
                 ShipStatsMessage message = (ShipStatsMessage) msg;
 
-                ServerPlayer serverPlayer = (ServerPlayer) player;
-
-                // add a new ship based on the stats
-                Vector2 position = startingPositions[serverPlayer.getColorIndex()];
-                float shipHeight = message.getStats().getHeight();
-
-                shipOffsets[serverPlayer.getColorIndex()] += shipHeight * 2;
-
-                ServerShip ship = new ServerShip(world, position.x,
-                        position.y + shipOffsets[serverPlayer.getColorIndex()], 0,
-                        serverPlayer, message.getStats());
-                shipOffsets[serverPlayer.getColorIndex()] += shipHeight * 2;
-                battleLoop.addShip(ship);
-                // notify everyone about the new ship
-                battleLoop.sendToAll(new CreateShipMessage(ship.getId(), ship.getPlayer().getId(), ship.getStats()));
-                final float lerp1 = battleLoop.getRelativePhysicsTimeLeft();
-                final float lerp2 = 1f - lerp1;
-                ship.getInterpolatedPosition(pos, lerp1, lerp2);
-                float angle = ship.getInterpolatedAngle(lerp1, lerp2);
-                serverPlayer.send(new ShipPhysicsMessage(ship.getId(), pos, angle, ship.getBody(), true));
+                gameManager.newShip(message);
             }
             else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {
                 ShootRequestMessage message = (ShootRequestMessage) msg;
@@ -191,6 +160,8 @@ public class BattleServer extends IntervalTask {
         if (Settings.koth) {
             scoreKeeper.addScoreGatheringPoint(scorePointPos.x, scorePointPos.y);
         }
+        this.deployHandler = new DeployHandler(battleLoop, world);
+        this.gameManager = new KOTHManager(battleLoop, scoreKeeper, deployHandler, 3, 60*4);
     }
 
     @Override
@@ -201,6 +172,7 @@ public class BattleServer extends IntervalTask {
         if (gameManager != null) {
             gameManager.update();
         }
+        deployHandler.update();
     }
 
     private class ShipPhysicsUpdate extends IntervalTask {

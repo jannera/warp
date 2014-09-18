@@ -198,4 +198,13 @@ public class BattleLoop extends RunnableFPS {
         }
         players.clear();
     }
+
+    public Player getPlayer(long id) {
+        for (Player p : players) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
 }

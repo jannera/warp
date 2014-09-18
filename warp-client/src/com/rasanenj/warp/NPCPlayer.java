@@ -119,83 +119,6 @@ public class NPCPlayer {
         public void onOpen() {
             conn.send(new JoinServerMessage("npc", -1));
             conn.send(new JoinBattleMessage("npc", -1, -1));
-
-            createRandomFleet();
-        }
-
-        private void createRandomFleet() {
-            float totalCost;
-            int fitAmount;
-            ShipStats[] stats;
-            int[] shipAmounts;
-            do {
-                fitAmount = rng.nextInt(4) + 1; // 1 -4 fits
-                float[] maxCosts = new float[fitAmount];
-                float costLeft = maxFleetCost * 1.2f;
-                for(int i=0; i < fitAmount - 1; i++) {
-                    float cost = rng.nextFloat() * costLeft;
-                    maxCosts[i] = cost;
-                    costLeft -= cost;
-                }
-                maxCosts[fitAmount - 1] = costLeft;
-
-                stats = new ShipStats[fitAmount];
-                shipAmounts = new int[fitAmount];
-                ShipBuildWindow[] allTypes = ShipBuildWindow.createAllTypes();
-
-                for(int i=0; i < fitAmount; i++) {
-                    stats[i] = generateRandomFit(maxCosts[i], allTypes);
-                    if (stats[i] != null) {
-                        float cost = stats[i].getCost();
-                        shipAmounts[i] = (int) Math.floor(maxCosts[i] / cost);
-                    }
-                }
-
-                // calculate total cost
-                totalCost = 0;
-                for(int i=0; i < fitAmount; i++) {
-                    if (stats[i] != null) {
-                        totalCost += stats[i].getCost() * shipAmounts[i];
-                    }
-                }
-            }
-            while (!(totalCost < maxFleetCost * 1.2f && totalCost > maxFleetCost * 0.8f));
-
-            Log.log("Creating fleet of about " + maxFleetCost + " points");
-            for(int i=0; i < fitAmount; i++) {
-                if (stats[i] != null) {
-                    float singleCost = stats[i].getCost();
-                    Log.log(shipAmounts[i] + " x " + singleCost + " = " + shipAmounts[i] * singleCost);
-                }
-            }
-            Log.log("Total cost was " + totalCost);
-
-            for (int i = 0; i < fitAmount; i++) {
-                ShipStats s = stats[i];
-                if (s != null) {
-                    for (int j=0; j < shipAmounts[i]; j++) {
-                        conn.send(new ShipStatsMessage(s));
-                    }
-                }
-            }
-        }
-
-        private ShipStats generateRandomFit(float maxCost, ShipBuildWindow[] allTypes) {
-            allTypes[0].resetSliders();
-            float minCost = allTypes[0].getStats().getCost();
-            if (minCost > maxCost) {
-                return null;
-            }
-
-            float cost = Float.POSITIVE_INFINITY;
-            ShipBuildWindow selection = null;
-            while (cost > maxCost) {
-                int type = rng.nextInt(allTypes.length);
-                selection = allTypes[type];
-                selection.randomizeSliders();
-                cost = selection.getTotalCost();
-            }
-            return selection.getStats();
         }
 
         @Override
@@ -231,12 +154,14 @@ public class NPCPlayer {
                 if (message.getPlayerId() != -1) {
                     // terrible hack in order to use JoinServerMessages in both battle and chat
                     Player p = new Player(message.getPlayerName(), message.getPlayerId(), message.getColorIndex());
-                    log("joined in battle:" + p);
+                    log("[npc] joined in battle:" + p);
                     if (myId == -1) {
                         myId = message.getPlayerId();
                         shooting.setMyId(myId);
                     }
                     players.add(p);
+
+                    createRandomFleet();
                 }
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
@@ -338,5 +263,79 @@ public class NPCPlayer {
             }
         }
         return null;
+    }
+
+    private void createRandomFleet() {
+        log("creating random fleet");
+        float totalCost;
+        int fitAmount;
+        ShipStats[] stats;
+        int[] shipAmounts;
+        do {
+            fitAmount = rng.nextInt(4) + 1; // 1 -4 fits
+            float[] maxCosts = new float[fitAmount];
+            float costLeft = maxFleetCost * 1.2f;
+            for(int i=0; i < fitAmount - 1; i++) {
+                float cost = rng.nextFloat() * costLeft;
+                maxCosts[i] = cost;
+                costLeft -= cost;
+            }
+            maxCosts[fitAmount - 1] = costLeft;
+
+            stats = new ShipStats[fitAmount];
+            shipAmounts = new int[fitAmount];
+            ShipBuildWindow[] allTypes = ShipBuildWindow.createAllTypes();
+
+            for(int i=0; i < fitAmount; i++) {
+                stats[i] = generateRandomFit(maxCosts[i], allTypes);
+                if (stats[i] != null) {
+                    float cost = stats[i].getCost();
+                    shipAmounts[i] = (int) Math.floor(maxCosts[i] / cost);
+                }
+            }
+
+            // calculate total cost
+            totalCost = 0;
+            for(int i=0; i < fitAmount; i++) {
+                if (stats[i] != null) {
+                    totalCost += stats[i].getCost() * shipAmounts[i];
+                }
+            }
+        }
+        while (!(totalCost < maxFleetCost * 1.2f && totalCost > maxFleetCost * 0.8f));
+
+        Log.log("Creating fleet of about " + maxFleetCost + " points");
+        for(int i=0; i < fitAmount; i++) {
+            if (stats[i] != null) {
+                float singleCost = stats[i].getCost();
+                Log.log(shipAmounts[i] + " x " + singleCost + " = " + shipAmounts[i] * singleCost);
+            }
+        }
+        Log.log("Total cost was " + totalCost);
+
+        for (int i = 0; i < fitAmount; i++) {
+            ShipStats s = stats[i];
+            if (s != null) {
+                conn.send(new ShipStatsMessage(s, myId, 420, 400, shipAmounts[i]));
+            }
+        }
+    }
+
+    private ShipStats generateRandomFit(float maxCost, ShipBuildWindow[] allTypes) {
+        allTypes[0].resetSliders();
+        float minCost = allTypes[0].getStats().getCost();
+        if (minCost > maxCost) {
+            return null;
+        }
+
+        float cost = Float.POSITIVE_INFINITY;
+        ShipBuildWindow selection = null;
+        while (cost > maxCost) {
+            int type = rng.nextInt(allTypes.length);
+            selection = allTypes[type];
+            selection.randomizeSliders();
+            cost = selection.getTotalCost();
+        }
+        return selection.getStats();
     }
 }

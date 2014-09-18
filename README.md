@@ -51,9 +51,9 @@ Steps Before First Catalog-tuning, Nice to have
 MVProto
 ===
 * Näytä osumien logia ikkunassa
-* KOTH -moodin parametrien säätö (actien määrä, pojot jne)
-* KOTH -moodiin laivapisteiden lisääminen actien välissä
 * HotDeploy: Alusten ostaminen pelistä + deploy
+* KOTH -moodiin laivapisteiden lisääminen actien välissä
+* KOTH -moodin parametrien säätö (actien määrä, pojot jne)
 * Statteihin pitää lisätä fitin hinta
 * Alusten deployaaminen ympyrän sisälle
 * Fleettipojojen lisääntyminen

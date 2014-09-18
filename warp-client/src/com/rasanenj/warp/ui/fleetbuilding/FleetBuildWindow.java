@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.entities.ShipStats;
+import com.rasanenj.warp.messaging.ServerConnection;
+import com.rasanenj.warp.messaging.ShipStatsMessage;
 import com.rasanenj.warp.storage.LocalStorage;
 
 import java.io.StringWriter;
@@ -99,7 +101,7 @@ public class FleetBuildWindow {
         });
         bottomUIGroup.addActor(save);
         bottomUIGroup.addActor(load);
-        startFight = new TextButton("Test flight", Assets.skin);
+        startFight = new TextButton("Deploy", Assets.skin);
         bottomUIGroup.addActor(startFight);
         window.row().left();
         window.add(bottomUIGroup);
@@ -250,16 +252,6 @@ public class FleetBuildWindow {
         window.pack();
     }
 
-    public Array<ShipStats> getStats() {
-        Array<ShipStats> stats = new Array<ShipStats>(false, shipBuilds.size);
-        for (ShipBuildWindow build : shipBuilds) {
-            for (int i = 0; i < build.getAmount(); i++) {
-                stats.add(build.getStats());
-            }
-        }
-        return stats;
-    }
-
     public void loadCurrentBuild() {
         String rawText = LocalStorage.fetch(LocalStorage.CURRENT_BUILD);
         if (rawText == null) {
@@ -275,5 +267,14 @@ public class FleetBuildWindow {
 
     public TextButton getStartFight() {
         return startFight;
+    }
+
+    public void deploy(ServerConnection conn, long ownerId, float x, float y) {
+        // todo: do not create one message per ship type
+        // todo: instead add amount to message
+
+        for (ShipBuildWindow build : shipBuilds) {
+            conn.send(new ShipStatsMessage(build.getStats(), ownerId, x, y, build.getAmount()));
+        }
     }
 }

@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.actors.ClientShip;
@@ -19,6 +21,7 @@ import com.rasanenj.warp.screens.LobbyScreen;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 import com.rasanenj.warp.tasks.*;
+import com.rasanenj.warp.ui.fleetbuilding.FleetBuildWindow;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -78,6 +81,14 @@ public class BattleHandler {
         }
         dpsCalculator = new AverageDpsCalculator(statistics, 10000);
         orbitVelocityCalc = new MaxOrbitVelocityCalculator(15000, 16, screen);
+
+        FleetBuildWindow deployWindow = screen.getDeployWindow();
+        deployWindow.getStartFight().addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                startDeployMode();
+            }
+        });
     }
 
     public GameState getState() {
@@ -85,7 +96,7 @@ public class BattleHandler {
     }
 
     private enum MouseState {
-        DEFAULT, DIRECTION, GO_TO, ORBIT_CW, ORBIT_CCW;
+        DEFAULT, DIRECTION, GO_TO, ORBIT_CW, ORBIT_CCW, DEPLOY;
 
         public boolean isOrbit() {
             return this == ORBIT_CCW || this == ORBIT_CW;
@@ -93,7 +104,7 @@ public class BattleHandler {
     }
 
     public void createNPC() {
-        this.npcPlayers.add(new NPCPlayer(Utility.getHost(), BuildStats.totalCost));
+        this.npcPlayers.add(new NPCPlayer(ClientUtility.getHost(), BuildStats.totalCost));
     }
 
     private class BattleMessageConsumer extends MessageConsumer {
@@ -274,6 +285,10 @@ public class BattleHandler {
             else if (msg.getType() == Message.MessageType.CREATE_SCORE_GATHERING_POINT) {
                 ScoreGatheringPointMessage message = (ScoreGatheringPointMessage) msg;
                 screen.addScoreGatheringPoint(message.getX(), message.getY());
+                if (!firstPosSet) {
+                    screen.setCameraPos(message.getX(), message.getY());
+                    firstPosSet = true;
+                }
             }
             else if (msg.getType() == Message.MessageType.SCORE_UPDATE) {
                 ScoreUpdateMessage message = (ScoreUpdateMessage) msg;
@@ -510,6 +525,11 @@ public class BattleHandler {
                     changeMouseState(MouseState.DEFAULT);
                 }
             }
+            else if (mouseState == MouseState.DEPLOY) {
+                FleetBuildWindow deployWindow = screen.getDeployWindow();
+                deployWindow.deploy(conn, getMyId(), x, y);
+                changeMouseState(MouseState.DEFAULT);
+            }
         }
 
         @Override
@@ -639,8 +659,11 @@ public class BattleHandler {
                 setTargetValues(TargetValue.tertiary);
                 return true;
             }
-
-
+            else if (event.getKeyCode() == Input.Keys.SPACE) {
+                Window w = screen.getDeployWindow().getWindow();
+                w.setVisible(!w.isVisible());
+                return true;
+            }
             else {
                 log("Unknown input received: " + event.getKeyCode());
                 return false;
@@ -713,11 +736,11 @@ public class BattleHandler {
 
     public void update(float delta) {
         consumer.consumeStoredMessages();
+        updateNPCs();
         if (state == GameState.RUNNING) {
             shipSteering.update();
             shipShooting.update();
             taskHandler.update(delta);
-            updateNPCs();
         }
         updateCamPosition();
         dpsCalculator.update();
@@ -806,23 +829,31 @@ public class BattleHandler {
 
     private void changeMouseCursor(MouseState newState) {
         if (newState == MouseState.GO_TO) {
-            Utility.getCanvas().setClassName("goToCursor");
+            ClientUtility.getCanvas().setClassName("goToCursor");
         }
         else if (newState == MouseState.DIRECTION) {
-            Utility.getCanvas().setClassName("directionCursor");
+            ClientUtility.getCanvas().setClassName("directionCursor");
         }
         else if (newState == MouseState.ORBIT_CW) {
-            Utility.getCanvas().setClassName("orbitCwCursor");
+            ClientUtility.getCanvas().setClassName("orbitCwCursor");
         }
         else if (newState == MouseState.ORBIT_CCW) {
-            Utility.getCanvas().setClassName("orbitCcwCursor");
+            ClientUtility.getCanvas().setClassName("orbitCcwCursor");
         }
         else if (newState == MouseState.DEFAULT) {
-            Utility.getCanvas().setClassName("defaultCursor");
+            ClientUtility.getCanvas().setClassName("defaultCursor");
+        }
+        else if (newState == MouseState.DEPLOY) {
+            ClientUtility.getCanvas().setClassName("goToCursor"); // TODO create own class for deploy
         }
     }
 
     public Array<Player> getPlayers() {
         return players;
+    }
+
+    private void startDeployMode() {
+        screen.getDeployWindow().getWindow().setVisible(false);
+        changeMouseState(MouseState.DEPLOY);
     }
 }

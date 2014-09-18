@@ -1,16 +1,12 @@
 package com.rasanenj.warp;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
 import com.rasanenj.warp.messaging.MessageDelegator;
 import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.screens.*;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class WarpGame extends Game implements ResizeHandler {
@@ -29,7 +25,7 @@ public class WarpGame extends Game implements ResizeHandler {
 	public void create() {
         Assets.load();
         Window.addResizeHandler(this);
-        final String host = Utility.getHost();
+        final String host = ClientUtility.getHost();
         serverConnection = new ServerConnection(host, delegator);
         // TODO: move this connecting to servers to Screens (or their handlers)
 

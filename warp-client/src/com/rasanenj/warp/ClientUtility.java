@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 /**
  * @author gilead
  */
-public class Utility {
+public class ClientUtility {
     public static String getHost() {
         return "ws://" + getHostname() + ":" + Constants.PORT;
     }

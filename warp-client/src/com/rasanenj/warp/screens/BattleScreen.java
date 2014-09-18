@@ -9,11 +9,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -28,6 +30,7 @@ import com.rasanenj.warp.messaging.ServerConnection;
 import com.rasanenj.warp.projecting.PositionProjection;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.tasks.PathPlotterTask;
+import com.rasanenj.warp.ui.fleetbuilding.FleetBuildWindow;
 
 
 import static com.rasanenj.warp.Log.log;
@@ -44,6 +47,7 @@ public class BattleScreen implements Screen {
     private final WarpGame game;
     private final Stage stage, uiStage;
     private final Label hoveringText;
+    private final FleetBuildWindow deployWindow;
     private BattleHandler battleHandler;
 
     private static final int CAMERA_SIZE = 20;
@@ -95,13 +99,20 @@ public class BattleScreen implements Screen {
     final ActorBrowsingWindow debugWindow;
     private long countDownZero = 0;
 
-    public BattleScreen(ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
+    public BattleScreen(final ServerConnection conn, LobbyScreen lobbyScreen, WarpGame game) {
         this.game = game;
         stage = new Stage();
         stage.setViewport(CAMERA_SIZE, CAMERA_SIZE, true);
         cam = (OrthographicCamera) stage.getCamera();
 
         font = Assets.skin.getFont("default-font");
+
+        // init ui actors that are drawn over the game layer
+        uiStage = new Stage();
+        uiStage.setViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+        deployWindow = new FleetBuildWindow();
+        uiStage.addActor(deployWindow.getWindow());
 
         battleHandler = new BattleHandler(this, conn, lobbyScreen);
         for (int i=0; i < 4; i++) {
@@ -116,10 +127,6 @@ public class BattleScreen implements Screen {
         backgroundImage.setTileSize(GRID_SIZE, GRID_SIZE);
         backgroundImage.setZIndex(0);
         cam.zoom = 3.5f;
-
-        // init ui actors that are drawn over the game layer
-        uiStage = new Stage();
-        uiStage.setViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0.6f, 0.6f, 0.6f, 0.5f);
@@ -1173,5 +1180,9 @@ public class BattleScreen implements Screen {
 
     public ActorBrowsingWindow getDebugWindow() {
         return debugWindow;
+    }
+
+    public FleetBuildWindow getDeployWindow() {
+        return deployWindow;
     }
 }
