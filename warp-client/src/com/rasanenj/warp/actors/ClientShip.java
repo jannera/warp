@@ -14,7 +14,6 @@ import com.rasanenj.warp.TargetValue;
 import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.Player;
-import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 
 import static com.rasanenj.warp.Log.log;

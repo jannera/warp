@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.CreateShipMessage;
+import com.rasanenj.warp.messaging.DeployWarningMessage;
 import com.rasanenj.warp.messaging.ShipPhysicsMessage;
 import com.rasanenj.warp.messaging.ShipStatsMessage;
 import com.rasanenj.warp.tasks.IntervalTask;
@@ -21,6 +22,8 @@ public class DeployHandler extends IntervalTask {
     private final BattleLoop battleLoop;
     private final Vector2 pos = new Vector2();
     private final World world;
+
+    private final long TIMEOUT_NOT_DEFINED = Long.MAX_VALUE;
 
     public DeployHandler(BattleLoop battleLoop, World world) {
         super(UPDATES_IN_SECOND);
@@ -57,6 +60,8 @@ public class DeployHandler extends IntervalTask {
         log("adding " + System.currentTimeMillis() + timeoutMS);
         deployments.add(new Deployment(msg, System.currentTimeMillis() + timeoutMS));
         deployments.sort();
+
+        sendWarning(msg, (int) timeoutMS);
     }
 
     private void deploy(ShipStatsMessage message) {
@@ -91,9 +96,23 @@ public class DeployHandler extends IntervalTask {
     }
 
     public void flushAllAt(long time) {
+        int timeoutMs = (int) (time - System.currentTimeMillis());
         for (Deployment d : deployments) {
             d.deployTime = time;
+
+            sendWarning(d.msg, timeoutMs);
         }
+    }
+
+    public void addWithoutTimeout(ShipStatsMessage msg) {
+        deployments.add(new Deployment(msg, TIMEOUT_NOT_DEFINED));
+        deployments.sort();
+    }
+
+    private void sendWarning(ShipStatsMessage msg, int timeoutMS) {
+        ShipStats stats = msg.getStats();
+        log("sending id with owner " + msg.getOwnerId());
+        battleLoop.sendToAll(new DeployWarningMessage(stats.getCost(), msg.getX(), msg.getY(), timeoutMS, msg.getOwnerId()));
     }
 
     private class Deployment implements Comparable <Deployment> {

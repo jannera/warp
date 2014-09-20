@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.ai.ShipShootingAIDecisionTree;
 import com.rasanenj.warp.actors.ClientShip;
+import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.projecting.MaxOrbitVelocityCalculator;
@@ -300,6 +301,16 @@ public class BattleHandler {
                 state = newState;
                 screen.setCountdown(message.getLengthInSec());
             }
+            else if (msg.getType() == Message.MessageType.DEPLOY_WARNING) {
+                DeployWarningMessage message = (DeployWarningMessage) msg;
+                Player p = getPlayer(message.getOwnerId());
+                if (p == null) {
+                    log("Couldn't find player with id " + message.getOwnerId());
+                }
+                else {
+                    screen.addDeployWarning(message.getX(), message.getY(), message.getFleetSize(), message.getMsUntil(), p);
+                }
+            }
         }
 
         @Override
@@ -311,7 +322,8 @@ public class BattleHandler {
                     Message.MessageType.SHIP_DESTRUCTION,
                     Message.MessageType.CREATE_SCORE_GATHERING_POINT,
                     Message.MessageType.SCORE_UPDATE,
-                    Message.MessageType.GAME_STATE_CHANGE);
+                    Message.MessageType.GAME_STATE_CHANGE,
+                    Message.MessageType.DEPLOY_WARNING);
         }
     }
 

@@ -62,6 +62,9 @@ public class MessageFactory {
             case GAME_STATE_CHANGE:
                 message = new GameStateChangeMessage(msg);
                 break;
+            case DEPLOY_WARNING:
+                message = new DeployWarningMessage(msg);
+                break;
             default:
                 log(Level.SEVERE, "MessageFactory could not decode type " + type);
         }

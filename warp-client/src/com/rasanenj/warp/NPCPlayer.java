@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.ai.ShipShootingAISimple;
 import com.rasanenj.warp.actors.ClientShip;
+import com.rasanenj.warp.messaging.Player;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.systems.ShipShooting;
@@ -199,6 +200,9 @@ public class NPCPlayer {
                 GameStateChangeMessage message = (GameStateChangeMessage) msg;
                 state = message.getNewState();
             }
+            else if (msg.getType() == Message.MessageType.DEPLOY_WARNING) {
+                // aggressive NPCs aren't scared of no threat!
+            }
         }
 
         @Override
@@ -210,7 +214,8 @@ public class NPCPlayer {
                     Message.MessageType.SHIP_DESTRUCTION,
                     Message.MessageType.SCORE_UPDATE,
                     Message.MessageType.CREATE_SCORE_GATHERING_POINT,
-                    Message.MessageType.GAME_STATE_CHANGE);
+                    Message.MessageType.GAME_STATE_CHANGE,
+                    Message.MessageType.DEPLOY_WARNING);
         }
     }
 

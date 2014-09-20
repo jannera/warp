@@ -9,13 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -112,6 +110,7 @@ public class BattleScreen implements Screen {
         uiStage.setViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         deployWindow = new FleetBuildWindow();
+        deployWindow.loadCurrentBuild();
         uiStage.addActor(deployWindow.getWindow());
 
         battleHandler = new BattleHandler(this, conn, lobbyScreen);
@@ -145,6 +144,8 @@ public class BattleScreen implements Screen {
         hoveringTable.add(hoveringText);
         hoveringTable.pack();
         debugWindow = new ActorBrowsingWindow("debug", uiStage);
+
+        batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
     }
 
 
@@ -194,6 +195,13 @@ public class BattleScreen implements Screen {
         }
     }
 
+    private Array<DeployWarning> deployWarnings = new Array<DeployWarning>(false, 16);
+    private Array<DeployWarning> removableDeployWarnings = new Array<DeployWarning>(false, 16);
+
+    public void addDeployWarning(float x, float y, float fleetSize, int msUntil, Player player) {
+        deployWarnings.add(new DeployWarning(x, y, fleetSize, System.currentTimeMillis() + msUntil, player));
+    }
+
     public enum OptimalRenderingState {
         SELECTED_SHIPS, OWN_SHIPS, ENEMY_SHIPS, ALL_SHIPS, NOTHING
     }
@@ -228,6 +236,7 @@ public class BattleScreen implements Screen {
         updateMessages();
         updateProjectiles();
         updateLasers();
+        updateDeployWarnings();
         stage.act(Gdx.graphics.getDeltaTime());
         estimateShipPositions();
         stage.draw();
@@ -242,6 +251,8 @@ public class BattleScreen implements Screen {
         renderLasers();
         renderSelectionCircles();
         renderHealthBars();
+
+        renderDeployWarnings();
 
         // render active commands for selected ships
         renderOrbitTargets();
@@ -266,6 +277,40 @@ public class BattleScreen implements Screen {
         updateHoverTable();
         uiStage.act(Gdx.graphics.getDeltaTime());
         uiStage.draw();
+    }
+
+    private void updateDeployWarnings() {
+        removableDeployWarnings.clear();
+        long currentTime = System.currentTimeMillis();
+        for (DeployWarning w : deployWarnings) {
+            if (w.getEstimatedTime() <= currentTime) {
+                removableDeployWarnings.add(w);
+            }
+        }
+        deployWarnings.removeAll(removableDeployWarnings, true);
+    }
+
+    private static final float DEFAULT_TIME_DEPLOY_WARNING_CIRCLE_RADIUS_PX = 50f;
+    private void renderDeployWarnings() {
+        batch.begin();
+        for (DeployWarning w : deployWarnings) {
+            long until = w.getEstimatedTime() - System.currentTimeMillis();
+
+            if (until <= 0) {
+                continue;
+            }
+
+            float radius = DEFAULT_TIME_DEPLOY_WARNING_CIRCLE_RADIUS_PX
+                    * (until/1000f/Constants.DEPLOY_TIME_SECONDS);
+            tmp3.set(w.getX(), w.getY(), 0);
+            cam.project(tmp3);
+            tmp3.x -= radius;
+            tmp3.y -= radius;
+            batch.setColor(Assets.getBasicColor(w.getOwner()));
+            log(Assets.getBasicColor(w.getOwner()).r + ", " + Assets.getBasicColor(w.getOwner()).a);
+            batch.draw(Assets.scoreGatheringPoint, tmp3.x, tmp3.y, radius * 2f, radius * 2f);
+        }
+        batch.end();
     }
 
     private void renderScore() {
@@ -596,7 +641,6 @@ public class BattleScreen implements Screen {
         }
         long timeNow = System.currentTimeMillis();
         batch.begin();
-        batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 
         for (LaserBeam laser : laserBeams) {
             tmp3.set(laser.startX, laser.startY, 0);

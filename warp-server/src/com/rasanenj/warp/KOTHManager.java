@@ -38,15 +38,18 @@ public class KOTHManager extends IntervalTask {
         long timeout;
         if (state == KOTHState.RUNNING_ROUND) {
             timeout = (long) (1000 * Constants.DEPLOY_TIME_SECONDS);
+            deployHandler.add(message, timeout);
         }
         else if (state == KOTHState.JUST_STARTED ||
                 state == KOTHState.WAITING_FOR_PLAYERS) {
-            timeout = Long.MAX_VALUE/2;
+            deployHandler.addWithoutTimeout(message);
+
         }
         else {
             timeout = nextStateChange - System.currentTimeMillis();
+            deployHandler.add(message, timeout);
         }
-        deployHandler.add(message, timeout);
+
     }
 
     private enum KOTHState {
