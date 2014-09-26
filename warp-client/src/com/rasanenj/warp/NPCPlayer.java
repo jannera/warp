@@ -276,6 +276,7 @@ public class NPCPlayer {
         int fitAmount;
         ShipStats[] stats;
         int[] shipAmounts;
+        int tries = 0;
         do {
             fitAmount = rng.nextInt(4) + 1; // 1 -4 fits
             float[] maxCosts = new float[fitAmount];
@@ -306,6 +307,10 @@ public class NPCPlayer {
                     totalCost += stats[i].getCost() * shipAmounts[i];
                 }
             }
+            if (tries++ > 10000) {
+                log("Stopped trying to find optimal fit");
+                break;
+            }
         }
         while (!(totalCost < maxFleetCost * 1.2f && totalCost > maxFleetCost * 0.8f));
 
@@ -335,7 +340,11 @@ public class NPCPlayer {
 
         float cost = Float.POSITIVE_INFINITY;
         ShipBuildWindow selection = null;
+        int tries = 0;
         while (cost > maxCost) {
+            if (tries++ > 500) {
+                return null;
+            }
             int type = rng.nextInt(allTypes.length);
             selection = allTypes[type];
             selection.randomizeSliders();

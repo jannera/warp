@@ -16,6 +16,7 @@ public class PathPlotterTask implements Task, Iterable<Vector2> {
     private final Array<Vector2> points = new Array<Vector2>(false, SIZE);
     private float timeElapsed = 0;
     private int index = 0;
+    private Vector2 tmp = new Vector2();
 
     public PathPlotterTask(ClientShip ship) {
         this.ship = ship;
@@ -29,7 +30,8 @@ public class PathPlotterTask implements Task, Iterable<Vector2> {
         timeElapsed += delta;
         if (timeElapsed > INTERVAL) {
             timeElapsed -= INTERVAL;
-            points.get(index).set(ship.getX(), ship.getY());
+            ship.getCenterPos(tmp);
+            points.get(index).set(tmp);
             index++;
             if (index >= SIZE) {
                 index = 0;

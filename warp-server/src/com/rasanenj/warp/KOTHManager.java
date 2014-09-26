@@ -22,7 +22,7 @@ public class KOTHManager extends IntervalTask {
     private int currentRound = 0;
     private long nextStateChange;
 
-    private static final int PAUSE_LENGTH_SECONDS = 15;
+    private static final int PAUSE_LENGTH_SECONDS = 5;
 
     public KOTHManager(BattleLoop battleLoop, ScoreKeeper scoreKeeper, DeployHandler deployHandler, int rounds, int matchLength) {
         super(UPDATES_IN_SECOND);

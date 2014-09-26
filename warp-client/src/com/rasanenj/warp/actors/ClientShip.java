@@ -312,6 +312,12 @@ public class ClientShip extends Group {
         pos.add(getX(), getY());
     }
 
+    public void getOriginPos(Vector2 pos) {
+        pos.set(getOriginX(), getOriginY());
+        pos.rotate(getRotation());
+        pos.add(getX(), getY());
+    }
+
     public float getLeftX() {
         getCenterPos(tmp);
         return tmp.x - this.getWidth() / 2f;

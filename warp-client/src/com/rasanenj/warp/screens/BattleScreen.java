@@ -274,9 +274,21 @@ public class BattleScreen implements Screen {
 
         renderTextBelowMouseCursor();
 
+        // renderOrigins();
+
         updateHoverTable();
         uiStage.act(Gdx.graphics.getDeltaTime());
         uiStage.draw();
+    }
+
+    private void renderOrigins() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.WHITE);
+        for (ClientShip s : battleHandler.getShips()) {
+            s.getOriginPos(tmp2_1);
+            shapeRenderer.circle(tmp2_1.x, tmp2_1.y, 0.5f);
+        }
+        shapeRenderer.end();
     }
 
     private void updateDeployWarnings() {
@@ -307,7 +319,7 @@ public class BattleScreen implements Screen {
             tmp3.x -= radius;
             tmp3.y -= radius;
             batch.setColor(Assets.getBasicColor(w.getOwner()));
-            log(Assets.getBasicColor(w.getOwner()).r + ", " + Assets.getBasicColor(w.getOwner()).a);
+            // log(Assets.getBasicColor(w.getOwner()).r + ", " + Assets.getBasicColor(w.getOwner()).a);
             batch.draw(Assets.scoreGatheringPoint, tmp3.x, tmp3.y, radius * 2f, radius * 2f);
         }
         batch.end();
