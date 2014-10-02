@@ -311,6 +311,10 @@ public class BattleHandler {
                     screen.addDeployWarning(message.getX(), message.getY(), message.getFleetSize(), message.getMsUntil(), p);
                 }
             }
+            else if (msg.getType() == Message.MessageType.SERVER_UPDATE) {
+                ServerUpdateMessage message = (ServerUpdateMessage) msg;
+                screen.addToLog(message.getMsg());
+            }
         }
 
         @Override
@@ -323,7 +327,8 @@ public class BattleHandler {
                     Message.MessageType.CREATE_SCORE_GATHERING_POINT,
                     Message.MessageType.SCORE_UPDATE,
                     Message.MessageType.GAME_STATE_CHANGE,
-                    Message.MessageType.DEPLOY_WARNING);
+                    Message.MessageType.DEPLOY_WARNING,
+                    Message.MessageType.SERVER_UPDATE);
         }
     }
 

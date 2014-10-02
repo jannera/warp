@@ -65,6 +65,9 @@ public class MessageFactory {
             case DEPLOY_WARNING:
                 message = new DeployWarningMessage(msg);
                 break;
+            case SERVER_UPDATE:
+                message = new ServerUpdateMessage(msg);
+                break;
             default:
                 log(Level.SEVERE, "MessageFactory could not decode type " + type);
         }

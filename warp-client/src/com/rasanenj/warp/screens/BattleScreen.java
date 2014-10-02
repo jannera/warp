@@ -10,9 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -46,6 +44,8 @@ public class BattleScreen implements Screen {
     private final Stage stage, uiStage;
     private final Label hoveringText;
     private final FleetBuildWindow deployWindow;
+    private Label textLog;
+    private ScrollPane textLogScroll;
     private BattleHandler battleHandler;
 
     private static final int CAMERA_SIZE = 20;
@@ -113,6 +113,8 @@ public class BattleScreen implements Screen {
         deployWindow.loadCurrentBuild();
         uiStage.addActor(deployWindow.getWindow());
 
+        initTextLog();
+
         battleHandler = new BattleHandler(this, conn, lobbyScreen);
         for (int i=0; i < 4; i++) {
             corners[i] = new Vector2();
@@ -148,6 +150,24 @@ public class BattleScreen implements Screen {
         batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
     }
 
+    private void initTextLog() {
+        textLog = new Label("", Assets.skin);
+        // textLog.setAlignment(Align.top, Align.left);
+        textLog.setHeight(30);
+        textLog.setFillParent(false);
+        textLog.setWrap(true);
+
+        textLogScroll = new ScrollPane(textLog, Assets.skin);
+
+
+        Window textLogWindow = new Window("Log", Assets.skin);
+        textLogWindow.row().fill().expandX();
+        textLogWindow
+                .add(textLogScroll)
+                .minWidth(500).minHeight(500).expand().fill();
+        textLogWindow.pack();
+        uiStage.addActor(textLogWindow);
+    }
 
 
     public OrthographicCamera getCam() {
@@ -1240,5 +1260,16 @@ public class BattleScreen implements Screen {
 
     public FleetBuildWindow getDeployWindow() {
         return deployWindow;
+    }
+
+    public void addToLog(String s) {
+        CharSequence existing = textLog.getText();
+        String newLog = "" + existing;
+        if (!newLog.isEmpty()) {
+            newLog += "\n";
+        }
+        newLog += s;
+        textLog.setText(newLog);
+        textLogScroll.setScrollPercentY(1);
     }
 }
