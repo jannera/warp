@@ -315,6 +315,13 @@ public class BattleHandler {
                 ServerUpdateMessage message = (ServerUpdateMessage) msg;
                 screen.addToLog(message.getMsg());
             }
+            else if (msg.getType() == Message.MessageType.RESOURCE_UPDATE) {
+                ResourceUpdateMessage message = (ResourceUpdateMessage) msg;
+                Player p = getPlayer(message.getId());
+
+                p.setResourcePointsAvailable(message.getNewResourceAmount());
+                log("Player " + p.getId() + " has now " + message.getNewResourceAmount() + " resources");
+            }
         }
 
         @Override
@@ -328,7 +335,8 @@ public class BattleHandler {
                     Message.MessageType.SCORE_UPDATE,
                     Message.MessageType.GAME_STATE_CHANGE,
                     Message.MessageType.DEPLOY_WARNING,
-                    Message.MessageType.SERVER_UPDATE);
+                    Message.MessageType.SERVER_UPDATE,
+                    Message.MessageType.RESOURCE_UPDATE);
         }
     }
 

@@ -203,6 +203,9 @@ public class NPCPlayer {
             else if (msg.getType() == Message.MessageType.DEPLOY_WARNING) {
                 // aggressive NPCs aren't scared of no threat!
             }
+            else if (msg.getType() == Message.MessageType.RESOURCE_UPDATE) {
+                // TODO: make some note of this, if it involves us
+            }
         }
 
         @Override
@@ -215,7 +218,8 @@ public class NPCPlayer {
                     Message.MessageType.SCORE_UPDATE,
                     Message.MessageType.CREATE_SCORE_GATHERING_POINT,
                     Message.MessageType.GAME_STATE_CHANGE,
-                    Message.MessageType.DEPLOY_WARNING);
+                    Message.MessageType.DEPLOY_WARNING,
+                    Message.MessageType.RESOURCE_UPDATE);
         }
     }
 

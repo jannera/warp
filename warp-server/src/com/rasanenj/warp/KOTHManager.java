@@ -1,8 +1,11 @@
 package com.rasanenj.warp;
 
+import com.badlogic.gdx.utils.Array;
 import com.rasanenj.warp.entities.ServerShip;
 import com.rasanenj.warp.messaging.GameStateChangeMessage;
 import com.rasanenj.warp.messaging.ServerUpdateMessage;
+import com.rasanenj.warp.messaging.Player;
+import com.rasanenj.warp.messaging.ResourceUpdateMessage;
 import com.rasanenj.warp.messaging.ShipStatsMessage;
 import com.rasanenj.warp.scoring.ScoreKeeper;
 import com.rasanenj.warp.tasks.IntervalTask;
@@ -23,7 +26,9 @@ public class KOTHManager extends IntervalTask {
     private int currentRound = 0;
     private long nextStateChange;
 
-    private static final int PAUSE_LENGTH_SECONDS = 5;
+    private static final int PAUSE_LENGTH_SECONDS = 15;
+
+    private static final float RESOURCE_LIMIT = 1200;
 
     public KOTHManager(BattleLoop battleLoop, ScoreKeeper scoreKeeper, DeployHandler deployHandler, int rounds, int matchLength) {
         super(UPDATES_IN_SECOND);
@@ -68,27 +73,23 @@ public class KOTHManager extends IntervalTask {
 
         if (state == KOTHState.JUST_STARTED) {
             state = KOTHState.WAITING_FOR_PLAYERS;
-            pauseGame(0);
-            System.out.println("KOTH: Waiting for players to join");
+            pauseMatch(0);
+            logMessage("KOTH: Waiting for players to join");
         }
         else if (state != KOTHState.WAITING_FOR_PLAYERS
                 && playerAmount == 0) {
-            // game was running but we ran out of players
-            resetGame();
+            // match was running but we ran out of players
+            resetMatch();
             state = KOTHState.JUST_STARTED;
         }
         else if (state == KOTHState.WAITING_FOR_PLAYERS) {
             if (playerAmount >= 2) {
-                state = KOTHState.BETWEEN_ROUNDS;
-                nextStateChange = System.currentTimeMillis() + PAUSE_LENGTH_SECONDS * 1000;
-                deployHandler.flushAllAt(nextStateChange);
-                pauseGame(PAUSE_LENGTH_SECONDS);
-                logMessage("KOTH: Started deploy phase for " + PAUSE_LENGTH_SECONDS + " seconds");
+                startMatch();
             }
         }
         else if (state == KOTHState.BETWEEN_ROUNDS && timeNow > nextStateChange) {
             state = KOTHState.RUNNING_ROUND;
-            continueGame(matchLength);
+            continueMatch(matchLength);
             currentRound++;
             nextStateChange = timeNow + matchLength * 1000;
             logMessage("KOTH: Started round " + currentRound + "/" + rounds);
@@ -97,6 +98,7 @@ public class KOTHManager extends IntervalTask {
             roundEnded(timeNow);
         }
         else if (state == KOTHState.RUNNING_ROUND) {
+            // checks if there are only ships owned by single player left
             long firstOwner = -1;
             boolean onlyOneOwner = true;
             for (ServerShip s : battleLoop.getShips()) {
@@ -120,35 +122,69 @@ public class KOTHManager extends IntervalTask {
         }
     }
 
+    private void startMatch() {
+        state = KOTHState.BETWEEN_ROUNDS;
+        nextStateChange = System.currentTimeMillis() + PAUSE_LENGTH_SECONDS * 1000;
+        deployHandler.flushAllAt(nextStateChange);
+        pauseMatch(PAUSE_LENGTH_SECONDS);
+        updateResourcePoints();
+        logMessage("KOTH: Started deploy phase for " + PAUSE_LENGTH_SECONDS + " seconds");
+    }
+
+    private void updateResourcePoints() {
+        Array<Player> players = battleLoop.getPlayers();
+        for (int i = 0; i < players.size; i++) {
+            Player p = players.get(i);
+            updateResourcePoints(p);
+        }
+    }
+
+    private void updateResourcePoints(Player p) {
+        float resources = RESOURCE_LIMIT;
+        Array<ServerShip> ships = battleLoop.getShipsOwnedByPlayer(p);
+        for (int i=0; i < ships.size; i++) {
+            ServerShip s = ships.get(i);
+            System.out.println("reducing resources with " + s.getStats().getCost());
+            resources -= s.getStats().getCost();
+        }
+        battleLoop.sendToAll(new ResourceUpdateMessage(p.getId(), resources));
+    }
+
     private void roundEnded(long timeNow) {
         logMessage("KOTH: Ended round " + currentRound);
         if (currentRound >= rounds) {
-            // tell all players to end the match
-            battleLoop.disconnectEveryone();
-            resetGame();
+            matchEnded();
         }
         else {
             state = KOTHState.BETWEEN_ROUNDS;
             // tell all players to go to pause mode
             nextStateChange = timeNow + PAUSE_LENGTH_SECONDS * 1000;
-            pauseGame(PAUSE_LENGTH_SECONDS);
-            logMessage("KOTH: Started deploy phase for " + PAUSE_LENGTH_SECONDS + " seconds");
+            pauseMatch(PAUSE_LENGTH_SECONDS);
+            updateResourcePoints();
+            // TODO: heal all remaining ships to full health!
+        logMessage("KOTH: Started deploy phase for " + PAUSE_LENGTH_SECONDS + " seconds");
         }
     }
 
-    private void resetGame() {
-        logMessage("KOTH: Ended the game");
-        pauseGame(0);
+    private void matchEnded() {
+        // tell all players to end the match
+        battleLoop.disconnectEveryone();
+        resetMatch();
+    }
+
+    private void resetMatch() {
+        logMessage("KOTH: Ended the match");
+        pauseMatch(0);
         state = KOTHState.JUST_STARTED;
         currentRound = 0;
     }
 
-    private void pauseGame(int length) {
+    private void pauseMatch(int length) {
         battleLoop.setPhysicsPaused(true);
         battleLoop.sendToAll(new GameStateChangeMessage(GameState.PAUSED, length));
     }
 
-    private void continueGame(int length) {
+    private void continueMatch(int length) {
         battleLoop.setPhysicsPaused(false);
         battleLoop.sendToAll(new GameStateChangeMessage(GameState.RUNNING, length));
     }

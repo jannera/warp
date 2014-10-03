@@ -305,19 +305,19 @@
                             "name" : "Health",
                             "values" : [
                                 {
-                                    "value" : 240,
+                                    "value" : 120,
                                     "cost" : 10
                                 },
                                 {
-                                    "value" : 300,
+                                    "value" : 150,
                                     "cost" : 30
                                 },
                                 {
-                                    "value" : 360,
+                                    "value" : 180,
                                     "cost" : 50
                                 },
                                 {
-                                    "value" : 420,
+                                    "value" : 210,
                                     "cost" : 90
                                 }
                             ]

@@ -68,6 +68,9 @@ public class MessageFactory {
             case SERVER_UPDATE:
                 message = new ServerUpdateMessage(msg);
                 break;
+            case RESOURCE_UPDATE:
+                message = new ResourceUpdateMessage(msg);
+                break;
             default:
                 log(Level.SEVERE, "MessageFactory could not decode type " + type);
         }

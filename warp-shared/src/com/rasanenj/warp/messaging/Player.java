@@ -9,6 +9,7 @@ public class Player extends Entity {
     protected final String name;
     protected final int colorIndex;
     protected float score;
+    protected float resourcePointsAvailable;
 
     public Player(String name, int colorIndex) {
         this.name = name;
@@ -39,5 +40,13 @@ public class Player extends Entity {
 
     public void setScore(float score) {
         this.score = score;
+    }
+
+    public float getResourcePointsAvailable() {
+        return resourcePointsAvailable;
+    }
+
+    public void setResourcePointsAvailable(float resourcePointsAvailable) {
+        this.resourcePointsAvailable = resourcePointsAvailable;
     }
 }
