@@ -43,8 +43,7 @@ public class NPCPlayer {
 
     private final Map<Long, MyShipInfo> infos = new HashMap<Long, MyShipInfo>();
 
-    public NPCPlayer(String host, float maxCost) {
-        maxFleetCost = maxCost;
+    public NPCPlayer(String host) {
         this.delegator = new MessageDelegator();
         this.consumer = new Consumer(delegator);
         this.conn = new ServerConnection(host, delegator);
@@ -112,8 +111,6 @@ public class NPCPlayer {
         }
     }
 
-    private final float maxFleetCost;
-
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
 
         @Override
@@ -161,8 +158,6 @@ public class NPCPlayer {
                         shooting.setMyId(myId);
                     }
                     players.add(p);
-
-                    createRandomFleet();
                 }
             }
             else if (msg.getType() == Message.MessageType.CREATE_SHIP) {
@@ -204,7 +199,11 @@ public class NPCPlayer {
                 // aggressive NPCs aren't scared of no threat!
             }
             else if (msg.getType() == Message.MessageType.RESOURCE_UPDATE) {
-                // TODO: make some note of this, if it involves us
+                ResourceUpdateMessage message = (ResourceUpdateMessage) msg;
+                if (message.getId() == myId) {
+                    // received resources! let's spend them all at once!
+                    createRandomFleet(message.getNewResourceAmount());
+                }
             }
         }
 
@@ -274,7 +273,7 @@ public class NPCPlayer {
         return null;
     }
 
-    private void createRandomFleet() {
+    private void createRandomFleet(float maxFleetCost) {
         log("creating random fleet");
         float totalCost;
         int fitAmount;
@@ -284,7 +283,7 @@ public class NPCPlayer {
         do {
             fitAmount = rng.nextInt(4) + 1; // 1 -4 fits
             float[] maxCosts = new float[fitAmount];
-            float costLeft = maxFleetCost * 1.2f;
+            float costLeft = maxFleetCost;
             for(int i=0; i < fitAmount - 1; i++) {
                 float cost = rng.nextFloat() * costLeft;
                 maxCosts[i] = cost;

@@ -44,12 +44,7 @@ public class FleetBuildWindow {
         topUIGroup.addActor(shipSelectionGroup);
 
         // drop down menu for selecting new ship type
-        Object[] shipTypeNames = new Object[shipTypes.size()];
-        int i = 0;
-        for (String name : shipTypes.keySet()) {
-            shipTypeNames[i++] = name;
-        }
-        shipTypeSelect = new SelectBox(shipTypeNames, Assets.skin);
+        shipTypeSelect = createShipSelector();
         topUIGroup.addActor(shipTypeSelect);
 
         // button to add builds
@@ -107,6 +102,15 @@ public class FleetBuildWindow {
         window.add(bottomUIGroup);
 
         window.pack();
+    }
+
+    private SelectBox createShipSelector() {
+        Object[] shipTypeNames = new Object[shipTypes.size()];
+        int i = 0;
+        for (String name : shipTypes.keySet()) {
+            shipTypeNames[i++] = name;
+        }
+        return new SelectBox(shipTypeNames, Assets.skin);
     }
 
     private HashMap<String, Integer> readShipTypesFromJSON() {

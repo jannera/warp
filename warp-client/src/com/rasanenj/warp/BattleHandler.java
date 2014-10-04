@@ -105,7 +105,7 @@ public class BattleHandler {
     }
 
     public void createNPC() {
-        this.npcPlayers.add(new NPCPlayer(ClientUtility.getHost(), BuildStats.totalCost));
+        this.npcPlayers.add(new NPCPlayer(ClientUtility.getHost()));
     }
 
     private class BattleMessageConsumer extends MessageConsumer {
