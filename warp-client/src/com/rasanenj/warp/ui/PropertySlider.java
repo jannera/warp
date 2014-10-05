@@ -62,7 +62,13 @@ public class PropertySlider {
     }
 
     public void setIndex(int index) {
-        if (index < values.length && index >= 0) {
+        if (index < 0) {
+            slider.setValue(0);
+        }
+        else if (index >= values.length) {
+            slider.setValue(values.length - 1);
+        }
+        else {
             slider.setValue(index);
         }
     }

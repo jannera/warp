@@ -320,6 +320,10 @@ public class BattleHandler {
                 Player p = getPlayer(message.getId());
 
                 p.setResourcePointsAvailable(message.getNewResourceAmount());
+
+                if (message.getId() == myId) {
+                    screen.addToLog("You received " + message.getNewResourceAmount() + " resources");
+                }
                 log("Player " + p.getId() + " has now " + message.getNewResourceAmount() + " resources");
             }
         }

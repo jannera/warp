@@ -109,8 +109,10 @@ public class BattleScreen implements Screen {
         uiStage = new Stage();
         uiStage.setViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-        deployWindow = new FleetBuildWindow();
+        deployWindow = new FleetBuildWindow(true);
         deployWindow.loadCurrentBuild();
+        float y = (uiStage.getHeight() - deployWindow.getWindow().getHeight()) / 2f;
+        deployWindow.getWindow().setY(y);
         uiStage.addActor(deployWindow.getWindow());
 
         initTextLog();
@@ -166,6 +168,11 @@ public class BattleScreen implements Screen {
                 .add(textLogScroll)
                 .minWidth(500).minHeight(500).expand().fill();
         textLogWindow.pack();
+
+        float x = uiStage.getWidth() - textLogWindow.getWidth();
+        float y = (uiStage.getHeight() - textLogWindow.getHeight()) / 2f;
+        textLogWindow.setPosition(x, y);
+
         uiStage.addActor(textLogWindow);
     }
 

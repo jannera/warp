@@ -244,9 +244,7 @@ public class ShipBuildWindow {
             build.createActivateButton();
 
             String typeName = shipType.getString("typeName");
-            window.row().fill().expandX().fillX();
-            window.add(new Label("Type", Assets.skin));
-            window.add(new Label(typeName, Assets.skin));
+            window.setTitle(typeName);
 
             build.createAmountUI();
 
@@ -340,5 +338,9 @@ public class ShipBuildWindow {
         for (int i=0; i < sliders.size; i++) {
             sliders.get(i).reset();
         }
+    }
+
+    public void copySlidersFrom(ShipBuildWindow other) {
+        setSliders(other.getSliders());
     }
 }
