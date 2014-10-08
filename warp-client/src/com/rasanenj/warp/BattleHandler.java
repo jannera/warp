@@ -317,14 +317,17 @@ public class BattleHandler {
             }
             else if (msg.getType() == Message.MessageType.RESOURCE_UPDATE) {
                 ResourceUpdateMessage message = (ResourceUpdateMessage) msg;
-                Player p = getPlayer(message.getId());
+                float resources = message.getNewResourceAmount();
+                long playerId = message.getId();
+                Player p = getPlayer(playerId);
 
-                p.setResourcePointsAvailable(message.getNewResourceAmount());
+                p.setResourcePointsAvailable(resources);
 
-                if (message.getId() == myId) {
-                    screen.addToLog("You received " + message.getNewResourceAmount() + " resources");
+                if (playerId == myId) {
+                    screen.addToLog("You now have " + resources + " resources");
+                    screen.setFleetCostLimit(resources);
                 }
-                log("Player " + p.getId() + " has now " + message.getNewResourceAmount() + " resources");
+                log("Player " + playerId + " has now " + resources + " resources");
             }
         }
 

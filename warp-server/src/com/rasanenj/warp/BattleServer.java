@@ -104,7 +104,13 @@ public class BattleServer extends IntervalTask {
             }
             else if (msg.getType() == Message.MessageType.SHIP_STATS) {
                 ShipStatsMessage message = (ShipStatsMessage) msg;
-
+                float cost = message.getStats().getCost();
+                Player p = battleLoop.getPlayer(message.getOwnerId());
+                if (!p.getName().equals("npc")) {
+                    float resourcesLeft = p.getResourcePointsAvailable() - cost;
+                    p.setResourcePointsAvailable(resourcesLeft);
+                    battleLoop.sendToAll(new ResourceUpdateMessage(message.getOwnerId(), resourcesLeft));
+                }
                 gameManager.newShip(message);
             }
             else if (msg.getType() == Message.MessageType.SHOOT_REQUEST) {

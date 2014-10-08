@@ -26,9 +26,9 @@ public class KOTHManager extends IntervalTask {
     private int currentRound = 0;
     private long nextStateChange;
 
-    private static final int PAUSE_LENGTH_SECONDS = 15;
+    private static final int PAUSE_LENGTH_SECONDS = 30;
 
-    private static final float RESOURCE_LIMIT = 1200;
+    private static final float RESOURCE_LIMIT = 1500;
 
     public KOTHManager(BattleLoop battleLoop, ScoreKeeper scoreKeeper, DeployHandler deployHandler, int rounds, int matchLength) {
         super(UPDATES_IN_SECOND);
@@ -147,6 +147,7 @@ public class KOTHManager extends IntervalTask {
             System.out.println("reducing resources with " + s.getStats().getCost());
             resources -= s.getStats().getCost();
         }
+        p.setResourcePointsAvailable(resources);
         battleLoop.sendToAll(new ResourceUpdateMessage(p.getId(), resources));
     }
 
@@ -168,6 +169,7 @@ public class KOTHManager extends IntervalTask {
 
     private void matchEnded() {
         // tell all players to end the match
+        pauseMatch(0);
         battleLoop.disconnectEveryone();
         resetMatch();
     }

@@ -34,6 +34,7 @@ public class ShipBuildWindow {
     private TextButton activateButton, plusAmount, minusAmount;
     private int amount = 1;
     private final String icon;
+    private float fleetCostLimit;
 
     public ShipBuildWindow(int typeId, String icon, HashMap<String, Float> constants) {
         this.icon = icon;
@@ -51,7 +52,10 @@ public class ShipBuildWindow {
     }
 
     public void updateUI() {
-        total.setText("Total: " + getTotalCost());
+        float totalCost = getTotalCost();
+        String text = "Total: " + totalCost;
+        text += " / " + Float.toString(fleetCostLimit);
+        total.setText(text);
         window.pack();
     }
 
@@ -268,6 +272,7 @@ public class ShipBuildWindow {
                 }
             }
             build.createTotalLabel();
+            build.setFleetCostLimit(0);
             build.updateUI();
             build.validate();
             return build;
@@ -342,5 +347,10 @@ public class ShipBuildWindow {
 
     public void copySlidersFrom(ShipBuildWindow other) {
         setSliders(other.getSliders());
+    }
+
+    public void setFleetCostLimit(float fleetCostLimit) {
+        this.fleetCostLimit = fleetCostLimit;
+        updateUI();
     }
 }

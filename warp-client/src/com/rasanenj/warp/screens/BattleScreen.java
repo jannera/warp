@@ -1279,4 +1279,8 @@ public class BattleScreen implements Screen {
         textLog.setText(newLog);
         textLogScroll.setScrollPercentY(1);
     }
+
+    public void setFleetCostLimit(float limit) {
+        deployWindow.setFleetCostLimit(limit);
+    }
 }

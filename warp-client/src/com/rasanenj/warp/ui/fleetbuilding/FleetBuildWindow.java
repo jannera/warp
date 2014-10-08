@@ -36,6 +36,7 @@ public class FleetBuildWindow {
     Table buildTable;
     private final TextButton startFight;
     private final HashMap<String, Integer> shipTypes;
+    private float fleetCostLimit = 0;
 
     public FleetBuildWindow(boolean hotDeploy) {
         this.hotDeploy = hotDeploy;
@@ -275,8 +276,17 @@ public class FleetBuildWindow {
     }
 
     public void updateUI() {
+        float total = getTotalCost();
         if (totalCost != null) {
-            totalCost.setText("Fleet total: " + getTotalCost());
+            totalCost.setText("Fleet total: " + total);
+        }
+        if (total > fleetCostLimit) {
+            startFight.setDisabled(true);
+            startFight.setColor(Color.BLACK);
+        }
+        else {
+            startFight.setDisabled(false);
+            startFight.setColor(Color.GRAY);
         }
         window.pack();
     }
@@ -298,9 +308,12 @@ public class FleetBuildWindow {
     public void loadCurrentBuild() {
         String rawText = LocalStorage.fetch(LocalStorage.CURRENT_BUILD);
         if (rawText == null) {
-            return;
+            // init the screen with ship of empty stats
+            add(ShipBuildWindow.createShipFromCatalog(1));
         }
-        loadFromJson(rawText);
+        else {
+            loadFromJson(rawText);
+        }
     }
 
     private void saveCurrentBuild() {
@@ -319,5 +332,11 @@ public class FleetBuildWindow {
         for (ShipBuildWindow build : shipBuilds) {
             conn.send(new ShipStatsMessage(build.getStats(), ownerId, x, y, build.getAmount()));
         }
+    }
+
+    public void setFleetCostLimit(float limit) {
+        this.fleetCostLimit = limit;
+        activeBuild.setFleetCostLimit(limit);
+        updateUI();
     }
 }
