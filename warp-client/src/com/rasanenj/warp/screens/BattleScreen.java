@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Random;
 import com.rasanenj.warp.*;
 import com.rasanenj.warp.actors.TiledImage;
@@ -1090,6 +1089,7 @@ public class BattleScreen implements Screen {
         InputMultiplexer plexer = new InputMultiplexer(uiStage, stage);
         Gdx.input.setInputProcessor(plexer);
         Chart.init();
+        battleHandler.joinBattle();
     }
 
     @Override

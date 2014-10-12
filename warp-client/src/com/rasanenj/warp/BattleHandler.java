@@ -19,6 +19,7 @@ import com.rasanenj.warp.messaging.*;
 import com.rasanenj.warp.projecting.MaxOrbitVelocityCalculator;
 import com.rasanenj.warp.screens.BattleScreen;
 import com.rasanenj.warp.screens.LobbyScreen;
+import com.rasanenj.warp.screens.WelcomeScreen;
 import com.rasanenj.warp.systems.ShipShooting;
 import com.rasanenj.warp.systems.ShipSteering;
 import com.rasanenj.warp.tasks.*;
@@ -59,7 +60,6 @@ public class BattleHandler {
     private GameState state = GameState.PAUSED;
 
     public BattleHandler(BattleScreen screen, ServerConnection conn, LobbyScreen lobbyScreen) {
-        conn.register(new ConnectionListener());
         this.screen = screen;
         this.conn = conn;
         this.shipClickListener = new ShipClickListener();
@@ -824,17 +824,19 @@ public class BattleHandler {
     private class ConnectionListener implements ServerConnection.OpenCloseListener {
         @Override
         public void onOpen() {
-            if (WarpGame.START_SCREEN == WarpGame.ScreenType.BATTLE) {
-                conn.send(new JoinServerMessage("", -1));
-                lobbyScreen.loadEarlierBuild();
-                lobbyScreen.startTestFlight();
-            }
+            String name = WelcomeScreen.loadEarlierName();
+            conn.send(new JoinServerMessage(name, -1));
+            conn.send(new JoinBattleMessage(name, -1, -1));
         }
 
         @Override
         public void onClose() {
             // TODO: maybe tell the screen the connection was lost?
         }
+    }
+
+    public void joinBattle() {
+        conn.register(new ConnectionListener());
     }
 
     public long getMyId() {

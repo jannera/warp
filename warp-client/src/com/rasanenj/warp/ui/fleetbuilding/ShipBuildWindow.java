@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.rasanenj.warp.Assets;
+import com.rasanenj.warp.ClientUtility;
 import com.rasanenj.warp.Log;
 import com.rasanenj.warp.entities.ShipStats;
 import com.rasanenj.warp.ui.PropertySlider;
@@ -35,7 +35,6 @@ public class ShipBuildWindow {
     private TextButton activateButton, plusAmount, minusAmount;
     private int amount = 1;
     private final String icon;
-    private static final NumberFormat twoFullDecimals = NumberFormat.getFormat("0.00");
 
     private Label[][] stats;
     private static final int statsRows = 2, statsCols = 2;
@@ -67,10 +66,10 @@ public class ShipBuildWindow {
         float dpsPerRP = dps / totalCost;
 
         float hpPerRP = shipStats.getMaxHealth() / totalCost;
-        stats[0][0].setText("DPS " + twoFullDecimals.format(dps));
-        stats[0][1].setText("DPS/RP " + twoFullDecimals.format(dpsPerRP));
+        stats[0][0].setText("DPS " + ClientUtility.format(dps, 2));
+        stats[0][1].setText("DPS/RP " + ClientUtility.format(dpsPerRP, 2));
         stats[1][0].setText("");
-        stats[1][1].setText("HP/RP " + twoFullDecimals.format(hpPerRP));
+        stats[1][1].setText("HP/RP " + ClientUtility.format(hpPerRP, 2));
         window.pack();
     }
 

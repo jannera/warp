@@ -45,6 +45,7 @@ public class WelcomeScreen implements Screen {
         else {
             nameField = new TextField(name, Assets.skin);
         }
+        nameField.setMaxLength(10);
 
         // TODO: only allow valid characters when entering name
         nameField.setTextFieldListener(new TextField.TextFieldListener() {
@@ -53,9 +54,7 @@ public class WelcomeScreen implements Screen {
                 if (key == '\r' || key == '\n') {
                     String name = textField.getText();
                     storeName(name);
-                    serverConnection.send(new JoinServerMessage(name, -1));
-                    serverConnection.send(new JoinChatMessage(name));
-                    game.setScreen(WarpGame.ScreenType.LOBBY);
+                    game.setScreen(WarpGame.ScreenType.BATTLE);
                 }
             }
         });
@@ -75,6 +74,10 @@ public class WelcomeScreen implements Screen {
     public static String loadEarlierName() {
         String name = LocalStorage.fetch(LocalStorage.NAME);
         return name;
+    }
+
+    public static boolean earlierNameExists() {
+        return loadEarlierName() != null;
     }
 
     @Override

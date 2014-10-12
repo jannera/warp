@@ -126,7 +126,8 @@ public class LobbyScreen implements Screen {
 
         @Override
         public void onOpen() {
-            if (WarpGame.START_SCREEN == WarpGame.ScreenType.LOBBY) {
+            // if (WarpGame.START_SCREEN == WarpGame.ScreenType.LOBBY) {
+            if (false) { // TODO fix this to work once/if lobby screen is used again
                 String name = WelcomeScreen.loadEarlierName();
                 if (name == null) {
                     name = "dummyname";

@@ -542,6 +542,6 @@ public class ClientShip extends Group {
     }
 
     public String getDescriptionWithOwner() {
-        return owner.getName() + "s " + getDescription();
+        return owner.getName() + "'s " + getDescription();
     }
 }

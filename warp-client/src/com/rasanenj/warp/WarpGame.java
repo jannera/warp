@@ -35,7 +35,7 @@ public class WarpGame extends Game implements ResizeHandler {
 
         battleScreen = new BattleScreen(serverConnection, lobbyScreen, this);
 
-        setScreen(START_SCREEN);
+        setScreen(getStartScreen());
 
         serverConnection.open();
     }
@@ -63,5 +63,12 @@ public class WarpGame extends Game implements ResizeHandler {
         }
     }
 
-    public static final ScreenType START_SCREEN = ScreenType.BATTLE;
+    private ScreenType getStartScreen() {
+        if (WelcomeScreen.earlierNameExists()) {
+            return ScreenType.BATTLE;
+        }
+        else {
+            return ScreenType.WELCOME;
+        }
+    }
 }
