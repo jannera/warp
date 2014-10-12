@@ -65,9 +65,6 @@ public class BattleScreen implements Screen {
     private static final float PROJECTILE_SIZE = 3f;
 
     final BitmapFont font;
-    private NumberFormat twoFullDecimals = NumberFormat.getFormat("0.00");
-    private NumberFormat threeFullDecimals = NumberFormat.getFormat("0.000");
-    private NumberFormat noDecimals = NumberFormat.getFormat("0");
 
     private final Array<DamageText> damageMessages = new Array(false, 16);
     private final Array<DamageText> removables = new Array<DamageText>(false, 16);
@@ -379,7 +376,7 @@ public class BattleScreen implements Screen {
             if (name.isEmpty()) {
                 name = Long.toString(p.getId());
             }
-            scores[i+1] = name + " : " + noDecimals.format(p.getScore());
+            scores[i+1] = name + " : " + ClientUtility.format(p.getScore(), 0);
             full += "\n" + scores[i+1];
         }
 
@@ -430,8 +427,8 @@ public class BattleScreen implements Screen {
     private String getHoverInfo(Long id, float maxVel, float tracking) {
         String result = "";
         result += "id " + id;
-        result += "\n" + "maxvel " + twoFullDecimals.format(maxVel);
-        result += "\n" + "tracking " + threeFullDecimals.format(tracking);
+        result += "\n" + "maxvel " + ClientUtility.format(maxVel, 2);
+        result += "\n" + "tracking " + ClientUtility.format(tracking, 3);
         return result;
     }
 
@@ -558,7 +555,7 @@ public class BattleScreen implements Screen {
             if (!textBelowCursor.isEmpty()) {
                 textBelowCursor += ", ";
             }
-            textBelowCursor += noDecimals.format(f);
+            textBelowCursor += ClientUtility.format(f, 0);
         }
         textBelowCursor += "%";
 
@@ -942,14 +939,14 @@ public class BattleScreen implements Screen {
 
             if (damageText.damage > 0 ) {
                 font.setColor(fade, 0, 0, fade);
-                output = twoFullDecimals.format(damageText.damage);
+                output = ClientUtility.format(damageText.damage, 2);
 
                 // String output = String.format("%f.2", damageText.damage);
                 font.draw(batch, output, tmp3.x, tmp3.y);
                 offset = font.getBounds(output).width + 2;
             }
 
-            output = noDecimals.format(damageText.chance * 100f) + "%";
+            output = ClientUtility.format(damageText.chance * 100f, 0) + "%";
             font.setColor(Color.YELLOW.r, Color.YELLOW.g, Color.YELLOW.b, fade);
             font.draw(batch, output, tmp3.x + offset, tmp3.y);
         }

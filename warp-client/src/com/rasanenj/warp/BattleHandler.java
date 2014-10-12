@@ -231,6 +231,19 @@ public class BattleHandler {
                     // screen.addDamageProjectile(target, message.getDamage(), shooter.getX(), shooter.getY());
                     statistics.storeDamage(shooter.getId(), target.getId(), shooter.getOwner().getId(),
                             target.getOwner().getId(), System.currentTimeMillis(), message.getDamage());
+
+                    String logMessage = shooter.getDescriptionWithOwner();
+                    if (message.getDamage() <= 0) {
+                        logMessage += " missed " + target.getDescriptionWithOwner();
+                    }
+                    else {
+                        logMessage += " hit " + target.getDescriptionWithOwner() + " for " + ClientUtility.format(message.getDamage(), 1);
+                    }
+                    logMessage += " with " + ClientUtility.format(message.getChance() * 100, 0) + " % chance";
+                    screen.addToLog(logMessage);
+                }
+                if (shooter != null && myId != shooter.getOwner().getId()) {
+                    shooter.setLastFiringTime(System.currentTimeMillis());
                 }
             }
 

@@ -535,4 +535,13 @@ public class ClientShip extends Group {
     public void setDecisionTreeDirty(boolean decisionTreeDirty) {
         this.decisionTreeDirty = decisionTreeDirty;
     }
+
+    // in form of type + id, for example "frigate 42"
+    public String getDescription() {
+        return stats.getType().toString() + " " + id;
+    }
+
+    public String getDescriptionWithOwner() {
+        return owner.getName() + "s " + getDescription();
+    }
 }

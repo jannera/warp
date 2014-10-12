@@ -26,7 +26,7 @@ public class KOTHManager extends IntervalTask {
     private int currentRound = 0;
     private long nextStateChange;
 
-    private static final int PAUSE_LENGTH_SECONDS = 30;
+    private static final int PAUSE_LENGTH_SECONDS = 10;
 
     private static final float RESOURCE_LIMIT = 1500;
 

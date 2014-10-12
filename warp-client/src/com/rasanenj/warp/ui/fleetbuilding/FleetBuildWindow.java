@@ -278,7 +278,7 @@ public class FleetBuildWindow {
     public void updateUI() {
         float total = getTotalCost();
         if (totalCost != null) {
-            totalCost.setText("Fleet total: " + total);
+            totalCost.setText("Fleet total " + total + " / " + Float.toString(fleetCostLimit));
         }
         if (total > fleetCostLimit) {
             startFight.setDisabled(true);
@@ -336,7 +336,6 @@ public class FleetBuildWindow {
 
     public void setFleetCostLimit(float limit) {
         this.fleetCostLimit = limit;
-        activeBuild.setFleetCostLimit(limit);
         updateUI();
     }
 }

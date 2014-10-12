@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.rasanenj.warp.Assets;
 import com.rasanenj.warp.Log;
 import com.rasanenj.warp.entities.ShipStats;
@@ -34,7 +35,10 @@ public class ShipBuildWindow {
     private TextButton activateButton, plusAmount, minusAmount;
     private int amount = 1;
     private final String icon;
-    private float fleetCostLimit;
+    private static final NumberFormat twoFullDecimals = NumberFormat.getFormat("0.00");
+
+    private Label[][] stats;
+    private static final int statsRows = 2, statsCols = 2;
 
     public ShipBuildWindow(int typeId, String icon, HashMap<String, Float> constants) {
         this.icon = icon;
@@ -52,10 +56,21 @@ public class ShipBuildWindow {
     }
 
     public void updateUI() {
-        float totalCost = getTotalCost();
-        String text = "Total: " + totalCost;
-        text += " / " + Float.toString(fleetCostLimit);
+        ShipStats shipStats = getStats();
+        float totalCost = shipStats.getCost();
+        String text = "Single ship cost " + totalCost;
         total.setText(text);
+
+        float dps = shipStats.getWeaponDamage() / shipStats.getWeaponCooldown();
+        dps *= 100; // scaled to better be shown in ui
+        totalCost /= 100;
+        float dpsPerRP = dps / totalCost;
+
+        float hpPerRP = shipStats.getMaxHealth() / totalCost;
+        stats[0][0].setText("DPS " + twoFullDecimals.format(dps));
+        stats[0][1].setText("DPS/RP " + twoFullDecimals.format(dpsPerRP));
+        stats[1][0].setText("");
+        stats[1][1].setText("HP/RP " + twoFullDecimals.format(hpPerRP));
         window.pack();
     }
 
@@ -72,6 +87,17 @@ public class ShipBuildWindow {
         total = new Label("", Assets.skin);
         window.row().fill().expand();
         window.add(total).expand().fill().colspan(0);
+    }
+
+    private void createStatLabels() {
+        stats = new Label[statsRows][statsCols];
+        for (int i=0; i < statsRows; i++) {
+            window.row().fill().expand();
+            for (int j=0; j < statsCols; j++) {
+                stats[i][j] = new Label("", Assets.skin);
+                window.add(stats[i][j]).expand().fill();
+            }
+        }
     }
 
     private void createAmountUI() {
@@ -161,7 +187,7 @@ public class ShipBuildWindow {
         float weaponCooldown = getValue(values, "weaponCooldown");
         float weaponTracking = getValue(values, "weaponTracking");
         float width = getValue(constants, "width");
-        float cost = getTotalCost();
+        float cost = getSingleShipCost(); // todo when amount is added to ShipStats, maybe add whole fleet cost and singleship cost or something.. ?
 
         ShipStats.Shiptype shiptype = getType();
         // calculate the height dynamically, based on texture's ratio and the width given in the catalog
@@ -190,14 +216,18 @@ public class ShipBuildWindow {
         getStats();
     }
 
-    public float getTotalCost() {
+    public float getSingleShipCost() {
         float totalCost = 0;
 
         for (PropertySlider slider : sliders) {
             slider.update();
             totalCost += slider.getCost();
         }
-        return totalCost * amount;
+        return totalCost;
+    }
+
+    public float getTotalCost() {
+        return getSingleShipCost() * amount;
     }
 
     private final Array<PropertySlider> sliders = new Array<PropertySlider>(false, 16);
@@ -272,7 +302,7 @@ public class ShipBuildWindow {
                 }
             }
             build.createTotalLabel();
-            build.setFleetCostLimit(0);
+            build.createStatLabels();
             build.updateUI();
             build.validate();
             return build;
@@ -347,10 +377,5 @@ public class ShipBuildWindow {
 
     public void copySlidersFrom(ShipBuildWindow other) {
         setSliders(other.getSliders());
-    }
-
-    public void setFleetCostLimit(float fleetCostLimit) {
-        this.fleetCostLimit = fleetCostLimit;
-        updateUI();
     }
 }

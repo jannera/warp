@@ -68,6 +68,15 @@ public class ShipStats {
             }
             return null;
         }
+
+        public String toString() {
+            switch (this) {
+                case FRIGATE: return "frigate";
+                case CRUISER: return "cruiser";
+                case BATTLESHIP: return "battleship";
+            }
+            return null;
+        }
     }
 
     public ShipStats(float mass, float inertia,
